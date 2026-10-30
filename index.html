@@ -74,7 +74,7 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .hud .spd small{font-size:11px;color:var(--dim);margin-left:3px}
 .camlabel{position:absolute;z-index:3;font-size:11px;font-weight:700;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px;pointer-events:none}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;text-align:center;padding:30px}
-.overlay .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;max-width:520px}
+.overlay .ovcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;max-width:520px}
 .overlay h2{margin:0 0 8px;font-size:18px}
 .overlay p{color:var(--dim);margin:0 0 14px;line-height:1.5}
 .controls{background:var(--panel);border-top:1px solid var(--line);padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px}
@@ -105,17 +105,6 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .tl-head .sum{color:var(--dim);margin-right:auto}
 .cards{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;min-height:118px}
 .cards .empty{color:var(--faint);padding:30px 4px}
-.card{flex:0 0 176px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
-.card.editing{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
-.card.drag{opacity:.4}
-.card.over{border-color:var(--accent)}
-.card .th{height:72px;background:#000 center/cover no-repeat;position:relative}
-.card .num{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}
-.card .dur{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 6px;font-size:11px}
-.card .mutedtag{position:absolute;left:6px;bottom:6px;background:var(--bad);border-radius:4px;padding:1px 6px;font-size:10.5px;font-weight:700}
-.card .bd{padding:6px 8px;display:flex;align-items:center;gap:4px}
-.card .bd .lbl{flex:1;font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.card .bd button{padding:2px 6px;font-size:12px;min-width:0}
 .exportbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .exportbar label{color:var(--dim);display:flex;gap:6px;align-items:center}
 #exportName{width:190px}
@@ -135,6 +124,64 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .mapnote{position:absolute;left:8px;bottom:8px;z-index:2;background:rgba(10,12,16,.8);padding:4px 8px;border-radius:6px;font-size:11.5px;color:var(--dim)}
 #map{position:relative}
 .headarrow{width:22px;height:22px}
+/* footage picker */
+.picker{position:fixed;left:0;right:0;top:52px;bottom:0;z-index:800;background:rgba(10,12,16,.94);backdrop-filter:blur(4px);display:none;overflow:auto;padding:32px 20px}
+.picker.open{display:block}
+.pk{max-width:960px;margin:0 auto}
+.pk h2{font-size:22px;margin:0 0 4px}
+.pk .lead{color:var(--dim);margin:0 0 20px;font-size:14px;line-height:1.5}
+.pk-folder{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.pk-folder .txt{flex:1;min-width:0}.pk-folder b{font-size:15px}.pk-folder p{margin:4px 0 0;color:var(--dim);line-height:1.5}
+.pk-folder button{padding:10px 18px;font-size:14px}
+.pk-or{display:flex;align-items:center;gap:12px;color:var(--faint);margin:24px 0 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.pk-or::before,.pk-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.slot{background:var(--panel);border:2px dashed #353c4a;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-height:200px;cursor:pointer;transition:border-color .15s,background .15s}
+.slot:hover,.slot.over{border-color:var(--accent);background:#1a1f29}
+.slot.has{border-style:solid;border-color:#33507c}
+.slot .cam{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700}
+.slot .dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.slot .sub{color:var(--dim);font-size:12.5px;line-height:1.4}
+.slot .what{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--faint);gap:4px;padding:8px 0}
+.slot .what .big{font-size:30px;font-weight:300;line-height:1;color:var(--dim)}
+.slot .what .n{font-size:26px;font-weight:700;color:var(--text);line-height:1.1}
+.slot .acts{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.slot .acts button{padding:4px 10px;font-size:12px}
+.slot a{color:#9cc3ff;text-decoration:none}
+.matches{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.matches .msum{font-weight:600;margin-bottom:8px}
+.matches .msum span{color:var(--dim);font-weight:400}
+.matches table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.matches th{text-align:left;color:var(--faint);font-weight:600;font-size:12px;padding:4px 8px;border-bottom:1px solid var(--line)}
+.matches td{padding:5px 8px;border-bottom:1px solid #20242d}
+.matches td.y{font-weight:700}.matches td.no{color:#5b6475}
+.matches .more{color:var(--faint);padding:6px 8px 0}
+.pk-foot{display:flex;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.pk-foot .note{flex:1;color:var(--faint);font-size:12px;min-width:220px}
+.pk-foot button{padding:9px 16px;font-size:14px}
+@media (max-width:760px){.slots{grid-template-columns:1fr}.slot{min-height:150px}}
+/* drives in the clip list */
+.drive{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#141821;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1}
+.drive .dt{flex:1;min-width:0;font-size:12px;color:var(--dim);line-height:1.35}
+.drive .dt b{color:var(--text);display:block;font-size:12.5px}
+.drive button{padding:4px 10px;font-size:12px}
+/* edit timeline track */
+.tl-tools{display:flex;gap:6px;align-items:center;padding:0 12px 8px;flex-wrap:wrap}
+.tl-tools .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.tl-tools .selinfo{color:var(--dim);font-variant-numeric:tabular-nums;margin-left:4px}
+.tl-tools .grow{flex:1}
+.cards{overflow-x:auto;padding:6px 12px 12px;min-height:104px}
+.cards .empty{color:var(--faint);padding:24px 4px}
+.track{position:relative;height:80px;display:flex;align-items:stretch;user-select:none;-webkit-user-select:none;width:max-content;min-width:100%}
+.piece{position:relative;flex:0 0 auto;height:100%;border-radius:6px;margin-right:3px;background:#2a3140 center/cover no-repeat;overflow:hidden;border:2px solid #3a4252;cursor:pointer}
+.piece:hover{border-color:#5a6478}
+.piece.sel{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+.piece.drag{opacity:.4}.piece.over{border-color:var(--accent)}
+.piece .pl,.piece .pd,.piece .pm{position:absolute;font-size:11px;font-weight:700;background:rgba(0,0,0,.7);border-radius:3px;padding:0 4px;white-space:nowrap;pointer-events:none}
+.piece .pl{left:4px;top:3px}.piece .pd{right:4px;bottom:3px;font-weight:600}.piece .pm{left:4px;bottom:3px;background:var(--bad)}
+.seam{flex:0 0 auto;width:16px;margin-right:3px;display:flex;align-items:center;justify-content:center;color:var(--warn);font-size:13px;pointer-events:none}
+.playhead{position:absolute;top:-6px;bottom:-4px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
+.playhead::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;border-top-color:#fff}
 .dropzone.active::after{content:"Drop your dashcam folder";position:fixed;inset:12px;border:3px dashed var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:rgba(15,17,21,.85);z-index:2000}
 </style>
 </head>
@@ -143,9 +190,10 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
   <header>
     <div class="brand">Dashcam Studio <span>· WolfBox G900 Pro &amp; TriPro</span></div>
     <button class="primary" id="btnOpen" title="Choose the dashcam folder (for example the SD card's DCIM folder)">Open folder…</button>
-    <button id="btnAddFiles" title="Add individual video files">Add files…</button>
+    <button id="btnAddFiles" title="Choose files for each camera: front mirror, rear and separate front">Choose files…</button>
     <input type="file" id="inFolder" webkitdirectory directory multiple hidden>
-    <input type="file" id="inFiles" accept=".mp4,.MP4,.mov,.MOV" multiple hidden>
+    <input type="file" id="inSlot" accept=".mp4,.MP4,.mov,.MOV" multiple hidden>
+    <input type="file" id="inSlotDir" webkitdirectory directory multiple hidden>
     <input type="file" id="inProject" accept=".json,application/json" hidden>
     <div class="spacer"></div>
     <div class="savechip">Save folder: <b id="saveName">not chosen</b><button id="btnSaveDir">Choose…</button></div>
@@ -161,7 +209,7 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
         </div>
       </div>
       <div class="list" id="clipList"></div>
-      <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button><button id="btnAddAll" disabled title="Add every clip shown in this list to the edit timeline, in order">Add all to edit</button></span></div>
+      <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button><button id="btnAddAll" disabled title="Merge every clip shown in this list into the edit timeline, in order">Merge all</button></span></div>
     </aside>
 
     <section class="player">
@@ -171,11 +219,10 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
         <div class="tile s2 off" id="tC" title="Click to make this the main camera"><video id="vC" playsinline preload="auto" muted></video><div class="camlabel" id="labC"></div></div>
         <div class="hud" id="hud" style="display:none"></div>
         <div class="overlay" id="overlay">
-          <div class="card">
-            <h2>Open your dashcam footage</h2>
-            <p>Choose the folder from the G900 Pro's SD card (or a copy on your Mac). Every clip in it and its sub-folders loads in recording order, with the front, rear and (on a TriPro) third camera matched up automatically.</p>
-            <button class="primary" id="btnOpen2">Open folder…</button>
-            <p style="margin:14px 0 0;font-size:12px">Or drag the folder onto this window. Nothing is uploaded; everything stays on your Mac.</p>
+          <div class="ovcard">
+            <h2>No footage open</h2>
+            <p>Open the dashcam's folder, or choose the files for each camera.</p>
+            <button class="primary" id="btnOpen2">Open footage…</button>
           </div>
         </div>
       </div>
@@ -228,12 +275,26 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 
   <section class="tl">
     <div class="tl-head">
-      <h3>Edit timeline</h3><span class="sum" id="tlSum">Mark sections in the player, then add them here. Drag cards to reorder.</span>
+      <h3>Edit timeline</h3><span class="sum" id="tlSum"></span>
       <button id="bProjOpen" title="Open a saved edit (project file)">Open edit…</button>
       <button id="bProjSave" title="Save this edit as a small project file so you can reopen it later">Save edit</button>
       <button id="bTlClear" title="Remove every section">Clear all</button>
     </div>
-    <div class="cards" id="cards"><div class="empty">No sections yet. Play a clip, press <b>I</b> at the start and <b>O</b> at the end of what you want, then <b>A</b>. Gaps between sections are cut out automatically.</div></div>
+    <div class="tl-tools" id="tlTools">
+      <button id="bTlPlay" class="primary" title="Play the timeline from the playhead, skipping everything you've cut (Shift+Space)">▶ Play edit</button>
+      <div class="sep"></div>
+      <button id="bCut" title="Split the piece at the playhead (C)">✂ Cut at playhead <kbd style="opacity:.6">C</kbd></button>
+      <button id="bCutOut" title="Remove the part between your in and out marks from the timeline (X)">Cut out marked <kbd style="opacity:.6">X</kbd></button>
+      <button id="bDel" title="Remove the selected piece (Delete)">Delete piece <kbd style="opacity:.6">⌫</kbd></button>
+      <button id="bMute" title="Silence the selected piece in the export">🔇 Mute piece</button>
+      <button id="bTrim" title="Fine-tune the selected piece's start and end with Mark in / Mark out in the player">Trim in player</button>
+      <div class="sep"></div>
+      <button id="bUndo" title="Undo the last timeline change (⌘Z)">↶ Undo</button>
+      <span class="selinfo" id="selInfo"></span>
+      <div class="grow"></div>
+      <button class="icon" id="bZoomOut" title="Zoom out">−</button><button id="bZoomFit" title="Fit the whole edit">Fit</button><button class="icon" id="bZoomIn" title="Zoom in">+</button>
+    </div>
+    <div class="cards" id="cards"></div>
     <div class="tl-head exportbar" style="border-top:1px solid var(--line);padding:10px 12px">
       <label>Name <input type="text" id="exportName" value="Drive"></label>
       <label>Camera <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
@@ -252,7 +313,8 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
   <h2>Dashcam Studio — how it works</h2>
   <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, event, parking). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
   <p><b>Keeping clips:</b> click the ☆ beside a clip (or press <kbd>K</kbd>) to keep it. Kept clips stay starred next time you open the folder. The <b>★ Kept</b> tab lists them from every day: use <b>Add all to edit</b> to put them on the timeline, or <b>Copy originals</b> to copy the untouched files into a "Kept clips" folder inside your save folder, safe from the dashcam's loop recording.</p>
-  <p><b>Editing:</b> mark the start (<kbd>I</kbd>) and end (<kbd>O</kbd>) of what you want to keep and add it (<kbd>A</kbd>). Add sections from as many clips as you like; everything between sections is dropped. Click a card to adjust it, toggle 🔇 to silence that section, and drag cards to reorder.</p>
+  <p><b>Merging and cutting:</b> clips recorded back to back are grouped into drives in the list. Click <b>Merge</b> on a drive to lay all of its clips end to end in the edit timeline. Click anywhere on the timeline to jump there, then press <kbd>C</kbd> to cut at the playhead. Select a piece you don't want and press <kbd>⌫</kbd> to remove it. Or mark in (<kbd>I</kbd>) and out (<kbd>O</kbd>) around the unwanted part and press <kbd>X</kbd> to cut it out. <b>Play edit</b> plays the result, skipping what you removed. <kbd>⌘Z</kbd> undoes.</p>
+  <p><b>Picking sections:</b> you can also build an edit the other way round: mark the start (<kbd>I</kbd>) and end (<kbd>O</kbd>) of what you want to keep and add it (<kbd>A</kbd>). Drag pieces to reorder them.</p>
   <p><b>Export</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
   <p><b>Save folder:</b> in Chrome, choose a folder once and every export goes straight into it. Other browsers save to Downloads. From there, drag the files into Photos or iMovie.</p>
   <table>
@@ -260,10 +322,30 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
     <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>Frame back / forward</td><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous clip</td></tr>
     <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark in / out</td><td><kbd>A</kbd></td><td>Add section</td></tr>
     <tr><td><kbd>S</kbd></td><td>Switch main camera</td><td><kbd>M</kbd></td><td>Mute playback</td></tr>
+    <tr><td><kbd>C</kbd></td><td>Cut the timeline at the playhead</td><td><kbd>X</kbd></td><td>Cut out the marked part</td></tr>
+    <tr><td><kbd>⌫</kbd></td><td>Delete the selected piece</td><td><kbd>⌘Z</kbd></td><td>Undo a timeline change</td></tr>
     <tr><td><kbd>K</kbd></td><td>Keep / un-keep this clip</td><td></td><td></td></tr>
   </table>
-  <p><b>TriPro third camera:</b> <select id="thirdName"><option value="Bumper">Bumper camera</option><option value="Cabin">Cabin camera</option><option value="Camera 3">Other</option></select> <span style="color:var(--dim)">(sets the label used on screen and in export file names)</span></p>
+  <p><b>TriPro third camera:</b> <select id="thirdName"><option value="Separate front">Separate front camera</option><option value="Bumper">Bumper camera</option><option value="Cabin">Cabin camera</option><option value="Camera 3">Other</option></select> <span style="color:var(--dim)">(sets the label used on screen and in export file names)</span></p>
   <p style="margin-bottom:0"><button id="bDiag" title="Save a tiny file describing the current clip (no video) for troubleshooting">Save diagnostic file for current clip</button> <button id="bHelpClose" class="primary" style="float:right">Close</button></p>
+</div></div>
+
+<div class="picker" id="picker"><div class="pk">
+  <h2 id="pkTitle">Open your dashcam footage</h2>
+  <p class="lead">Nothing is uploaded. Everything stays on your Mac.</p>
+  <div class="pk-folder">
+    <div class="txt"><b>Open the whole SD card or folder</b><p>Every clip in it loads in recording order, with the front mirror, rear and separate front cameras matched up automatically.</p></div>
+    <button class="primary" id="pkFolder">Open folder…</button>
+  </div>
+  <div class="pk-or">or choose files for each camera</div>
+  <div class="slots" id="slots"></div>
+  <div class="matches" id="matches" style="display:none"></div>
+  <div class="pk-foot">
+    <span class="note">Tip: you can drop files or a folder straight onto a camera box.</span>
+    <button id="pkCancel">Cancel</button>
+    <button id="pkOpen" disabled>Open clips</button>
+    <button class="primary" id="pkMerge" disabled title="Open the clips and lay them out end to end in the edit timeline, ready to cut">Open and merge</button>
+  </div>
 </div></div>
 
 <div class="toasts" id="toasts"></div>
@@ -795,7 +877,7 @@ const D = window.DashMP4;
 const $ = id => document.getElementById(id);
 const vA = $('vA'), vB = $('vB'), vC = $('vC'), SUBS = [vB, vC];
 const CAMS = ['front', 'rear', 'third'];
-let thirdName = 'Bumper'; try { thirdName = localStorage.getItem('dashcam-studio.third') || 'Bumper'; } catch (_) {}
+let thirdName = 'Separate front'; try { thirdName = localStorage.getItem('dashcam-studio.third') || 'Separate front'; } catch (_) {}
 const camName = c => c === 'front' ? 'Front' : c === 'rear' ? 'Rear' : thirdName;
 const clipsOf = e => e ? CAMS.map(c => e[c]).filter(Boolean) : [];
 const okClips = e => clipsOf(e).filter(c => c.ok);
@@ -804,6 +886,7 @@ const S = {
   entries: [], byKey: new Map(), day: null, kind: 'all', shown: [], cur: -1,
   layout: 'pip', mainCam: 'front', autoNext: true, follow: true,
   inT: null, outT: null, timeline: [], editing: -1, saveDir: null, stopAt: null, previewing: false,
+  tlSel: -1, tlPlaying: false, tlZoom: 0, undo: [],
 };
 
 /* ---------- utilities ---------- */
@@ -868,8 +951,9 @@ async function loadFiles(files) {
   const clips = [];
   await pool(files, 8, async (f) => {
     const c = await D.openClip(f);
-    c.rel = f.webkitRelativePath || f._rel || f.name;
-    c.cam = camOf(c.rel); c.key = pairKey(c.rel);
+    c.rel = f._rel || f.webkitRelativePath || f.name;
+    // files chosen for a camera box keep that camera and pair by file name alone, whichever folder they came from
+    c.cam = f._cam || camOf(c.rel); c.key = f._cam ? pairKey(c.rel.split('/').pop()) + '|' + kindOf(c.rel) : pairKey(c.rel);
     c.when = timeFromName(c.rel) || (c.ok && await D.firstGpsTime(c)) || c.creation || new Date(f.lastModified);
     clips.push(c);
   }, done => progress(true, null, `${done} of ${files.length}`, done / files.length));
@@ -887,8 +971,8 @@ async function loadFiles(files) {
     e[c.cam] = c;
     if (c.cam === 'front' || !e.when) e.when = c.when;
   }
-  const existing = new Set(S.entries.map(e => e.key));
-  for (const e of map.values()) if (!existing.has(e.key)) S.entries.push(e);
+  const existing = new Set(S.entries.map(e => e.key)), added = [];
+  for (const e of map.values()) if (!existing.has(e.key)) { S.entries.push(e); added.push(e); }
   S.entries.sort((a, b) => a.when - b.when || a.key.localeCompare(b.key));
   S.byKey = new Map(S.entries.map(e => [e.key, e]));
   S.entries.forEach(e => { const ok = okClips(e); e.main = ok[0] || clipsOf(e)[0]; e.day = dayKey(e.when); e.ok = ok.length > 0; e.dur = ok.length ? ok[0].duration : 0; });
@@ -897,8 +981,21 @@ async function loadFiles(files) {
   const bad = clips.filter(c => !c.ok).length;
   toast(`Loaded <b>${clips.length}</b> files as <b>${map.size}</b> clips` + (bad ? ` · ${bad} damaged file${bad > 1 ? 's' : ''} labelled` : '') + '.', 'good');
   $('overlay').style.display = 'none';
+  closePicker();
   buildDays();
   restoreTimelineOffer();
+  return added.sort((a, b) => a.when - b.when);
+}
+
+/* clips recorded back to back (next starts within a few seconds of the last one ending) form one drive */
+function drivesOf(list) {
+  const out = []; let cur = null;
+  for (const e of list) {
+    const p = cur && cur[cur.length - 1];
+    const gap = p ? (e.when - p.when) / 1000 - (p.dur || 180) : Infinity;
+    if (p && e.day === p.day && e.kind === p.kind && gap > -5 && gap <= 15) cur.push(e); else out.push(cur = [e]);
+  }
+  return out;
 }
 
 function buildDays() {
@@ -914,7 +1011,11 @@ function renderList(selectFirst) {
   S.shown = S.kind === 'kept' ? S.entries.filter(isKept) : S.entries.filter(e => e.day === S.day && (S.kind === 'all' || e.kind === S.kind));
   const multiDay = S.kind === 'kept' && new Set(S.shown.map(e => e.day)).size > 1;
   const L = $('clipList');
+  const driveAt = new Map();
+  if (S.kind !== 'kept') { let k = 0; for (const d of drivesOf(S.shown)) { if (d.length > 1 && d.some(e => e.ok)) driveAt.set(k, d); k += d.length; } }
   L.innerHTML = S.shown.map((e, i) => {
+    const d = driveAt.get(i), dur = d ? d.reduce((a, x) => a + (x.dur || 0), 0) : 0;
+    const head = d ? `<div class="drive"><span class="dt"><b>Drive · ${fmtClock(d[0].when)} to ${fmtClock(new Date(d[d.length - 1].when.getTime() + (d[d.length - 1].dur || 0) * 1000))}</b>${d.length} clips back to back · ${fmt(dur)}</span><button class="primary" data-merge="${i}" data-n="${d.length}" title="Lay all ${d.length} clips of this drive end to end in the edit timeline, ready to cut">Merge</button></div>` : '';
     const b = [];
     if (e.front) b.push(`<span class="badge f">Front</span>`);
     if (e.rear) b.push(`<span class="badge r">Rear</span>`);
@@ -925,7 +1026,7 @@ function renderList(selectFirst) {
     const errs = clipsOf(e).filter(c => !c.ok);
     if (errs.length) b.push(`<span class="badge err" title="${esc(errs.map(c => c.error).join(' '))}">${!e.ok ? 'Damaged' : errs.map(c => camName(c.cam)).join(' + ') + ' damaged'}</span>`);
     const kept = isKept(e);
-    return `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
+    return head + `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
   }).join('') || `<div style="padding:20px;color:var(--faint)">${S.kind === 'kept' ? 'No kept clips yet. Click the ☆ beside any clip (or press K) to keep it.' : 'No clips of this type on this day.'}</div>`;
   const tot = S.shown.reduce((a, e) => a + (e.dur || 0), 0);
   $('listSum').textContent = `${S.shown.length} clips · ${fmt(tot)}`;
@@ -981,7 +1082,7 @@ async function selectClip(i, t = 0, play = false) {
 
 function showOverlayMsg(title, body, withNext) {
   const o = $('overlay'); o.style.display = 'flex';
-  o.innerHTML = `<div class="card"><h2>${title}</h2><p>${body}</p>${withNext ? '<button class="primary" id="ovNext">Go to next clip</button>' : ''}</div>`;
+  o.innerHTML = `<div class="ovcard"><h2>${title}</h2><p>${body}</p>${withNext ? '<button class="primary" id="ovNext">Go to next clip</button>' : ''}</div>`;
   const b = $('ovNext'); if (b) b.onclick = () => nextClip(1, true);
 }
 function hideOverlayMsg() { if (S.entries.length) $('overlay').style.display = 'none'; }
@@ -1010,7 +1111,10 @@ vA.addEventListener('play', () => { liveSubs().forEach(v => v.play().catch(() =>
 vA.addEventListener('pause', () => { SUBS.forEach(v => v.pause()); $('bPlay').textContent = '▶'; });
 vA.addEventListener('seeking', () => { if (isFinite(vA.currentTime)) liveSubs().forEach(v => { v.currentTime = Math.min(vA.currentTime, (v.duration || 1e9) - 0.05); }); });
 vA.addEventListener('ratechange', () => { SUBS.forEach(v => { v.playbackRate = vA.playbackRate; }); });
-vA.addEventListener('ended', () => { if (S.previewing) { S.previewing = false; return; } if (S.autoNext) nextClip(1, true); });
+vA.addEventListener('ended', () => {
+  if (S.tlPlaying) { const i = S.timeline.findIndex((s, k) => k >= S.tlSel && s.key === (curEntry() || {}).key); tlAdvance(i < 0 ? S.tlSel : i); return; }
+  if (S.previewing) { S.previewing = false; return; } if (S.autoNext) nextClip(1, true);
+});
 vA.addEventListener('error', () => {
   if (!vA.getAttribute('src')) return;
   showOverlayMsg('This video won\'t play in this browser', 'The G900 Pro records in HEVC (H.265). Open Dashcam Studio in <b>Google Chrome</b> or <b>Safari</b> on your Mac. If other clips play fine, this file is probably damaged.', true);
@@ -1025,7 +1129,7 @@ function tick(force) {
   $('tCur').textContent = fmt(t); $('tDur').textContent = fmt(d);
   const p = d ? t / d * 100 : 0;
   $('scrubFill').style.width = p + '%'; $('scrubKnob').style.left = p + '%';
-  updateHud(t);
+  updateHud(t); tlPlayhead();
 }
 (function loop() { if (!vA.paused || S.dragging) tick(); requestAnimationFrame(loop); })();
 vA.addEventListener('timeupdate', () => { if (vA.paused) tick(); });
@@ -1064,57 +1168,209 @@ function addSection(whole) {
   let s = whole ? 0 : (S.inT ?? 0), en = whole ? d : (S.outT ?? d);
   if (en - s < 0.2) { toast('That section is too short. Mark an in point (I) and an out point (O).', 'warn', 4000); return; }
   const sec = { key: e.key, start: s, end: en, mute: false, thumb: thumbNow() };
+  snap();
   if (S.editing >= 0 && !whole) { sec.mute = S.timeline[S.editing].mute; S.timeline[S.editing] = sec; toast(`Section ${S.editing + 1} updated.`, 'good', 2500); setEditing(-1); }
   else { S.timeline.push(sec); }
   const snap = D.snapSegment(e.main.ok ? e.main : mainClip(e), s, en);
   if (s - snap.start > 0.05) toast(`Section will start at ${fmt(snap.start, true)}, the nearest keyframe before your mark.`, '', 3500);
   S.inT = S.outT = null; updateInOut(); renderTimeline();
 }
-function addAllShown() { for (const e of S.shown) if (e.ok) S.timeline.push({ key: e.key, start: 0, end: e.dur, mute: false, thumb: '' }); renderTimeline(); toast(`Added ${S.shown.filter(e => e.ok).length} clips to the edit timeline.`, 'good', 3000); }
+function addAllShown() { mergeEntries(S.shown); }
+
+/* lay whole clips end to end in the timeline so unwanted parts can be cut out */
+function mergeEntries(list) {
+  const ok = list.filter(e => e.ok && e.dur > 0); if (!ok.length) { toast('Those clips can\'t be played, so there is nothing to merge.', 'warn'); return; }
+  snap();
+  const first = S.timeline.length;
+  for (const e of ok) S.timeline.push({ key: e.key, start: 0, end: e.dur, mute: false, thumb: '' });
+  S.tlZoom = 0; S.tlSel = first; renderTimeline();
+  tlSeek(first, 0, false);
+  toast(`Merged <b>${ok.length}</b> clip${ok.length > 1 ? 's' : ''} (${fmt(ok.reduce((a, e) => a + e.dur, 0))}) into the timeline. Click the timeline to jump around, press <b>C</b> to cut, then select a piece you don't want and press <b>⌫</b>.`, 'good', 9000);
+}
+
+/* undo for every timeline change */
+function snap() { S.undo.push(S.timeline.map(s => ({ ...s }))); if (S.undo.length > 60) S.undo.shift(); }
+function undo() {
+  if (!S.undo.length) { toast('Nothing to undo.', '', 2000); return; }
+  S.timeline = S.undo.pop(); S.tlSel = Math.min(S.tlSel, S.timeline.length - 1); S.editing = -1;
+  renderTimeline(); updateInOut();
+}
 
 function setEditing(i) { S.editing = i; renderTimeline(); updateInOut(); }
+// does piece b carry straight on from piece a in the original recording?
+function continues(a, b) {
+  if (a.key === b.key) return Math.abs(a.end - b.start) < 0.05;
+  const ea = S.byKey.get(a.key), eb = S.byKey.get(b.key); if (!ea || !eb) return false;
+  if (b.start > 0.05 || ea.dur - a.end > 0.3) return false;
+  const gap = (eb.when - ea.when) / 1000 - ea.dur; return gap > -5 && gap <= 15;
+}
 function renderTimeline() {
-  const C = $('cards');
-  if (!S.timeline.length) {
-    C.innerHTML = '<div class="empty">No sections yet. Play a clip, press <b>I</b> at the start and <b>O</b> at the end of what you want, then <b>A</b>. Gaps between sections are cut out automatically.</div>';
+  const C = $('cards'), T = S.timeline;
+  if (S.tlSel >= T.length) S.tlSel = T.length - 1;
+  if (!T.length) {
+    C.innerHTML = '<div class="empty">Nothing here yet. Click <b>Merge</b> on a drive in the clip list to lay its clips out here, ready to cut. Or mark a section in the player (<b>I</b> at the start, <b>O</b> at the end) and add it (<b>A</b>).</div>';
   } else {
-    C.innerHTML = S.timeline.map((s, i) => {
+    const tot = T.reduce((a, s) => a + (s.end - s.start), 0);
+    const seams = T.filter((s, i) => i && !continues(T[i - 1], s)).length;
+    const avail = Math.max(240, C.clientWidth - 26 - T.length * 3 - seams * 19);
+    const pps = S.tlZoom || avail / tot;
+    S.tlPps = pps;
+    C.innerHTML = '<div class="track" id="track">' + T.map((s, i) => {
       const e = S.byKey.get(s.key);
       const when = e ? fmtClock(new Date(e.when.getTime() + s.start * 1000)) : 'missing clip';
-      return `<div class="card${S.editing === i ? ' editing' : ''}" draggable="true" data-i="${i}">
-        <div class="th" style="background-image:${s.thumb ? `url(${s.thumb})` : 'none'}"><span class="num">${i + 1}</span><span class="dur">${fmt(s.end - s.start)}</span>${s.mute ? '<span class="mutedtag">MUTED</span>' : ''}</div>
-        <div class="bd"><span class="lbl" title="${esc(e ? e.main.rel : s.key)}">${when}</span>
-          <button data-a="play" title="Preview this section">▶</button>
-          <button data-a="mute" title="${s.mute ? 'Unmute' : 'Mute'} this section in the export">${s.mute ? '🔇' : '🔊'}</button>
-          <button data-a="del" title="Remove section">✕</button></div></div>`;
-    }).join('');
+      const w = Math.max(26, (s.end - s.start) * pps);
+      if (!s.thumb) wantThumb(s);
+      return (i && !continues(T[i - 1], s) ? '<div class="seam" title="Cut">✂</div>' : '') +
+        `<div class="piece${S.tlSel === i ? ' sel' : ''}" draggable="true" data-i="${i}" style="width:${w.toFixed(1)}px;${s.thumb ? `background-image:url(${s.thumb})` : ''}" title="${esc(when)} · ${fmt(s.end - s.start)}${e ? ' · ' + esc(e.main.rel) : ''}">` +
+        `<span class="pl">${i + 1} · ${when}</span><span class="pd">${fmt(s.end - s.start)}</span>${s.mute ? '<span class="pm">MUTED</span>' : ''}</div>`;
+    }).join('') + '<div class="playhead" id="playhead"></div></div>';
   }
-  const tot = S.timeline.reduce((a, s) => a + (s.end - s.start), 0);
-  $('tlSum').textContent = S.timeline.length ? `${S.timeline.length} section${S.timeline.length > 1 ? 's' : ''} · ${fmt(tot)} total` : 'Mark sections in the player, then add them here. Drag cards to reorder.';
-  $('bExport').disabled = !S.timeline.length;
+  const tot = T.reduce((a, s) => a + (s.end - s.start), 0);
+  $('tlSum').textContent = T.length ? `${T.length} piece${T.length > 1 ? 's' : ''} · ${fmt(tot)} total` : '';
+  $('bExport').disabled = !T.length;
+  tlTools(); tlPlayhead(true);
   saveTimelineLocal();
 }
+function tlTools() {
+  const s = S.timeline[S.tlSel], e = s && S.byKey.get(s.key);
+  $('selInfo').textContent = s ? `Piece ${S.tlSel + 1} of ${S.timeline.length}: ${e ? fmtClock(new Date(e.when.getTime() + s.start * 1000)) : ''} · ${fmt(s.end - s.start, true)}` : (S.timeline.length ? 'Click a piece to select it' : '');
+  $('bDel').disabled = $('bMute').disabled = $('bTrim').disabled = !s;
+  $('bMute').textContent = s && s.mute ? '🔊 Unmute piece' : '🔇 Mute piece';
+  $('bTlPlay').disabled = !S.timeline.length;
+  $('bTlPlay').textContent = S.tlPlaying ? '❚❚ Pause edit' : '▶ Play edit';
+  $('bUndo').disabled = !S.undo.length;
+  ['bZoomOut', 'bZoomFit', 'bZoomIn'].forEach(id => { $(id).disabled = !S.timeline.length; });
+}
+// which piece is the player showing right now?
+function tlCurrent() {
+  const e = curEntry(); if (!e || !vA.getAttribute('src') || vA.readyState < 1 || vA.seeking) return -1;
+  const t = vA.currentTime, T = S.timeline, s = T[S.tlSel];
+  if (s && s.key === e.key && t >= s.start - 0.05 && t <= s.end + 0.05) return S.tlSel;
+  return T.findIndex(x => x.key === e.key && t >= x.start && t < x.end);
+}
+function tlPlayhead(force) {
+  const ph = $('playhead'); if (!ph) return;
+  const i = tlCurrent();
+  if (i < 0) { ph.style.display = 'none'; return; }
+  if (i !== S.tlSel) { S.tlSel = i; document.querySelectorAll('.piece').forEach(p => p.classList.toggle('sel', +p.dataset.i === i)); tlTools(); }
+  const s = S.timeline[i], el = document.querySelector(`.piece[data-i="${i}"]`); if (!el) return;
+  const x = el.offsetLeft + Math.min(1, Math.max(0, (vA.currentTime - s.start) / (s.end - s.start))) * el.offsetWidth;
+  ph.style.display = 'block'; ph.style.left = x + 'px';
+  const C = $('cards');
+  if (!vA.paused && (x < C.scrollLeft + 20 || x > C.scrollLeft + C.clientWidth - 40)) C.scrollLeft = x - 60;
+  // playing the edit: jump over whatever was cut
+  if (S.tlPlaying && !vA.paused && vA.currentTime >= s.end - 0.04) tlAdvance(i);
+}
+function tlAdvance(i) {
+  if (i + 1 < S.timeline.length) tlSeek(i + 1, S.timeline[i + 1].start, true);
+  else { S.tlPlaying = false; vA.pause(); tlTools(); }
+}
+// show piece i in the player at time t of its clip
+function tlSeek(i, t, play) {
+  const s = S.timeline[i]; if (!s) return;
+  const e = S.byKey.get(s.key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
+  S.tlSel = i; document.querySelectorAll('.piece').forEach(p => p.classList.toggle('sel', +p.dataset.i === i)); tlTools();
+  if (curEntry() === e && vA.getAttribute('src')) {
+    if (Math.abs(vA.currentTime - t) > 0.04) vA.currentTime = t;
+    if (play && vA.paused) vA.play().catch(() => {});
+    return;
+  }
+  if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
+  let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
+  selectClip(k, t, play);
+}
+function tlPlayToggle() {
+  if (!S.timeline.length) return;
+  if (S.tlPlaying) { S.tlPlaying = false; vA.pause(); tlTools(); return; }
+  S.tlPlaying = true; S.previewing = false; S.stopAt = null;
+  const i = tlCurrent();
+  if (i >= 0 && vA.currentTime < S.timeline[i].end - 0.1) { S.tlSel = i; vA.play().catch(() => {}); }
+  else tlSeek(Math.max(0, S.tlSel), S.timeline[Math.max(0, S.tlSel)].start, true);
+  tlTools();
+}
+
+/* cutting */
+function cutAtPlayhead() {
+  const i = tlCurrent();
+  if (i < 0) { toast('Move the playhead onto the timeline first: click the piece where you want to cut.', 'warn', 4000); return; }
+  const s = S.timeline[i], t = vA.currentTime;
+  if (t - s.start < 0.2 || s.end - t < 0.2) { toast('That\'s already the edge of a piece.', '', 2500); return; }
+  snap();
+  S.timeline.splice(i, 1, { ...s, end: t }, { ...s, start: t, thumb: '', _tq: false });
+  S.tlSel = i + 1; S.editing = -1; renderTimeline();
+}
+function cutOutMarked() {
+  const e = curEntry(); if (!e) return;
+  const a = S.inT ?? null, b = S.outT ?? null;
+  if (a == null || b == null) { toast('Mark the start (I) and end (O) of the part you want to remove, then press X.', 'warn', 4500); return; }
+  const out = []; let hit = 0;
+  for (const s of S.timeline) {
+    if (s.key !== e.key || b <= s.start || a >= s.end) { out.push(s); continue; }
+    hit++;
+    if (a - s.start >= 0.2) out.push({ ...s, end: a });
+    if (s.end - b >= 0.2) out.push({ ...s, start: b, thumb: '', _tq: false });
+  }
+  if (!hit) { toast('The marked part isn\'t in the timeline. Merge this clip\'s drive first.', 'warn', 4500); return; }
+  snap(); S.timeline = out; S.inT = S.outT = null; S.editing = -1; updateInOut(); renderTimeline();
+  toast(`Cut out ${fmt(b - a, true)}.`, 'good', 2500);
+}
+function deletePiece() {
+  const i = S.tlSel; if (i < 0 || !S.timeline[i]) return;
+  snap(); S.timeline.splice(i, 1); S.editing = -1;
+  S.tlSel = Math.min(i, S.timeline.length - 1); renderTimeline();
+  if (S.tlSel >= 0) tlSeek(S.tlSel, S.timeline[S.tlSel].start, false);
+}
+function zoom(f) { if (!S.timeline.length) return; S.tlZoom = f ? Math.min(60, Math.max(0.01, (S.tlZoom || S.tlPps || 1) * f)) : 0; renderTimeline(); }
+
+$('cards').addEventListener('click', ev => {
+  const p = ev.target.closest('.piece'); if (!p) return;
+  const i = +p.dataset.i, s = S.timeline[i], r = p.getBoundingClientRect();
+  const f = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
+  S.tlPlaying = false;
+  tlSeek(i, s.start + f * (s.end - s.start) * 0.999, false);
+});
+(function dnd() {
+  let from = -1; const C = $('cards');
+  C.addEventListener('dragstart', ev => { const c = ev.target.closest('.piece'); if (!c) return; from = +c.dataset.i; c.classList.add('drag'); ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', 'piece'); });
+  C.addEventListener('dragend', () => { from = -1; document.querySelectorAll('.piece').forEach(c => c.classList.remove('drag', 'over')); });
+  C.addEventListener('dragover', ev => { const c = ev.target.closest('.piece'); if (from < 0 || !c) return; ev.preventDefault(); document.querySelectorAll('.piece').forEach(x => x.classList.toggle('over', x === c)); });
+  C.addEventListener('drop', ev => { const c = ev.target.closest('.piece'); if (from < 0 || !c) return; ev.preventDefault(); ev.stopPropagation(); const to = +c.dataset.i; if (to !== from) { snap(); const [m] = S.timeline.splice(from, 1); S.timeline.splice(to, 0, m); S.tlSel = to; } from = -1; S.editing = -1; renderTimeline(); updateInOut(); });
+})();
+
+/* timeline thumbnails, made one at a time from a hidden video */
+const thumbQ = []; let thumbBusy = false;
+const tv = document.createElement('video'); tv.muted = true; tv.playsInline = true; tv.preload = 'auto';
+tv.style.cssText = 'position:fixed;left:0;top:0;width:4px;height:4px;opacity:0;pointer-events:none';
+document.body.appendChild(tv);
+function wantThumb(s) { if (s.thumb || s._tq) return; s._tq = true; thumbQ.push(s); runThumbs(); }
+function grabFrame(file, t) {
+  return new Promise(res => {
+    const u = URL.createObjectURL(file); let done = false;
+    const fin = v => { if (done) return; done = true; tv.onloadedmetadata = tv.onseeked = tv.onerror = null; URL.revokeObjectURL(u); res(v); };
+    tv.onloadedmetadata = () => { tv.currentTime = Math.min(t, (tv.duration || t) - 0.1); };
+    tv.onseeked = () => { try { const c = document.createElement('canvas'); c.width = 160; c.height = 90; c.getContext('2d').drawImage(tv, 0, 0, 160, 90); fin(c.toDataURL('image/jpeg', 0.65)); } catch (_) { fin(''); } };
+    tv.onerror = () => fin('');
+    tv.src = u; setTimeout(() => fin(''), 8000);
+  });
+}
+async function runThumbs() {
+  if (thumbBusy) return; thumbBusy = true;
+  while (thumbQ.length) {
+    const s = thumbQ.shift(); if (!S.timeline.includes(s)) continue;
+    const e = S.byKey.get(s.key), c = e && (e.front && e.front.ok ? e.front : okClips(e)[0]); if (!c) continue;
+    s.thumb = await grabFrame(c.file, s.start + Math.min(1, (s.end - s.start) / 2));
+    const i = S.timeline.indexOf(s), el = document.querySelector(`.piece[data-i="${i}"]`);
+    if (el && s.thumb) el.style.backgroundImage = `url(${s.thumb})`;
+  }
+  tv.removeAttribute('src'); tv.load(); thumbBusy = false;
+}
+
 function openSection(i, play) {
   const s = S.timeline[i]; const e = S.byKey.get(s.key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
   if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
   let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
   selectClip(k, s.start, play).then(() => { S.inT = s.start; S.outT = s.end; updateInOut(); vA.addEventListener('loadedmetadata', updateInOut, { once: true }); if (play) { S.stopAt = s.end; S.previewing = true; } });
 }
-$('cards').addEventListener('click', ev => {
-  const card = ev.target.closest('.card'); if (!card) return; const i = +card.dataset.i;
-  const a = ev.target.closest('button') && ev.target.closest('button').dataset.a;
-  if (a === 'del') { S.timeline.splice(i, 1); if (S.editing === i) S.editing = -1; else if (S.editing > i) S.editing--; renderTimeline(); updateInOut(); return; }
-  if (a === 'mute') { S.timeline[i].mute = !S.timeline[i].mute; renderTimeline(); return; }
-  if (a === 'play') { setEditing(-1); openSection(i, true); return; }
-  setEditing(i); openSection(i, false);
-});
-(function dnd() {
-  let from = -1; const C = $('cards');
-  C.addEventListener('dragstart', ev => { const c = ev.target.closest('.card'); if (!c) return; from = +c.dataset.i; c.classList.add('drag'); ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', 'card'); });
-  C.addEventListener('dragend', () => { document.querySelectorAll('.card').forEach(c => c.classList.remove('drag', 'over')); });
-  C.addEventListener('dragover', ev => { const c = ev.target.closest('.card'); if (from < 0 || !c) return; ev.preventDefault(); document.querySelectorAll('.card').forEach(x => x.classList.toggle('over', x === c)); });
-  C.addEventListener('drop', ev => { const c = ev.target.closest('.card'); if (from < 0 || !c) return; ev.preventDefault(); ev.stopPropagation(); const to = +c.dataset.i; const [m] = S.timeline.splice(from, 1); S.timeline.splice(to, 0, m); from = -1; S.editing = -1; renderTimeline(); updateInOut(); });
-})();
 
 /* ---------- GPS, HUD and map ---------- */
 async function ensureGps(e) {
@@ -1356,7 +1612,7 @@ function resolveKey(sec) {
 }
 function loadProject(p) {
   if (!p || !Array.isArray(p.sections)) throw new Error('not a Dashcam Studio edit file');
-  let miss = 0;
+  let miss = 0; snap();
   S.timeline = p.sections.map(s => { const k = resolveKey(s); if (!k) miss++; return k ? { key: k, start: s.start, end: s.end, mute: !!s.mute, thumb: '' } : null; }).filter(Boolean);
   if (p.name) $('exportName').value = p.name;
   S.editing = -1; renderTimeline(); updateInOut();
@@ -1395,16 +1651,15 @@ async function saveDiagnostic() {
 
 /* ---------- wiring ---------- */
 function syncKindSeg() { document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === S.kind)); }
-$('btnOpen').onclick = $('btnOpen2').onclick = () => $('inFolder').click();
-$('btnAddFiles').onclick = () => $('inFiles').click();
+$('btnOpen').onclick = $('pkFolder').onclick = () => $('inFolder').click();
+$('btnOpen2').onclick = $('btnAddFiles').onclick = openPicker;
 $('inFolder').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
-$('inFiles').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
 $('btnSaveDir').onclick = chooseSaveDir;
 $('daySel').onchange = ev => { S.day = ev.target.value; renderList(true); };
 $('kindSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.kind = b.dataset.k; syncKindSeg(); renderList(true); };
-$('clipList').onclick = ev => { const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
+$('clipList').onclick = ev => { const mg = ev.target.closest('[data-merge]'); if (mg) { const i = +mg.dataset.merge; mergeEntries(S.shown.slice(i, i + +mg.dataset.n)); return; } const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
 $('btnAddAll').onclick = addAllShown;
-$('bPlay').onclick = () => { if (!vA.src) return; vA.paused ? vA.play().catch(() => {}) : vA.pause(); };
+$('bPlay').onclick = () => { if (!vA.src) return; if (vA.paused) vA.play().catch(() => {}); else { vA.pause(); if (S.tlPlaying) { S.tlPlaying = false; tlTools(); } } };
 $('bBack').onclick = () => { vA.currentTime = Math.max(0, vA.currentTime - 5); };
 $('bFwd').onclick = () => { vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 5); };
 $('bPrev').onclick = () => { if (vA.currentTime > 3) vA.currentTime = 0; else nextClip(-1, !vA.paused); };
@@ -1433,8 +1688,14 @@ $('bWhole').onclick = () => addSection(true);
 $('bFollow').onclick = () => { S.follow = !S.follow; $('bFollow').classList.toggle('on', S.follow); if (S.follow && lastPos && map) map.easeTo({ center: [lastPos.lon, lastPos.lat] }); };
 $('bFit').onclick = () => { if (map && S.dayBounds) { S.follow = false; $('bFollow').classList.remove('on'); map.fitBounds(S.dayBounds, { padding: 40, maxZoom: 15 }); } };
 $('bExport').onclick = doExport;
-$('bTlClear').onclick = () => { if (!S.timeline.length) return; const keep = S.timeline.slice(); S.timeline = []; S.editing = -1; renderTimeline(); updateInOut();
-  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Timeline cleared. <button style="margin-left:8px">Undo</button>'; t.querySelector('button').onclick = () => { S.timeline = keep; renderTimeline(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000); };
+$('bTlClear').onclick = () => { if (!S.timeline.length) return; snap(); S.timeline = []; S.editing = -1; S.tlSel = -1; S.tlPlaying = false; renderTimeline(); updateInOut();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Timeline cleared. <button style="margin-left:8px">Undo</button>'; t.querySelector('button').onclick = () => { undo(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000); };
+$('bTlPlay').onclick = tlPlayToggle;
+$('bCut').onclick = cutAtPlayhead; $('bCutOut').onclick = cutOutMarked; $('bDel').onclick = deletePiece; $('bUndo').onclick = undo;
+$('bMute').onclick = () => { const s = S.timeline[S.tlSel]; if (!s) return; snap(); s.mute = !s.mute; renderTimeline(); };
+$('bTrim').onclick = () => { const i = S.tlSel; if (i < 0) return; S.tlPlaying = false; setEditing(i); openSection(i, false); toast('Move the playhead and use Mark in / Mark out, then <b>Update section</b>.', '', 5000); };
+$('bZoomIn').onclick = () => zoom(1.6); $('bZoomOut').onclick = () => zoom(1 / 1.6); $('bZoomFit').onclick = () => zoom(0);
+window.addEventListener('resize', () => { if (!S.tlZoom && S.timeline.length) renderTimeline(); });
 $('bProjSave').onclick = async () => { if (!S.timeline.length) { toast('The timeline is empty.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - edit.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
 $('bProjOpen').onclick = () => $('inProject').click();
 $('inProject').onchange = async ev => { const f = ev.target.files[0]; ev.target.value = ''; if (!f) return; try { loadProject(JSON.parse(await f.text())); } catch (e) { toast('Couldn\'t open that edit file: ' + esc(e.message), 'bad'); } };
@@ -1444,37 +1705,128 @@ $('help').onclick = ev => { if (ev.target.id === 'help') $('help').style.display
 $('bDiag').onclick = saveDiagnostic;
 
 document.addEventListener('keydown', ev => {
-  if (ev.target.matches('input,select,textarea') || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if (ev.target.matches('input,select,textarea')) return;
+  if ((ev.metaKey || ev.ctrlKey) && !ev.shiftKey && ev.key.toLowerCase() === 'z') { ev.preventDefault(); undo(); return; }
+  if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if ($('picker').classList.contains('open')) { if (ev.key === 'Escape') closePicker(); return; }
   const k = ev.key;
+  if (k === ' ' && ev.shiftKey) { ev.preventDefault(); tlPlayToggle(); return; }
   const act = { ' ': () => $('bPlay').click(), ArrowLeft: () => $('bBack').click(), ArrowRight: () => $('bFwd').click(), ',': () => $('bStepB').click(), '.': () => $('bStepF').click(),
-    i: markIn, o: markOut, a: () => addSection(false), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), Escape: () => { $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
+    i: markIn, o: markOut, a: () => addSection(false), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), c: cutAtPlayhead, x: cutOutMarked, Delete: deletePiece, Backspace: deletePiece, Escape: () => { $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
   if (act) { ev.preventDefault(); act(); }
 });
 
-// drag & drop folders
+// drag & drop: files and folders
+async function filesFromDrop(dt) {
+  const out = [];
+  const walk = async (entry, path) => {
+    if (entry.isFile) { await new Promise(res => entry.file(f => { f._rel = path + f.name; out.push(f); res(); }, res)); }
+    else if (entry.isDirectory) { const r = entry.createReader(); let batch; do { batch = await new Promise(res => r.readEntries(res, () => res([]))); for (const x of batch) await walk(x, path + entry.name + '/'); } while (batch.length); }
+  };
+  const items = [...dt.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  progress(true, 'Finding clips…', '', 0);
+  for (const it of items) await walk(it, '');
+  progress(false);
+  return out;
+}
+const pickerOpen = () => $('picker').classList.contains('open');
 (function () {
   let depth = 0;
-  document.addEventListener('dragenter', ev => { if (ev.dataTransfer && [...ev.dataTransfer.types].includes('Files')) { depth++; document.body.classList.add('active'); } });
+  document.addEventListener('dragenter', ev => { if (ev.dataTransfer && [...ev.dataTransfer.types].includes('Files') && !pickerOpen()) { depth++; document.body.classList.add('active'); } });
   document.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; document.body.classList.remove('active'); } });
   document.addEventListener('dragover', ev => { if ([...(ev.dataTransfer || {}).types || []].includes('Files')) ev.preventDefault(); });
   document.addEventListener('drop', async ev => {
     if (!ev.dataTransfer || ![...ev.dataTransfer.types].includes('Files')) return;
     ev.preventDefault(); depth = 0; document.body.classList.remove('active');
-    const out = [];
-    const walk = async (entry, path) => {
-      if (entry.isFile) { await new Promise(res => entry.file(f => { f._rel = path + f.name; out.push(f); res(); }, res)); }
-      else if (entry.isDirectory) { const r = entry.createReader(); let batch; do { batch = await new Promise(res => r.readEntries(res, () => res([]))); for (const x of batch) await walk(x, path + entry.name + '/'); } while (batch.length); }
-    };
-    const items = [...ev.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
-    progress(true, 'Finding clips…', '', 0);
-    for (const it of items) await walk(it, '');
-    progress(false);
-    loadFiles(out);
+    loadFiles(await filesFromDrop(ev.dataTransfer));
   });
 })();
 
+/* ---------- footage picker: one box per camera ---------- */
+const PK = { front: [], rear: [], third: [] };
+const SLOT = {
+  front: { name: 'Front mirror', sub: 'The camera in the mirror unit, facing forward', dot: '#9cc3ff' },
+  rear: { name: 'Rear', sub: 'The rear window camera', dot: '#ffd28a' },
+  third: { name: () => thirdName + ' camera', sub: 'G900 TriPro only: the third, separate camera. Optional', dot: '#d9b3ff' },
+};
+const isVideo = f => /\.(mp4|mov)$/i.test(f.name) && !f.name.startsWith('._') && f.size > 0;
+function addToSlot(cam, files) {
+  const have = new Set(CAMS.flatMap(c => PK[c]).map(f => f.name + ':' + f.size));
+  let n = 0;
+  for (const f of files.filter(isVideo)) { const id = f.name + ':' + f.size; if (have.has(id)) continue; have.add(id); f._cam = cam; PK[cam].push(f); n++; }
+  if (!n && files.length) toast('No new MP4 or MOV files there.', 'warn', 3000);
+  renderPicker();
+}
+function openPicker() {
+  $('pkTitle').textContent = S.entries.length ? 'Add more footage' : 'Open your dashcam footage';
+  $('picker').classList.add('open'); renderPicker();
+}
+function closePicker() { $('picker').classList.remove('open'); for (const c of CAMS) PK[c] = []; if (!S.entries.length) $('overlay').style.display = 'flex'; }
+function slotTimes(list) {
+  const t = list.map(f => timeFromName(f.name)).filter(Boolean).sort((a, b) => a - b);
+  return t.length ? (t.length > 1 ? `${fmtClock(t[0])} to ${fmtClock(t[t.length - 1])}` : fmtClock(t[0])) : '';
+}
+function renderPicker() {
+  $('slots').innerHTML = CAMS.map(c => {
+    const d = SLOT[c], list = PK[c], name = typeof d.name === 'function' ? d.name() : d.name;
+    const body = list.length
+      ? `<div class="what"><div class="n">${list.length} file${list.length > 1 ? 's' : ''}</div><div>${esc(slotTimes(list) || list[0].name)}</div></div>
+         <div class="acts"><button data-add="${c}">Add more</button><button data-clear="${c}">Clear</button></div>`
+      : `<div class="what"><div class="big">+</div><div><b style="color:var(--text)">Choose files</b></div><div>or drop files or a folder here</div></div>
+         <div class="acts"><a href="#" data-dir="${c}">Choose a folder instead</a></div>`;
+    return `<div class="slot${list.length ? ' has' : ''}" data-slot="${c}"><div class="cam"><span class="dot" style="background:${d.dot}"></span>${esc(name)}</div><div class="sub">${esc(d.sub)}</div>${body}</div>`;
+  }).join('');
+  // match preview: which files belong together
+  const all = CAMS.flatMap(c => PK[c]);
+  const rows = new Map();
+  for (const f of all) {
+    const rel = f._rel || f.webkitRelativePath || f.name, k = pairKey(f.name) + '|' + kindOf(rel);
+    let r = rows.get(k); if (!r) rows.set(k, r = { when: timeFromName(f.name), kind: kindOf(rel) });
+    r[f._cam] = true;
+  }
+  const list = [...rows.values()].sort((a, b) => (a.when || 0) - (b.when || 0));
+  const used = CAMS.filter(c => PK[c].length);
+  const M = $('matches');
+  if (!list.length) M.style.display = 'none';
+  else {
+    const full = list.filter(r => used.every(c => r[c])).length;
+    const show = list.slice(0, 8);
+    M.style.display = 'block';
+    M.innerHTML = `<div class="msum">${list.length} recording${list.length > 1 ? 's' : ''} found <span>· ${used.length > 1 ? `${full} with every camera matched${list.length - full ? `, ${list.length - full} with a camera missing` : ''}` : 'add the other cameras to match them up'}</span></div>
+      <table><tr><th>Recorded</th>${used.map(c => `<th>${esc(c === 'third' ? SLOT.third.name() : SLOT[c].name)}</th>`).join('')}</tr>
+      ${show.map(r => `<tr><td>${r.when ? fmtClock(r.when) : '?'}${r.kind !== 'normal' ? ` <span class="badge ${r.kind === 'event' ? 'ev' : 'pk'}">${r.kind === 'event' ? 'Event' : 'Parking'}</span>` : ''}</td>${used.map(c => r[c] ? `<td class="y" style="color:${SLOT[c].dot}">✓</td>` : '<td class="no">missing</td>').join('')}</tr>`).join('')}</table>
+      ${list.length > show.length ? `<div class="more">and ${list.length - show.length} more</div>` : ''}`;
+  }
+  $('pkOpen').disabled = !all.length; $('pkMerge').disabled = !all.length;
+  $('pkMerge').textContent = list.length > 1 ? `Open and merge ${list.length} recordings` : 'Open and merge';
+  $('pkCancel').style.display = S.entries.length || all.length ? '' : 'none';
+}
+async function pickerLoad(merge) {
+  const files = CAMS.flatMap(c => PK[c]); if (!files.length) return;
+  const added = await loadFiles(files);
+  if (merge && added && added.length) mergeEntries(added);
+}
+$('slots').addEventListener('click', ev => {
+  const cl = ev.target.closest('[data-clear]'); if (cl) { ev.stopPropagation(); PK[cl.dataset.clear] = []; renderPicker(); return; }
+  const dir = ev.target.closest('[data-dir]'); if (dir) { ev.preventDefault(); ev.stopPropagation(); S.slotCam = dir.dataset.dir; $('inSlotDir').click(); return; }
+  const sl = ev.target.closest('[data-slot]'); if (sl) { S.slotCam = sl.dataset.slot; $('inSlot').click(); }
+});
+['inSlot', 'inSlotDir'].forEach(id => { $(id).onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; addToSlot(S.slotCam, f); }; });
+$('slots').addEventListener('dragover', ev => { const sl = ev.target.closest('[data-slot]'); document.querySelectorAll('.slot').forEach(x => x.classList.toggle('over', x === sl)); if (sl) ev.preventDefault(); });
+$('slots').addEventListener('dragleave', ev => { if (!ev.relatedTarget || !$('slots').contains(ev.relatedTarget)) document.querySelectorAll('.slot').forEach(x => x.classList.remove('over')); });
+$('slots').addEventListener('drop', async ev => {
+  const sl = ev.target.closest('[data-slot]'); if (!sl) return;
+  ev.preventDefault(); ev.stopPropagation(); sl.classList.remove('over');
+  const files = await filesFromDrop(ev.dataTransfer);
+  addToSlot(sl.dataset.slot, files);
+});
+$('pkCancel').onclick = closePicker;
+$('pkOpen').onclick = () => pickerLoad(false);
+$('pkMerge').onclick = () => pickerLoad(true);
+$('picker').addEventListener('click', ev => { if (ev.target.id === 'picker' && S.entries.length) closePicker(); });
+
 (async () => {
-  initMap(); renderTimeline(); layout();
+  initMap(); renderTimeline(); layout(); openPicker();
   if (!canPickDir) { $('saveName').textContent = 'Safari downloads folder'; if (!/Safari/.test(navigator.userAgent) || /Chrome|Edg/.test(navigator.userAgent)) $('saveName').textContent = 'Downloads'; $('btnSaveDir').textContent = 'How to change…'; }
   const h = await idb.get('saveDir'); if (h) { S.saveDir = h; $('saveName').textContent = h.name; }
 })();
