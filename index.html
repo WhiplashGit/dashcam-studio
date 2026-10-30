@@ -39,6 +39,12 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .seg button{border:0;border-radius:0;flex:1;padding:5px 4px;background:transparent;color:var(--dim)}
 .seg button.on{background:var(--sel);color:#cfe0ff}
+.showlbl{color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:-4px}
+.seg.kinds button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 2px;line-height:1.2}
+.seg.kinds small{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.seg.kinds button.on small{color:#9cc3ff}
+.seg.kinds button:disabled{opacity:.4}
+.kindhint{color:var(--dim);font-size:12px;line-height:1.4}
 .list{overflow:auto;flex:1}
 .clip{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 12px;border-bottom:1px solid #20242d;cursor:pointer}
 .clip:hover{background:#1c2029}
@@ -204,9 +210,11 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
     <aside>
       <div class="side-top">
         <div class="row"><select id="daySel"><option>No clips loaded</option></select></div>
-        <div class="seg" id="kindSeg">
-          <button data-k="all" class="on">All</button><button data-k="normal">Driving</button><button data-k="event">Event</button><button data-k="parking">Parking</button><button data-k="kept" title="Clips you've starred to keep, from every day">★ Kept</button>
+        <div class="showlbl">Show</div>
+        <div class="seg kinds" id="kindSeg">
+          <button data-k="all" class="on" title="Every clip from this day">All<small id="nK_all"></small></button><button data-k="normal" title="Ordinary recordings made while driving">Driving<small id="nK_normal"></small></button><button data-k="event" title="Clips the camera locked so they can't be recorded over: after a bump or hard braking, or when you pressed the emergency button">Locked<small id="nK_event"></small></button><button data-k="parking" title="Clips recorded by parking mode while the car was switched off">Parked<small id="nK_parking"></small></button><button data-k="kept" title="Clips you've starred to keep, from every day">★ Kept<small id="nK_kept"></small></button>
         </div>
+        <div class="kindhint" id="kindHint"></div>
       </div>
       <div class="list" id="clipList"></div>
       <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button><button id="btnAddAll" disabled title="Merge every clip shown in this list into the edit timeline, in order">Merge all</button></span></div>
@@ -311,7 +319,7 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 
 <div class="modal" id="help"><div class="card2">
   <h2>Dashcam Studio — how it works</h2>
-  <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, event, parking). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
+  <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, locked after a bump or the emergency button, and parked). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
   <p><b>Keeping clips:</b> click the ☆ beside a clip (or press <kbd>K</kbd>) to keep it. Kept clips stay starred next time you open the folder. The <b>★ Kept</b> tab lists them from every day: use <b>Add all to edit</b> to put them on the timeline, or <b>Copy originals</b> to copy the untouched files into a "Kept clips" folder inside your save folder, safe from the dashcam's loop recording.</p>
   <p><b>Merging and cutting:</b> clips recorded back to back are grouped into drives in the list. Click <b>Merge</b> on a drive to lay all of its clips end to end in the edit timeline. Click anywhere on the timeline to jump there, then press <kbd>C</kbd> to cut at the playhead. Select a piece you don't want and press <kbd>⌫</kbd> to remove it. Or mark in (<kbd>I</kbd>) and out (<kbd>O</kbd>) around the unwanted part and press <kbd>X</kbd> to cut it out. <b>Play edit</b> plays the result, skipping what you removed. <kbd>⌘Z</kbd> undoes.</p>
   <p><b>Picking sections:</b> you can also build an edit the other way round: mark the start (<kbd>I</kbd>) and end (<kbd>O</kbd>) of what you want to keep and add it (<kbd>A</kbd>). Drag pieces to reorder them.</p>
@@ -1020,14 +1028,24 @@ function renderList(selectFirst) {
     if (e.front) b.push(`<span class="badge f">Front</span>`);
     if (e.rear) b.push(`<span class="badge r">Rear</span>`);
     if (e.third) b.push(`<span class="badge t">${esc(thirdName)}</span>`);
-    if (e.kind === 'event') b.push(`<span class="badge ev">Event</span>`);
-    if (e.kind === 'parking') b.push(`<span class="badge pk">Parking</span>`);
+    if (e.kind === 'event') b.push(`<span class="badge ev" title="The camera locked this clip after a bump, hard braking or the emergency button">Locked</span>`);
+    if (e.kind === 'parking') b.push(`<span class="badge pk" title="Recorded by parking mode">Parked</span>`);
     if (clipsOf(e).some(c => c.gps)) b.push(`<span class="badge g">GPS</span>`);
     const errs = clipsOf(e).filter(c => !c.ok);
     if (errs.length) b.push(`<span class="badge err" title="${esc(errs.map(c => c.error).join(' '))}">${!e.ok ? 'Damaged' : errs.map(c => camName(c.cam)).join(' + ') + ' damaged'}</span>`);
     const kept = isKept(e);
     return head + `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
   }).join('') || `<div style="padding:20px;color:var(--faint)">${S.kind === 'kept' ? 'No kept clips yet. Click the ☆ beside any clip (or press K) to keep it.' : 'No clips of this type on this day.'}</div>`;
+  const day = S.entries.filter(e => e.day === S.day), cnt = { all: day.length, kept: S.entries.filter(isKept).length };
+  for (const k of ['normal', 'event', 'parking']) cnt[k] = day.filter(e => e.kind === k).length;
+  for (const k in cnt) { $('nK_' + k).textContent = S.entries.length ? cnt[k] : ''; document.querySelector(`#kindSeg [data-k="${k}"]`).disabled = !!S.entries.length && !cnt[k] && S.kind !== k && k !== 'kept'; }
+  $('kindHint').textContent = !S.entries.length ? '' : {
+    all: 'Every clip from this day, in recording order.',
+    normal: 'Ordinary recordings made while driving.',
+    event: 'Clips the camera locked after a bump, hard braking or the emergency button, so they can\'t be recorded over.',
+    parking: 'Clips recorded by parking mode while the car was off.',
+    kept: 'Clips you starred (☆ beside a clip, or K), from every day.',
+  }[S.kind];
   const tot = S.shown.reduce((a, e) => a + (e.dur || 0), 0);
   $('listSum').textContent = `${S.shown.length} clips · ${fmt(tot)}`;
   $('btnAddAll').disabled = !S.shown.some(e => e.ok);
@@ -1488,7 +1506,7 @@ function updateInfo() {
   const e = curEntry(); const box = $('clipInfo');
   if (!e) { box.textContent = 'No clip selected.'; return; }
   const row = (c, lab) => c ? `<div><b>${lab}:</b> ${esc(c.rel)} — ${c.ok ? `${c.video.width}×${c.video.height}, ${(c.size / 1048576).toFixed(0)} MB${c.audio ? '' : ', no sound'}${c.gps ? ', GPS' : ''}` : `<span style="color:var(--bad)">${esc(c.error)}</span>`}</div>` : '';
-  box.innerHTML = `<div><b>${dayLabel(e.day)}, ${fmtClock(e.when)}</b> · ${e.kind === 'normal' ? 'Driving' : e.kind === 'event' ? 'Event' : 'Parking'}</div>` + CAMS.map(c => row(e[c], camName(c))).join('');
+  box.innerHTML = `<div><b>${dayLabel(e.day)}, ${fmtClock(e.when)}</b> · ${e.kind === 'normal' ? 'Driving' : e.kind === 'event' ? 'Locked' : 'Parked'}</div>` + CAMS.map(c => row(e[c], camName(c))).join('');
 }
 
 /* ---------- saving ---------- */
@@ -1794,7 +1812,7 @@ function renderPicker() {
     M.style.display = 'block';
     M.innerHTML = `<div class="msum">${list.length} recording${list.length > 1 ? 's' : ''} found <span>· ${used.length > 1 ? `${full} with every camera matched${list.length - full ? `, ${list.length - full} with a camera missing` : ''}` : 'add the other cameras to match them up'}</span></div>
       <table><tr><th>Recorded</th>${used.map(c => `<th>${esc(c === 'third' ? SLOT.third.name() : SLOT[c].name)}</th>`).join('')}</tr>
-      ${show.map(r => `<tr><td>${r.when ? fmtClock(r.when) : '?'}${r.kind !== 'normal' ? ` <span class="badge ${r.kind === 'event' ? 'ev' : 'pk'}">${r.kind === 'event' ? 'Event' : 'Parking'}</span>` : ''}</td>${used.map(c => r[c] ? `<td class="y" style="color:${SLOT[c].dot}">✓</td>` : '<td class="no">missing</td>').join('')}</tr>`).join('')}</table>
+      ${show.map(r => `<tr><td>${r.when ? fmtClock(r.when) : '?'}${r.kind !== 'normal' ? ` <span class="badge ${r.kind === 'event' ? 'ev' : 'pk'}">${r.kind === 'event' ? 'Locked' : 'Parked'}</span>` : ''}</td>${used.map(c => r[c] ? `<td class="y" style="color:${SLOT[c].dot}">✓</td>` : '<td class="no">missing</td>').join('')}</tr>`).join('')}</table>
       ${list.length > show.length ? `<div class="more">and ${list.length - show.length} more</div>` : ''}`;
   }
   $('pkOpen').disabled = !all.length; $('pkMerge').disabled = !all.length;
