@@ -5,7 +5,7 @@ A browser-based viewer and editor for WolfBox G900 Pro and G900 TriPro dashcam f
 **Open the app:** use this repository's GitHub Pages link.
 
 - Opens a whole SD card or folder and plays clips in recording order, with front, rear and third camera synced
-- GPS speed, heading and route on an OpenStreetMap map, with Google Maps and Street View links
+- GPS speed, heading and route on an OpenStreetMap-based street map, with Google Maps and Street View links
 - Star clips to keep, copy originals off the card, and splice and trim sections into new videos without re-encoding
 - Runs entirely in the browser: footage is read from your own computer and never uploaded
 
@@ -14,7 +14,7 @@ Works best in Google Chrome on a Mac (it can save straight into a folder you cho
 ## Credits
 
 - GPS decoding is based on the WolfBox/Redtiger data layout documented in [ExifTool](https://exiftool.org) by Phil Harvey. No ExifTool code is included.
-- Maps use [Leaflet](https://leafletjs.com) and map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, with map tiles from OpenStreetMap or [CARTO](https://carto.com/attributions).
+- Maps use [MapLibre GL JS](https://maplibre.org) with free street maps from [OpenFreeMap](https://openfreemap.org) (© OpenMapTiles). Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 ## Disclaimer
 
