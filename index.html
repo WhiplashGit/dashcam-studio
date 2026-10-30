@@ -139,6 +139,7 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .pk-folder{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
 .pk-folder .txt{flex:1;min-width:0}.pk-folder b{font-size:15px}.pk-folder p{margin:4px 0 0;color:var(--dim);line-height:1.5}
 .pk-folder button{padding:10px 18px;font-size:14px}
+.pk-more{margin:14px 2px 0}.pk-more a{color:#9cc3ff;text-decoration:none}.pk-more a:hover{text-decoration:underline}
 .pk-or{display:flex;align-items:center;gap:12px;color:var(--faint);margin:24px 0 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
 .pk-or::before,.pk-or::after{content:"";flex:1;height:1px;background:var(--line)}
 .slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
@@ -173,27 +174,48 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .drive button{padding:4px 10px;font-size:12px}
 /* my video editor */
 .ed-empty{color:var(--dim);padding:18px 14px 22px;font-size:14px;line-height:1.5}
-.ed-guide{padding:2px 12px 10px;font-size:14px;line-height:1.45;color:var(--text)}
+.ed-guide{padding:0 12px 4px;font-size:14px;line-height:1.45;color:var(--text)}
 .ed-guide .dim{color:var(--faint);font-size:12.5px}
 .ed-guide b.red{color:#ff8f8f}.ed-guide b.green{color:#7fe0a8}
-.ed-barwrap{padding:24px 12px 4px}
-.movie{position:relative;height:74px;border-radius:8px;background:#222833;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
-.strip{position:absolute;inset:0;border-radius:8px;overflow:hidden}
+.ed-barwrap{padding:22px 12px 0}
+.movie{position:relative;height:112px;border-radius:8px;background:#222833;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.strip{position:absolute;left:0;right:0;top:0;height:64px;border-radius:8px 8px 0 0;overflow:hidden}
 .strip .tile{position:absolute;top:0;bottom:0;background:#2a3140 center/cover no-repeat}
-.movie .rm{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(12,14,18,.88) 0 8px,rgba(40,44,52,.88) 8px 16px);display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
-.movie .rm span,.movie .mu span{font-size:11.5px;font-weight:700;color:#c9ced8;background:rgba(0,0,0,.6);padding:1px 6px;border-radius:4px;white-space:nowrap}
-.movie .mu{position:absolute;top:0;height:16px;background:rgba(61,139,253,.55);display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
-.movie .mu span{background:none;padding:0;font-size:11px}
-.selr{position:absolute;top:-6px;bottom:-6px;background:rgba(245,200,75,.28);border:3px solid #f5c84b;border-radius:6px;display:none;z-index:2}
-.selr .h{position:absolute;top:50%;width:14px;height:34px;margin-top:-17px;background:#f5c84b;border-radius:4px;cursor:ew-resize}
+.chart{position:absolute;left:0;right:0;bottom:0;width:100%;height:46px;background:#151920;border-radius:0 0 8px 8px}
+.chartkey{position:absolute;right:6px;bottom:3px;font-size:10.5px;color:#5aa2ff;pointer-events:none}
+.movie .mo{position:absolute;top:0;height:64px;background:rgba(54,194,122,.28);border:2px solid #36c27a;border-radius:6px;overflow:hidden;z-index:1}
+.movie .mo.ed{opacity:.3}
+.movie .mo span{position:absolute;left:3px;top:3px;font-size:11px;font-weight:700;background:rgba(0,0,0,.7);color:#c9f3dc;padding:0 5px;border-radius:3px;white-space:nowrap}
+.selr{position:absolute;top:-6px;bottom:-6px;background:rgba(245,200,75,.25);border:3px solid #f5c84b;border-radius:6px;display:none;z-index:2}
+.selr .h{position:absolute;top:50%;width:14px;height:40px;margin-top:-20px;background:#f5c84b;border-radius:4px;cursor:ew-resize}
 .selr .h[data-h="a"]{left:-9px}.selr .h[data-h="b"]{right:-9px}
 .selr .sellen{position:absolute;left:50%;top:-22px;transform:translateX(-50%);background:#f5c84b;color:#111;font-weight:700;font-size:11.5px;padding:1px 6px;border-radius:4px;white-space:nowrap}
 .mk{position:absolute;top:-8px;bottom:-8px;width:4px;margin-left:-2px;background:#f5c84b;border-radius:2px;display:none;z-index:2}
 .mk::after{content:"start";position:absolute;top:-16px;left:4px;font-size:11px;font-weight:700;color:#f5c84b}
-.playhead{position:absolute;top:-10px;bottom:-10px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
+.playhead{position:absolute;top:-10px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
 .playhead span{position:absolute;top:-6px;left:50%;transform:translate(-50%,-100%);background:#fff;color:#111;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.bartip{position:absolute;bottom:-22px;transform:translateX(-50%);background:#000;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;display:none;pointer-events:none;white-space:nowrap;z-index:4}
-.ruler{display:flex;justify-content:space-between;color:var(--faint);font-size:11.5px;padding:6px 2px 0;font-variant-numeric:tabular-nums}
+.bartip{position:absolute;bottom:calc(100% + 14px);transform:translateX(-50%);background:#000;border:1px solid #3a4252;color:#fff;padding:4px;border-radius:6px;font-size:11.5px;display:none;pointer-events:none;white-space:nowrap;z-index:5;text-align:center;font-variant-numeric:tabular-nums}
+.bartip .tipimg{width:160px;height:90px;background:#1a1d23 center/cover no-repeat;border-radius:4px;margin-bottom:3px}
+.ruler{position:relative;height:18px;color:var(--faint);font-size:11.5px;font-variant-numeric:tabular-nums;margin-top:4px}
+.ruler span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ruler span:first-child{transform:none}.ruler span:last-child{transform:translateX(-100%)}
+.ed-actions .grow{flex:1}.ed-actions .dim{color:var(--faint);font-size:12px}
+.mom-head{display:flex;align-items:center;gap:8px;padding:10px 12px 6px;border-top:1px solid var(--line);flex-wrap:wrap}
+.mom-head h3{margin:0;font-size:13px}.mom-head .sum{color:var(--dim);margin-right:6px}.mom-head .grow{flex:1}
+.moments{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px}
+.mcard{flex:0 0 370px;display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mcard.ed{border-color:#f5c84b}
+.mth{position:relative;flex:0 0 128px;background:#000 center/cover no-repeat}
+.mplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.8);font-size:16px;padding:0}
+.mlen{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 6px;font-size:11.5px;font-weight:600}
+.mmute{position:absolute;left:6px;bottom:6px;background:var(--bad);border-radius:4px;padding:1px 6px;font-size:10.5px;font-weight:700}
+.mbd{padding:7px 8px;display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.mname{background:transparent;border:1px solid transparent;font-weight:700;font-size:13.5px;padding:2px 4px;margin:-2px -4px;border-radius:4px;width:calc(100% + 8px)}
+.mname:hover,.mname:focus{border-color:var(--line);background:var(--panel);outline:none}
+.mmeta{color:var(--faint);font-size:12px}
+.mreel{display:flex;gap:6px;align-items:center;color:var(--dim);font-size:12px;cursor:pointer}
+.macts{display:flex;gap:4px;flex-wrap:wrap}.macts button{padding:4px 8px;font-size:12px}
+.drive[data-drive]{cursor:pointer}.drive[data-drive]:hover{background:#181d27}
 .ed-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px 12px}
 .ed-actions .sep{width:1px;height:28px;background:var(--line);margin:0 2px}
 button.big{padding:9px 14px;font-size:14px;font-weight:600;border-radius:8px}
@@ -232,7 +254,7 @@ button.ok:hover:not(:disabled){background:#1d4733}
         <div class="kindhint" id="kindHint"></div>
       </div>
       <div class="list" id="clipList"></div>
-      <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button><button id="btnAddAll" disabled title="Merge every clip shown in this list into the edit timeline, in order">Merge all</button></span></div>
+      <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button></span></div>
     </aside>
 
     <section class="player">
@@ -272,10 +294,6 @@ button.ok:hover:not(:disabled){background:#1d4733}
           <button id="bSwap" title="Switch the main camera (S). You can also click a small video.">Switch camera ⇄</button>
           <button id="bAuto" class="on" title="Play the next clip automatically when one ends">Auto-next</button>
         </div>
-        <div class="btnrow">
-          <span class="dim" style="color:var(--faint)">Want just this one clip?</span>
-          <button id="bAddClip" title="Add the clip in the player to the end of your video at the bottom">＋ Add this clip to my video</button>
-        </div>
       </div>
     </section>
 
@@ -293,47 +311,49 @@ button.ok:hover:not(:disabled){background:#1d4733}
 
   <section class="tl">
     <div class="tl-head">
-      <h3>My video</h3><span class="sum" id="tlSum"></span>
-      <button id="bProjOpen" title="Open an edit you saved earlier">Open saved edit…</button>
-      <button id="bProjSave" title="Save this edit as a small file so you can carry on later">Save edit for later</button>
-      <button id="bTlClear" title="Clear your video and start again">Start over</button>
+      <h3>The whole day</h3><span class="sum" id="tlSum"></span>
     </div>
-    <div class="ed-empty" id="edEmpty"><b>Put your clips together here.</b> Click <b>Merge</b> next to a drive in the list on the left, and its clips join up into one video in this space. Then you can cut out the parts you don't want.</div>
+    <div class="ed-empty" id="edEmpty">Open a trip folder to see the whole day here.</div>
     <div id="edBar" style="display:none">
       <div class="ed-guide" id="edGuide"></div>
       <div class="ed-barwrap">
         <div class="movie" id="movie">
-          <div class="strip" id="strip"></div><div id="ovl"></div>
+          <div class="strip" id="strip"></div>
+          <canvas class="chart" id="chart"></canvas><span class="chartkey" id="chartKey"></span>
+          <div id="ovl"></div>
           <div class="selr" id="selr"><span class="h" data-h="a"></span><span class="sellen" id="selLen"></span><span class="h" data-h="b"></span></div>
           <div class="mk" id="mkA"></div>
           <div class="playhead" id="playhead"><span id="phTime"></span></div>
-          <div class="bartip" id="barTip"></div>
+          <div class="bartip" id="barTip"><div class="tipimg" id="tipImg"></div><div id="tipClock"></div></div>
         </div>
-        <div class="ruler"><span id="rulA"></span><span id="rulB"></span></div>
+        <div class="ruler" id="ruler"></div>
       </div>
       <div class="ed-actions">
-        <button class="big primary" id="bWatch" title="Play your video, skipping the parts you deleted (Shift+Space)">▶ Watch my video</button>
-        <div class="sep"></div>
-        <button class="big mark" id="bMarkA" title="Mark where a part begins, at the point the video is showing now (I)">⟦ Mark start</button>
-        <button class="big mark" id="bMarkB" title="Mark where the part ends, at the point the video is showing now (O)">Mark end ⟧</button>
+        <button class="big mark" id="bMarkA" title="Mark where a moment begins, at the point the video is showing now (I)">⟦ Mark start</button>
+        <button class="big mark" id="bMarkB" title="Mark where the moment ends, at the point the video is showing now (O)">Mark end ⟧</button>
+        <button class="big ok" id="bSaveMo" title="Keep the marked part as a moment (Enter)">⭐ Save as a moment</button>
         <button id="bClearMarks" title="Remove the marks (Esc)">Clear marks</button>
-        <div class="sep"></div>
-        <button class="big danger" id="bDelPart" title="Cut the marked part out of your video (Delete)">✕ Delete marked part</button>
-        <button class="big ok" id="bKeepPart" title="Keep only the marked part and delete everything else">✓ Keep only marked part</button>
-        <button class="big" id="bMutePart" title="Make the marked part silent in your saved video">🔇 Make it silent</button>
-        <div class="sep"></div>
-        <button class="big" id="bPutBack" title="Bring back a part you deleted or silenced: click on it in the bar first">↺ Put back</button>
-        <button class="big" id="bUndo" title="Undo your last change (⌘Z)">↶ Undo</button>
+        <div class="grow"></div>
+        <span class="dim">Tip: play at 4× or 8× (speed menu above) to skim boring stretches.</span>
       </div>
     </div>
+    <div class="mom-head" id="momHead" style="display:none">
+      <h3>Your moments</h3><span class="sum" id="momCount"></span>
+      <button class="big primary" id="bSaveEach" title="Save every moment as its own video">💾 Save each as its own video</button>
+      <button class="big ok" id="bSaveReel" title="Join the ticked moments, in order, into one highlight video">🎬 Save highlight reel</button>
+      <button class="big" id="bWatchReel" title="Play the ticked moments one after another">▶ Watch reel</button>
+      <button class="big" id="bUndo" title="Undo your last change to the moments (⌘Z)">↶ Undo</button>
+      <div class="grow"></div>
+      <button id="bProjSave" title="Save your list of moments as a small file">Save list…</button>
+      <button id="bProjOpen" title="Open a list of moments you saved">Open list…</button>
+    </div>
+    <div class="moments" id="moments"></div>
     <div class="tl-head exportbar" style="border-top:1px solid var(--line);padding:10px 12px">
-      <label>Name <input type="text" id="exportName" value="Drive"></label>
+      <label>Trip name <input type="text" id="exportName" value="Trip" title="Used at the start of every saved video's file name"></label>
       <label>Camera <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
-      <label>Output <select id="exMode"><option value="one">One combined video</option><option value="each">One video per kept part</option></select></label>
-      <label>Sound <select id="exAudio"><option value="keep">Keep (silent parts stay silent)</option><option value="remove">Remove all sound</option></select></label>
+      <label>Sound <select id="exAudio"><option value="keep">Keep sound</option><option value="remove">No sound in any video</option></select></label>
       <div style="flex:1"></div>
       <span id="exStatus" style="color:var(--dim)"></span>
-      <button class="primary big" id="bExport" disabled title="Save your finished video as a file">💾 Save my video</button>
     </div>
   </section>
 </div>
@@ -344,16 +364,16 @@ button.ok:hover:not(:disabled){background:#1d4733}
   <h2>Dashcam Studio — how it works</h2>
   <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, locked after a bump or the emergency button, and parked). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
   <p><b>Keeping clips:</b> click the ☆ beside a clip (or press <kbd>K</kbd>) to keep it. Kept clips stay starred next time you open the folder. The <b>★ Kept</b> tab lists them from every day: use <b>Add all to edit</b> to put them on the timeline, or <b>Copy originals</b> to copy the untouched files into a "Kept clips" folder inside your save folder, safe from the dashcam's loop recording.</p>
-  <p><b>Making your video:</b> clips recorded back to back are grouped into drives in the list. Click <b>Merge</b> on a drive and its clips join up into one video in <b>My video</b> at the bottom.</p>
-  <p><b>Cutting out a part:</b> play the video, or click on the bar, to where the part begins and press <b>Mark start</b>. Go to where it ends and press <b>Mark end</b>. The part turns yellow. Then press <b>Delete marked part</b> to cut it out, or <b>Keep only marked part</b> to throw away everything else. You can also drag across the bar to mark a part, and drag the yellow handles to adjust it. Deleted parts stay on the bar, greyed out: click one and press <b>Put back</b> to bring it back. <b>Watch my video</b> plays the result, and <b>Undo</b> takes back your last change.</p>
-  <p><b>Save my video</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
+  <p><b>Finding the moments:</b> each day plays as one continuous video. The strip at the bottom covers the whole day: hover over it to preview, click to jump, or click the route on the map. The blue line under it is your speed and the shading is your height, so slow crawls, stops and the highest point are easy to spot. Play at 4× or 8× to skim.</p>
+  <p><b>Saving a moment:</b> press <b>Mark start</b> where it begins and <b>Mark end</b> where it ends (or drag across the strip), then <b>⭐ Save as a moment</b>. A moment can run across several 3-minute files. Give it a name on its card. Each moment can be saved as its own video, and the ones ticked "In highlight reel" join into one video with <b>Save highlight reel</b>. Moments are remembered in this browser, and come back when you open the same folder again.</p>
+  <p><b>Saving videos</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
   <p><b>Save folder:</b> in Chrome, choose a folder once and every export goes straight into it. Other browsers save to Downloads. From there, drag the files into Photos or iMovie.</p>
   <table>
     <tr><td><kbd>Space</kbd></td><td>Play / pause</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 5 s</td></tr>
     <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>Frame back / forward</td><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous clip</td></tr>
-    <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark start / end</td><td><kbd>⇧ Space</kbd></td><td>Watch my video</td></tr>
+    <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark start / end</td><td><kbd>Enter</kbd></td><td>Save as a moment</td></tr>
     <tr><td><kbd>S</kbd></td><td>Switch main camera</td><td><kbd>M</kbd></td><td>Mute playback</td></tr>
-    <tr><td><kbd>⌫</kbd></td><td>Delete the marked part</td><td><kbd>⌘Z</kbd></td><td>Undo</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Clear the marks</td><td><kbd>⌘Z</kbd></td><td>Undo a change to the moments</td></tr>
     <tr><td><kbd>K</kbd></td><td>Keep / un-keep this clip</td><td></td><td></td></tr>
   </table>
   <p><b>TriPro third camera:</b> <select id="thirdName"><option value="Separate front">Separate front camera</option><option value="Bumper">Bumper camera</option><option value="Cabin">Cabin camera</option><option value="Camera 3">Other</option></select> <span style="color:var(--dim)">(sets the label used on screen and in export file names)</span></p>
@@ -364,17 +384,19 @@ button.ok:hover:not(:disabled){background:#1d4733}
   <h2 id="pkTitle">Open your dashcam footage</h2>
   <p class="lead">Nothing is uploaded. Everything stays on your Mac.</p>
   <div class="pk-folder">
-    <div class="txt"><b>Open the whole SD card or folder</b><p>Every clip in it loads in recording order, with the front mirror, rear and separate front cameras matched up automatically.</p></div>
+    <div class="txt"><b>Open a trip folder or the SD card</b><p>Everything in it opens at once: each day plays as one continuous video, with the front mirror, rear and separate front cameras matched up. Then skim through and save the moments you want.</p></div>
     <button class="primary" id="pkFolder">Open folder…</button>
   </div>
-  <div class="pk-or">or choose files for each camera</div>
+  <p class="pk-more" id="pkMore"><a href="#" id="pkShowFiles">Or choose specific files for each camera…</a></p>
+  <div id="pkFiles" style="display:none">
+  <div class="pk-or">choose files for each camera</div>
   <div class="slots" id="slots"></div>
   <div class="matches" id="matches" style="display:none"></div>
+  </div>
   <div class="pk-foot">
     <span class="note">Tip: you can drop files or a folder straight onto a camera box.</span>
     <button id="pkCancel">Cancel</button>
-    <button id="pkOpen" disabled>Open clips</button>
-    <button class="primary" id="pkMerge" disabled title="Open the clips and lay them out end to end in the edit timeline, ready to cut">Open and merge</button>
+    <button class="primary" id="pkOpen" disabled>Open these files</button>
   </div>
 </div></div>
 
@@ -916,7 +938,7 @@ const S = {
   entries: [], byKey: new Map(), day: null, kind: 'all', shown: [], cur: -1,
   layout: 'pip', mainCam: 'front', autoNext: true, follow: true,
   timeline: [], saveDir: null, stopAt: null, previewing: false,
-  movie: [], removed: [], muted: [], mA: null, mB: null, mvPos: null, mvPlaying: false, undo: [],
+  movie: [], moments: [], mA: null, mB: null, mvPos: null, momEdit: null, stopT: null, reel: null, dayTok: 0, undo: [],
 };
 
 /* ---------- utilities ---------- */
@@ -1050,9 +1072,10 @@ function buildDays() {
   const days = [...new Set(S.entries.map(e => e.day))].sort();
   const sel = $('daySel');
   sel.innerHTML = days.map(d => { const n = S.entries.filter(e => e.day === d).length; return `<option value="${d}">${dayLabel(d)} — ${n} clip${n > 1 ? 's' : ''}</option>`; }).join('');
-  if (!days.includes(S.day)) S.day = days[days.length - 1];
+  // start on the day with the most footage, which is usually the trip
+  if (!days.includes(S.day)) S.day = days.reduce((a, d) => S.entries.filter(e => e.day === d).length > S.entries.filter(e => e.day === a).length ? d : a, days[0]);
   sel.value = S.day;
-  renderList(true);
+  renderList(true); buildDay();
 }
 
 function renderList(selectFirst, quiet) {
@@ -1063,7 +1086,7 @@ function renderList(selectFirst, quiet) {
   if (S.kind !== 'kept') { let k = 0; for (const d of drivesOf(S.shown)) { if (d.length > 1 && d.some(e => e.ok)) driveAt.set(k, d); k += d.length; } }
   L.innerHTML = S.shown.map((e, i) => {
     const d = driveAt.get(i), dur = d ? d.reduce((a, x) => a + (x.dur || 0), 0) : 0;
-    const head = d ? `<div class="drive"><span class="dt"><b>Drive · ${fmtClock(d[0].when)} to ${fmtClock(new Date(d[d.length - 1].when.getTime() + (d[d.length - 1].dur || 0) * 1000))}</b>${d.length} clips back to back · ${fmt(dur)}</span><button class="primary" data-merge="${i}" data-n="${d.length}" title="Lay all ${d.length} clips of this drive end to end in the edit timeline, ready to cut">Merge</button></div>` : '';
+    const head = d ? `<div class="drive" data-drive="${i}" title="Jump to the start of this drive"><span class="dt"><b>Drive · ${fmtClock(d[0].when)} to ${fmtClock(new Date(d[d.length - 1].when.getTime() + (d[d.length - 1].dur || 0) * 1000))}</b>${d.length} clips back to back · ${fmt(dur)}</span></div>` : '';
     const b = [];
     if (e.front) b.push(`<span class="badge f">Front</span>`);
     if (e.rear) b.push(`<span class="badge r">Rear</span>`);
@@ -1088,7 +1111,6 @@ function renderList(selectFirst, quiet) {
   }[S.kind];
   const tot = S.shown.reduce((a, e) => a + (e.dur || 0), 0);
   $('listSum').textContent = `${S.shown.length} clips · ${fmt(tot)}`;
-  $('btnAddAll').disabled = !S.shown.some(e => e.ok);
   $('btnCopyKept').style.display = S.kind === 'kept' && S.shown.length ? '' : 'none';
   $('daySel').disabled = S.kind === 'kept';
   if (!quiet) { drawDayRoutes(); pool(S.shown.filter(e => e.pending), 2, ensureEntry); }
@@ -1170,7 +1192,8 @@ vA.addEventListener('pause', () => { SUBS.forEach(v => v.pause()); $('bPlay').te
 vA.addEventListener('seeking', () => { if (isFinite(vA.currentTime)) liveSubs().forEach(v => { v.currentTime = Math.min(vA.currentTime, (v.duration || 1e9) - 0.05); }); });
 vA.addEventListener('ratechange', () => { SUBS.forEach(v => { v.playbackRate = vA.playbackRate; }); });
 vA.addEventListener('ended', () => {
-  if (S.mvPlaying) { const T = mvNow(); if (T != null) { const m = itemAt(T); mvJump(m.off + m.end - m.start); } return; }
+  // watching a moment that runs on into the next file
+  if (S.stopT != null) { const T = mvNow(); if (T != null) { const m = itemAt(T); mvSeek(m.off + m.end - m.start + 0.01, true); } return; }
   if (S.previewing) { S.previewing = false; return; } if (S.autoNext) nextClip(1, true);
 });
 vA.addEventListener('error', () => {
@@ -1203,203 +1226,165 @@ vA.addEventListener('timeupdate', () => { if (vA.paused) tick(); });
 })();
 
 /* ---------- in / out & timeline ---------- */
-/* ---------- my video: merged clips shown and edited as one continuous video ----------
-   S.movie lists source pieces {key, start, end} played end to end. S.removed and S.muted are
-   [from, to] ranges in seconds of that combined video. S.timeline (what export uses) is derived. */
+/* ---------- the trip: a whole day plays as one continuous video ----------
+   S.movie lists the day's clips {key, start, end} end to end; times on the day strip are seconds into it.
+   Moments are what you keep: {id, name, segs: [{key, start, end}], mute, reel}. Segments point at clips,
+   so a moment can run across several 3-minute files. */
 function updateInOut() { mvDraw(); }
 const mvTotal = () => S.movie.reduce((a, m) => a + (m.end - m.start), 0);
 function mvLayout() { let o = 0; for (const m of S.movie) { m.off = o; o += m.end - m.start; } return o; }
-function rangeAdd(list, a, b) {
-  const out = [];
-  for (const r of [...list, [a, b]].sort((x, y) => x[0] - y[0])) { const l = out[out.length - 1]; if (l && r[0] <= l[1] + 0.05) l[1] = Math.max(l[1], r[1]); else out.push([r[0], r[1]]); }
-  return out;
-}
-function rangeSub(list, a, b) {
-  const out = [];
-  for (const [x, y] of list) { if (y <= a || x >= b) { out.push([x, y]); continue; } if (a - x > 0.1) out.push([x, a]); if (y - b > 0.1) out.push([b, y]); }
-  return out;
-}
-const rangeAt = (list, T) => list.find(r => T >= r[0] && T < r[1]);
-const overlaps = (list, a, b) => list.some(r => r[1] > a && r[0] < b);
-const keptLength = () => { let k = mvTotal(); for (const r of S.removed) k -= r[1] - r[0]; return Math.max(0, k); };
 function itemAt(T) { return S.movie.find(m => T < m.off + m.end - m.start) || S.movie[S.movie.length - 1]; }
 function clockAt(T) { const m = itemAt(T), e = m && S.byKey.get(m.key); return e ? fmtClock(new Date(e.when.getTime() + (m.start + T - m.off) * 1000)) : ''; }
+const mvItem = key => S.movie.find(m => m.key === key);
 
-// the player's position as a time in my video, or null when the clip on screen isn't part of it
+async function buildDay() {
+  const day = S.day, tok = ++S.dayTok, list = S.entries.filter(e => e.day === day);
+  S.movie = []; S.mA = S.mB = null; S.momEdit = null; mvRender();
+  if (!list.length) return;
+  if (list.some(e => e.pending)) {
+    $('edEmpty').innerHTML = `Getting ${esc(dayLabel(day))} ready…`;
+    await pool(list, 3, ensureEntry, d => { if (tok === S.dayTok) $('edEmpty').innerHTML = `Getting ${esc(dayLabel(day))} ready… ${d} of ${list.length} clips`; });
+    if (tok !== S.dayTok) return;
+  }
+  S.movie = list.filter(e => e.ok && e.dur > 0).map(e => ({ key: e.key, start: 0, end: e.dur }));
+  mvLayout(); mvRender(); drawChart();
+  // speed and height come from each clip's GPS; the chart fills in as they arrive
+  let n = 0; await pool(list, 2, async e => { await ensureGps(e); if (tok === S.dayTok && ++n % 4 === 0) drawChart(); });
+  if (tok === S.dayTok) drawChart();
+}
+
+// the player's position on the day strip, or null when it shows a clip from another day
 function mvNow() {
   const e = curEntry(); if (!e || !vA.getAttribute('src') || vA.readyState < 1) return null;
-  const t = vA.currentTime, mine = S.movie.filter(m => m.key === e.key);
-  const m = mine.find(m => t >= m.start - 0.05 && t < m.end) || mine.find(m => t >= m.start - 0.05 && t <= m.end + 0.05);
-  return m ? m.off + Math.min(Math.max(t, m.start), m.end) - m.start : null;
+  const m = mvItem(e.key); if (!m) return null;
+  return m.off + Math.min(Math.max(vA.currentTime, m.start), m.end) - m.start;
 }
 function mvSeek(T, play) {
   if (!S.movie.length) return;
   T = Math.max(0, Math.min(T, mvTotal() - 0.02));
-  const m = itemAt(T), e = S.byKey.get(m.key);
-  if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
-  const t = m.start + (T - m.off);
+  const m = itemAt(T), e = S.byKey.get(m.key), t = m.start + (T - m.off);
   S.mvPos = T;
   if (curEntry() === e && vA.getAttribute('src')) {
     if (Math.abs(vA.currentTime - t) > 0.04) vA.currentTime = t;
     if (play && vA.paused) vA.play().catch(() => {});
     mvDraw(); return;
   }
-  if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
-  let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
+  let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false, true); k = S.shown.indexOf(e); }
   S.mvHold = performance.now() + 500;
   selectClip(k, t, play);
 }
-
-/* watching my video skips the deleted parts */
-function mvJump(T) {
-  for (let r; (r = rangeAt(S.removed, T)); ) T = r[1];
-  if (T >= mvTotal() - 0.05) { S.mvPlaying = false; vA.pause(); mvDraw(); return; }
-  mvSeek(T, true);
+// jump to a clip and time, switching day if needed
+async function jumpTo(key, t, play) {
+  const e = S.byKey.get(key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return false; }
+  if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); await buildDay(); }
+  const m = mvItem(key); if (!m) return false;
+  mvSeek(m.off + t - m.start, play); return true;
 }
 function mvTick() {
   const T = mvNow(); if (T != null) S.mvPos = T;
   mvPlayhead(T);
-  if (!S.mvPlaying || vA.paused || vA.seeking || T == null || performance.now() < (S.mvHold || 0)) return;
-  if (rangeAt(S.removed, T)) { mvJump(T); return; }
-  const m = itemAt(T);
-  if (vA.currentTime >= m.end - 0.04) mvJump(m.off + m.end - m.start);
-}
-function watchToggle() {
-  if (!S.movie.length) return;
-  if (S.mvPlaying) { S.mvPlaying = false; vA.pause(); mvDraw(); return; }
-  S.mvPlaying = true; S.previewing = false; S.stopAt = null;
-  let T = mvNow(); if (T == null || T >= mvTotal() - 0.3) T = S.mvPos != null && S.mvPos < mvTotal() - 0.3 ? S.mvPos : 0;
-  mvJump(T); mvDraw();
+  if (S.stopT == null || vA.paused || vA.seeking || T == null || performance.now() < (S.mvHold || 0)) return;
+  if (T >= S.stopT - 0.05) { S.stopT = null; if (S.reel && S.reel.length) watchMoment(S.reel.shift(), true); else { S.reel = null; vA.pause(); } }
 }
 
-/* putting clips together */
-function addAllShown() { mergeEntries(S.shown); }
-async function mergeEntries(list) {
-  list = list.filter(Boolean);
-  if (list.some(e => e.pending)) {
-    progress(true, 'Getting clips ready…', '', 0);
-    await pool(list, 3, ensureEntry, d => progress(true, null, `${d} of ${list.length}`, d / list.length));
-    progress(false);
-  }
-  const ok = list.filter(e => e && e.ok && e.dur > 0); if (!ok.length) { toast('Those clips can\'t be played, so there is nothing to add.', 'warn'); return; }
-  snap();
-  const was = mvTotal();
-  for (const e of ok) S.movie.push({ key: e.key, start: 0, end: e.dur });
-  S.mA = S.mB = null; changed();
-  mvSeek(was, false);
-  toast(`${was ? 'Added' : 'Joined'} <b>${ok.length}</b> clip${ok.length > 1 ? 's' : ''} (${fmt(ok.reduce((a, e) => a + e.dur, 0))}) ${was ? 'to the end of' : 'into'} your video at the bottom.`, 'good', 5000);
-}
-
-/* undo covers every change to my video */
-function snap() { S.undo.push(JSON.stringify({ m: S.movie.map(({ key, start, end }) => ({ key, start, end })), r: S.removed, u: S.muted })); if (S.undo.length > 80) S.undo.shift(); }
-function undo() {
-  if (!S.undo.length) { toast('Nothing to undo.', '', 2000); return; }
-  const u = JSON.parse(S.undo.pop()); S.movie = u.m; S.removed = u.r; S.muted = u.u; S.mA = S.mB = null; changed();
-}
-function changed() { mvLayout(); mvDerive(); mvRender(); saveTimelineLocal(); }
-function mvDerive() {
-  const segs = [];
-  for (const m of S.movie) {
-    const A = m.off, B = A + m.end - m.start;
-    let keep = [[A, B]]; for (const r of S.removed) keep = rangeSub(keep, r[0], r[1]);
-    for (const [x, y] of keep) {
-      const cuts = [x, y]; for (const r of S.muted) for (const c of r) if (c > x && c < y) cuts.push(c);
-      cuts.sort((p, q) => p - q);
-      for (let i = 0; i < cuts.length - 1; i++) { const p = cuts[i], q = cuts[i + 1]; if (q - p < 0.1) continue; segs.push({ key: m.key, start: m.start + p - A, end: m.start + q - A, mute: !!rangeAt(S.muted, (p + q) / 2) }); }
-    }
-  }
-  S.timeline = segs;
-}
-
-/* marking and the three choices */
-const marked = () => S.mA != null && S.mB != null && S.mB - S.mA >= 0.2;
+/* marking a moment */
+const marked = () => S.mA != null && S.mB != null && S.mB - S.mA >= 0.5;
 function markAt(which) {
-  if (!S.movie.length) { toast('First put your clips together: click <b>Merge</b> next to a drive in the list.', 'warn', 5000); return; }
+  if (!S.movie.length) return;
   const T = mvNow();
-  if (T == null) { toast('The clip in the player isn\'t part of your video. Click the video bar at the bottom to go back to it.', 'warn', 5000); return; }
+  if (T == null) { toast('Click the day strip at the bottom to go back to this day\'s video.', 'warn', 4000); return; }
   if (which === 'a') { S.mA = T; if (S.mB != null && S.mB <= T) S.mB = null; }
-  else { S.mB = T; if (S.mA == null) { S.mA = S.mB; S.mB = null; toast('Marked the start. Now find where the part ends and press <b>Mark end</b>.', '', 4000); } else if (S.mB < S.mA) [S.mA, S.mB] = [S.mB, S.mA]; }
+  else { if (S.mA == null) { S.mA = T; toast('Marked the start. Now find where the moment ends and press <b>Mark end</b>.', '', 4000); } else { S.mB = T; if (S.mB < S.mA) [S.mA, S.mB] = [S.mB, S.mA]; } }
   mvDraw();
 }
-function clearMarks() { S.mA = S.mB = null; mvDraw(); }
-function deletePart() {
-  if (!marked()) { toast('First mark the start and the end of the part you want to delete.', 'warn', 4000); return; }
-  const a = S.mA, b = S.mB; snap(); S.removed = rangeAdd(S.removed, a, b); S.mA = S.mB = null; changed();
-  mvSeek(b, false);
-  toast(`Deleted ${fmt(b - a)}. Changed your mind? Press <b>Undo</b>.`, 'good', 4000);
+function clearMarks() { S.mA = S.mB = null; S.momEdit = null; mvDraw(); }
+function segsFor(a, b) {
+  const out = [];
+  for (const m of S.movie) { const A = m.off, B = A + m.end - m.start; const x = Math.max(a, A), y = Math.min(b, B); if (y - x >= 0.1) out.push({ key: m.key, start: m.start + x - A, end: m.start + y - A }); }
+  return out;
 }
-function keepPart() {
-  if (!marked()) { toast('First mark the start and the end of the part you want to keep.', 'warn', 4000); return; }
-  const a = S.mA, b = S.mB, tot = mvTotal(); snap();
-  if (a > 0.05) S.removed = rangeAdd(S.removed, 0, a);
-  if (tot - b > 0.05) S.removed = rangeAdd(S.removed, b, tot);
-  S.mA = S.mB = null; changed(); mvSeek(a, false);
-  toast(`Kept ${fmt(b - a)} and deleted the rest. Changed your mind? Press <b>Undo</b>.`, 'good', 4000);
+function rangeOf(mo) {
+  const f = mvItem(mo.segs[0].key), l = mvItem(mo.segs[mo.segs.length - 1].key); if (!f || !l) return null;
+  return [f.off + mo.segs[0].start - f.start, l.off + mo.segs[mo.segs.length - 1].end - l.start];
 }
-function mutePart() {
-  if (!marked()) { toast('First mark the start and the end of the part you want silent.', 'warn', 4000); return; }
-  const a = S.mA, b = S.mB, all = S.muted.some(r => r[0] <= a + 0.05 && r[1] >= b - 0.05); snap();
-  S.muted = all ? rangeSub(S.muted, a, b) : rangeAdd(S.muted, a, b);
-  S.mA = S.mB = null; changed();
+const momLen = mo => mo.segs.reduce((a, s) => a + s.end - s.start, 0);
+const momWhen = mo => { const e = S.byKey.get(mo.segs[0].key); return e ? new Date(e.when.getTime() + mo.segs[0].start * 1000) : null; };
+function saveMoment() {
+  if (!marked()) { toast('First mark the start and the end of the moment.', 'warn', 4000); return; }
+  snap();
+  const segs = segsFor(S.mA, S.mB), ed = S.moments.find(m => m.id === S.momEdit);
+  if (ed) { ed.segs = segs; ed.thumb = ''; toast(`Updated "${esc(ed.name)}".`, 'good', 3000); }
+  else {
+    const mo = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: `Moment ${S.moments.length + 1}`, segs, mute: false, reel: true, thumb: '' };
+    S.moments.push(mo); S.moments.sort((a, b) => (momWhen(a) || 0) - (momWhen(b) || 0));
+    S.focusName = mo.id;
+  }
+  S.mA = S.mB = null; S.momEdit = null; momChanged();
 }
-// what "Put back" would restore: the marked part, or the deleted/silenced part under the playhead
-function putBackRange() {
-  if (marked()) return overlaps(S.removed, S.mA, S.mB) || overlaps(S.muted, S.mA, S.mB) ? [S.mA, S.mB] : null;
-  const T = S.mvPos; if (T == null) return null;
-  return rangeAt(S.removed, T) || rangeAt(S.muted, T) || null;
+async function adjustMoment(mo) {
+  if (!(await jumpTo(mo.segs[0].key, mo.segs[0].start, false))) return;
+  const r = rangeOf(mo); if (!r) return;
+  S.mA = r[0]; S.mB = r[1]; S.momEdit = mo.id; mvDraw();
+  toast('Drag the yellow handles on the strip (or use Mark start / Mark end), then press <b>Update moment</b>.', '', 6000);
 }
-function putBack() {
-  const r = putBackRange(); if (!r) return;
-  snap(); S.removed = rangeSub(S.removed, r[0], r[1]); S.muted = rangeSub(S.muted, r[0], r[1]); S.mA = S.mB = null; changed();
+async function watchMoment(mo, play = true) {
+  if (!(await jumpTo(mo.segs[0].key, mo.segs[0].start, play))) return;
+  const r = rangeOf(mo); S.stopT = r ? r[1] : null;
 }
-function startOver() {
-  if (!S.movie.length) return;
-  snap(); S.movie = []; S.removed = []; S.muted = []; S.mA = S.mB = null; S.mvPlaying = false; changed();
-  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Your video was cleared. <button style="margin-left:8px">Undo</button>';
+function watchReel() {
+  const list = S.moments.filter(m => m.reel); if (!list.length) return;
+  S.reel = list.slice(1); watchMoment(list[0], true);
+}
+function deleteMoment(mo) {
+  snap(); S.moments = S.moments.filter(m => m !== mo); momChanged();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `Removed "${esc(mo.name)}". <button style="margin-left:8px">Undo</button>`;
   t.querySelector('button').onclick = () => { undo(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000);
 }
 
-/* drawing the bar */
+/* undo covers changes to the moments */
+const momJSON = () => JSON.stringify(S.moments.map(({ id, name, segs, mute, reel }) => ({ id, name, segs, mute, reel })));
+function snap() { S.undo.push(momJSON()); if (S.undo.length > 80) S.undo.shift(); }
+function undo() { if (!S.undo.length) { toast('Nothing to undo.', '', 2000); return; } S.moments = JSON.parse(S.undo.pop()); S.momEdit = null; momChanged(); }
+function momChanged() {
+  S.timeline = S.moments.filter(m => m.reel).flatMap(m => m.segs.map(s => ({ ...s, mute: m.mute })));
+  renderMoments(); mvDraw(); saveTimelineLocal();
+}
+
+/* the day strip */
 const pct = T => (T / (mvTotal() || 1) * 100).toFixed(3) + '%';
 function mvRender() {
   const tot = mvTotal(), has = S.movie.length > 0;
   $('edEmpty').style.display = has ? 'none' : 'block';
+  if (!has && !S.entries.length) $('edEmpty').innerHTML = 'Open a trip folder to see the whole day here.';
   $('edBar').style.display = has ? 'block' : 'none';
-  $('bExport').disabled = !S.timeline.length;
   if (has) {
-    // film strip: one picture every ~110 px, taken from that moment of the video
-    const w = $('movie').clientWidth || 800, n = Math.max(4, Math.min(40, Math.round(w / 110)));
+    const w = $('movie').clientWidth || 800, n = Math.max(4, Math.min(48, Math.round(w / 100)));
     $('strip').innerHTML = Array.from({ length: n }, (_, i) => {
       const T = (i + 0.5) * tot / n, m = itemAt(T), id = m.key + '@' + Math.round(m.start + T - m.off);
       const th = THUMB.get(id); if (!th) wantThumb(id, m.key, m.start + T - m.off);
       return `<div class="tile" data-th="${esc(id)}" style="left:${(i / n * 100).toFixed(3)}%;width:${(100 / n).toFixed(3)}%;${th ? `background-image:url(${th})` : ''}"></div>`;
     }).join('');
-    $('rulA').textContent = clockAt(0);
-    $('rulB').textContent = clockAt(tot - 0.01);
-  }
-  mvDraw();
+    // clock times along the bottom
+    const k = Math.max(2, Math.min(9, Math.round(w / 150)));
+    $('ruler').innerHTML = Array.from({ length: k }, (_, i) => `<span style="left:${(i / (k - 1) * 100).toFixed(2)}%">${clockAt(Math.min(tot - 0.01, i / (k - 1) * tot))}</span>`).join('');
+    $('tlSum').textContent = `${dayLabel(S.day)} · ${fmt(tot)} of video`;
+  } else $('tlSum').textContent = '';
+  drawChart(); mvDraw();
 }
 function mvDraw() {
-  S.mvInRm = S.mvPos != null && !!rangeAt(S.removed, S.mvPos);
-  const tot = mvTotal(), has = S.movie.length > 0;
-  const kept = keptLength();
-  $('tlSum').textContent = has ? (S.removed.length ? `${fmt(kept)} long, from ${fmt(tot)} of recording` : `${fmt(tot)} long`) : '';
+  const has = S.movie.length > 0;
   if (has) {
-    $('ovl').innerHTML = S.removed.map(r => `<div class="rm" style="left:${pct(r[0])};width:${pct(r[1] - r[0])}" title="Deleted (${fmt(r[1] - r[0])}). Click it, then Put back, to bring it back."><span>Deleted</span></div>`).join('') +
-      S.muted.map(r => `<div class="mu" style="left:${pct(r[0])};width:${pct(r[1] - r[0])}" title="Silent (${fmt(r[1] - r[0])})"><span>🔇</span></div>`).join('');
+    $('ovl').innerHTML = S.moments.map((mo, i) => { const r = rangeOf(mo); return r ? `<div class="mo${mo.id === S.momEdit ? ' ed' : ''}" data-mo="${i}" style="left:${pct(r[0])};width:${pct(r[1] - r[0])}" title="${esc(mo.name)} · ${fmt(momLen(mo))}. Click to watch it."><span>⭐ ${esc(mo.name)}</span></div>` : ''; }).join('');
     const sel = $('selr'), mk = $('mkA');
     if (S.mA != null && S.mB != null) { sel.style.display = 'block'; sel.style.left = pct(S.mA); sel.style.width = pct(S.mB - S.mA); mk.style.display = 'none'; $('selLen').textContent = fmt(S.mB - S.mA); }
     else { sel.style.display = 'none'; mk.style.display = S.mA != null ? 'block' : 'none'; if (S.mA != null) mk.style.left = pct(S.mA); }
   }
   // the clip scrubber shows the marked part too, where it falls in this clip
-  const sc = $('scrubSel'), e = curEntry(), d = vA.duration || 0;
+  const sc = $('scrubSel'), e = curEntry(), d = vA.duration || 0, m = e && mvItem(e.key);
   let shown = false;
-  if (e && d && S.mA != null) {
-    const a = S.mA, b = S.mB ?? S.mA;
-    for (const m of S.movie) if (m.key === e.key) {
-      const x = Math.max(a, m.off), y = Math.min(b, m.off + m.end - m.start);
-      if (y >= x) { const s = m.start + x - m.off, en = m.start + y - m.off; sc.style.left = (s / d * 100) + '%'; sc.style.width = Math.max(0.3, (en - s) / d * 100) + '%'; shown = true; break; }
-    }
+  if (m && d && S.mA != null) {
+    const x = Math.max(S.mA, m.off), y = Math.min(S.mB ?? S.mA, m.off + m.end - m.start);
+    if (y >= x) { const s = m.start + x - m.off, en = m.start + y - m.off; sc.style.left = (s / d * 100) + '%'; sc.style.width = Math.max(0.3, (en - s) / d * 100) + '%'; shown = true; }
   }
   sc.style.display = shown ? 'block' : 'none';
   mvGuide(); mvButtons();
@@ -1408,84 +1393,200 @@ function mvPlayhead(T) {
   const ph = $('playhead'); if (!ph) return;
   if (T == null || !S.movie.length) { ph.style.display = 'none'; return; }
   ph.style.display = 'block'; ph.style.left = pct(T); $('phTime').textContent = clockAt(T);
-  const inRm = !!rangeAt(S.removed, T);
-  if (inRm !== S.mvInRm) { S.mvInRm = inRm; mvGuide(); mvButtons(); }
+  const f = T / (mvTotal() || 1); $('phTime').style.transform = `translate(${f < 0.04 ? '0' : f > 0.96 ? '-100%' : '-50%'},-100%)`;
 }
 function mvGuide() {
-  const g = $('edGuide');
-  if (!S.movie.length) { g.innerHTML = ''; return; }
+  const g = $('edGuide'); if (!S.movie.length) { g.innerHTML = ''; return; }
   let h;
-  if (S.mA != null && S.mB != null) h = `<b>Step 3.</b> The yellow part is marked (${fmt(S.mB - S.mA)}). Press <b class="red">Delete marked part</b> to cut it out, or <b class="green">Keep only marked part</b> to throw away everything else.`;
-  else if (S.mA != null) h = '<b>Step 2.</b> Now play on, or click the bar, to where that part ends. Then press <b>Mark end</b>.';
-  else if (S.mvInRm) h = 'You\'re looking at a part you deleted (it\'s greyed out on the bar and won\'t be in your video). Press <b>Put back</b> to bring it back.';
-  else h = '<b>Step 1.</b> Play the video, or click on the bar, to find where a part you want to delete (or keep) begins. Then press <b>Mark start</b>. <span class="dim">You can also drag across the bar to mark a part.</span>';
+  if (S.mA != null && S.mB != null) h = S.momEdit ? `Adjust the yellow part by dragging its handles, then press <b class="green">Update moment</b>.` : `<b>Step 3.</b> The yellow part (${fmt(S.mB - S.mA)}) is marked. Press <b class="green">⭐ Save as a moment</b> to keep it.`;
+  else if (S.mA != null) h = '<b>Step 2.</b> Play on, or click the strip, to where the moment ends. Then press <b>Mark end</b>.';
+  else h = '<b>Step 1.</b> Skim the day: hover over the strip to preview, click to jump, or click the route on the map. The blue line is your speed; slow parts are often the interesting bits. When you find a moment, press <b>Mark start</b> where it begins. <span class="dim">Or drag across the strip.</span>';
   g.innerHTML = h;
 }
 function mvButtons() {
   const has = S.movie.length > 0, mk = marked();
-  $('bWatch').disabled = !has; $('bWatch').innerHTML = S.mvPlaying ? '❚❚ Pause' : '▶ Watch my video';
   $('bMarkA').disabled = $('bMarkB').disabled = !has;
   $('bMarkA').classList.toggle('done', S.mA != null); $('bMarkB').classList.toggle('done', S.mB != null);
-  $('bDelPart').disabled = $('bKeepPart').disabled = $('bMutePart').disabled = !mk;
-  $('bMutePart').innerHTML = mk && S.muted.some(r => r[0] <= S.mA + 0.05 && r[1] >= S.mB - 0.05) ? '🔊 Sound back on' : '🔇 Make it silent';
+  $('bSaveMo').disabled = !mk; $('bSaveMo').innerHTML = S.momEdit ? '✓ Update moment' : '⭐ Save as a moment';
   $('bClearMarks').style.display = S.mA != null ? '' : 'none';
-  $('bPutBack').disabled = !putBackRange();
-  $('bUndo').disabled = !S.undo.length;
-  $('bTlClear').disabled = $('bProjSave').disabled = !has;
 }
 
-/* clicking and dragging on the bar */
+/* speed (line) and height (shaded) under the strip */
+function drawChart() {
+  const cv = $('chart'); if (!cv || !S.movie.length) return;
+  const W = cv.clientWidth, H = cv.clientHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.scale(dpr, dpr); g.clearRect(0, 0, W, H);
+  const tot = mvTotal(), pts = [];
+  for (const m of S.movie) { const e = S.byKey.get(m.key); if (e && e.gps) for (const p of e.gps) if (p.t >= m.start && p.t <= m.end) pts.push({ T: m.off + p.t - m.start, mph: p.knots * 1.15078, alt: p.alt }); }
+  if (pts.length < 2) { g.fillStyle = '#6b7383'; g.font = '11px -apple-system,sans-serif'; g.fillText(S.movie.some(m => !(S.byKey.get(m.key) || {}).gps) ? 'Reading speed and height from GPS…' : 'No GPS on this day', 8, H / 2 + 4); return; }
+  pts.sort((a, b) => a.T - b.T);
+  const x = T => T / tot * W;
+  const amin = Math.min(...pts.map(p => p.alt)), amax = Math.max(...pts.map(p => p.alt)), smax = Math.max(15, ...pts.map(p => p.mph));
+  const gapT = 20; // don't draw lines across missing stretches
+  g.fillStyle = 'rgba(160,170,190,.18)'; g.beginPath(); let open = false;
+  pts.forEach((p, i) => { const y = H - 2 - (p.alt - amin) / ((amax - amin) || 1) * (H - 8); if (!open || p.T - pts[i - 1].T > gapT) { if (open) { g.lineTo(x(pts[i - 1].T), H); g.closePath(); g.fill(); g.beginPath(); } g.moveTo(x(p.T), H); open = true; } g.lineTo(x(p.T), y); });
+  g.lineTo(x(pts[pts.length - 1].T), H); g.closePath(); g.fill();
+  g.strokeStyle = '#5aa2ff'; g.lineWidth = 1.5; g.beginPath();
+  pts.forEach((p, i) => { const y = H - 2 - p.mph / smax * (H - 6); if (!i || p.T - pts[i - 1].T > gapT) g.moveTo(x(p.T), y); else g.lineTo(x(p.T), y); });
+  g.stroke();
+  const top = pts.reduce((a, p) => p.alt > a.alt ? p : a);
+  g.fillStyle = '#f5c84b'; g.font = 'bold 10.5px -apple-system,sans-serif';
+  const tx = Math.min(W - 92, Math.max(2, x(top.T) - 4)); g.fillText(`▲ highest ${Math.round(top.alt * 3.28084).toLocaleString()} ft`, tx, 10);
+  $('chartKey').textContent = `speed up to ${Math.round(smax)} mph`;
+}
+
+/* clicking, dragging and hovering on the strip */
 (function () {
-  const M = $('movie'); let drag = null;
+  const M = $('movie'); let drag = null, hov = 0;
   const T = ev => { const r = M.getBoundingClientRect(); return Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * mvTotal(); };
   M.addEventListener('pointerdown', ev => {
     if (!S.movie.length) return;
     const h = ev.target.closest('.h'); M.setPointerCapture(ev.pointerId);
-    drag = { x: ev.clientX, t0: T(ev), handle: h ? h.dataset.h : null, moved: false };
+    drag = { x: ev.clientX, t0: T(ev), handle: h ? h.dataset.h : null, moved: false, mo: ev.target.closest('.mo') };
   });
   M.addEventListener('pointermove', ev => {
     const r = M.getBoundingClientRect(), tip = $('barTip');
-    if (S.movie.length && ev.clientX >= r.left && ev.clientX <= r.right) { tip.style.display = 'block'; tip.style.left = (ev.clientX - r.left) + 'px'; tip.textContent = clockAt(T(ev)); }
+    if (S.movie.length && ev.clientX >= r.left && ev.clientX <= r.right && !drag) {
+      const t = T(ev), m = itemAt(t), ct = m.start + t - m.off, id = m.key + '@' + Math.round(ct / 5) * 5;
+      tip.style.display = 'block'; tip.style.left = Math.min(r.width - 84, Math.max(84, ev.clientX - r.left)) + 'px';
+      $('tipClock').textContent = clockAt(t);
+      const th = THUMB.get(id); $('tipImg').style.backgroundImage = th ? `url(${th})` : 'none';
+      clearTimeout(hov); if (!THUMB.has(id)) hov = setTimeout(() => { wantThumb(id, m.key, Math.round(ct / 5) * 5, th2 => { if ($('tipClock').textContent === clockAt(t) && th2) $('tipImg').style.backgroundImage = `url(${th2})`; }, true); }, 120);
+    }
     if (!drag) return;
     if (!drag.moved && Math.abs(ev.clientX - drag.x) < 5) return;
-    drag.moved = true; const t = T(ev);
-    if (drag.handle === 'a') S.mA = Math.min(t, S.mB - 0.2);
-    else if (drag.handle === 'b') S.mB = Math.max(t, S.mA + 0.2);
+    drag.moved = true; tip.style.display = 'none'; const t = T(ev);
+    if (drag.handle === 'a') S.mA = Math.min(t, S.mB - 0.5);
+    else if (drag.handle === 'b') S.mB = Math.max(t, S.mA + 0.5);
     else { S.mA = Math.min(drag.t0, t); S.mB = Math.max(drag.t0, t); }
     mvDraw();
   });
   M.addEventListener('pointerleave', () => { $('barTip').style.display = 'none'; });
   M.addEventListener('pointerup', ev => {
     if (!drag) return; const d = drag; drag = null;
-    if (!d.moved) { S.mvPlaying = false; mvSeek(T(ev), false); }
-    else { if (S.mB - S.mA < 0.2) S.mB = null; mvSeek(S.mA, false); }
+    if (!d.moved) { S.stopT = null; S.reel = null; if (d.mo && S.mA == null) watchMoment(S.moments[+d.mo.dataset.mo], false); else mvSeek(T(ev), !vA.paused); }
+    else { if (S.mB - S.mA < 0.5) S.mB = null; mvSeek(S.mA, false); }
   });
 })();
 
-/* film strip pictures, made one at a time from a hidden video */
+/* the moments list */
+function renderMoments() {
+  const L = $('moments'), n = S.moments.length, inReel = S.moments.filter(m => m.reel);
+  $('momHead').style.display = n ? 'flex' : 'none';
+  $('momCount').textContent = n ? `${n} moment${n > 1 ? 's' : ''} saved · ${fmt(S.moments.reduce((a, m) => a + momLen(m), 0))}` : '';
+  $('bSaveEach').disabled = !n;
+  $('bSaveReel').disabled = $('bWatchReel').disabled = !inReel.length;
+  $('bSaveReel').innerHTML = `🎬 Save highlight reel${inReel.length ? ` (${inReel.length} moment${inReel.length > 1 ? 's' : ''}, ${fmt(inReel.reduce((a, m) => a + momLen(m), 0))})` : ''}`;
+  $('bProjSave').disabled = !n;
+  L.innerHTML = n ? S.moments.map((mo, i) => {
+    const w = momWhen(mo);
+    if (!mo.thumb && !mo._tq) { mo._tq = true; const s = mo.segs[0]; wantThumb('mo:' + mo.id, s.key, s.start + Math.min(2, (s.end - s.start) / 2), th => { mo.thumb = th; const el = document.querySelector(`.mcard[data-i="${S.moments.indexOf(mo)}"] .mth`); if (el && th) el.style.backgroundImage = `url(${th})`; }); }
+    return `<div class="mcard${mo.id === S.momEdit ? ' ed' : ''}" data-i="${i}">
+      <div class="mth" style="${mo.thumb ? `background-image:url(${mo.thumb})` : ''}"><button class="mplay" data-a="watch" title="Watch this moment">▶</button><span class="mlen">${fmt(momLen(mo))}</span>${mo.mute ? '<span class="mmute">SILENT</span>' : ''}</div>
+      <div class="mbd">
+        <input type="text" class="mname" data-a="name" value="${esc(mo.name)}" title="Click to rename" spellcheck="false">
+        <div class="mmeta">${w ? `${w.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${fmtClock(w)}` : ''}</div>
+        <label class="mreel"><input type="checkbox" data-a="reel" ${mo.reel ? 'checked' : ''}> In highlight reel</label>
+        <div class="macts">
+          <button data-a="save" class="primary" title="Save this moment as its own video">💾 Save</button>
+          <button data-a="adjust" title="Change where this moment starts and ends">✎ Adjust</button>
+          <button data-a="mute" title="${mo.mute ? 'Turn the sound back on' : 'Save this moment without sound'}">${mo.mute ? '🔊' : '🔇'}</button>
+          <button data-a="del" title="Remove this moment (your clips aren't touched)">✕</button>
+        </div>
+      </div></div>`;
+  }).join('') : '';
+  if (S.focusName) { const i = S.moments.findIndex(m => m.id === S.focusName); S.focusName = null; const el = document.querySelector(`.mcard[data-i="${i}"] .mname`); if (el) { el.focus(); el.select(); el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } }
+}
+$('moments').addEventListener('click', ev => {
+  const card = ev.target.closest('.mcard'); if (!card) return; const mo = S.moments[+card.dataset.i];
+  const a = ev.target.closest('[data-a]') && ev.target.closest('[data-a]').dataset.a;
+  if (a === 'watch') { S.reel = null; watchMoment(mo); }
+  else if (a === 'adjust') adjustMoment(mo);
+  else if (a === 'save') exportMoments([{ label: mo.name, segs: mo.segs, mute: mo.mute }]);
+  else if (a === 'mute') { snap(); mo.mute = !mo.mute; momChanged(); }
+  else if (a === 'del') deleteMoment(mo);
+});
+$('moments').addEventListener('change', ev => {
+  const card = ev.target.closest('.mcard'); if (!card) return; const mo = S.moments[+card.dataset.i];
+  if (ev.target.dataset.a === 'reel') { snap(); mo.reel = ev.target.checked; momChanged(); }
+  if (ev.target.dataset.a === 'name') { const v = ev.target.value.trim(); if (v && v !== mo.name) { snap(); mo.name = v; momChanged(); } }
+});
+$('moments').addEventListener('keydown', ev => { if (ev.target.dataset.a === 'name' && ev.key === 'Enter') ev.target.blur(); });
+
+/* pictures for the strip, the hover preview and the moment cards, made one at a time from a hidden video */
 const THUMB = new Map(), thumbQ = []; let thumbBusy = false;
 const tv = document.createElement('video'); tv.muted = true; tv.playsInline = true; tv.preload = 'auto';
 tv.style.cssText = 'position:fixed;left:0;top:0;width:4px;height:4px;opacity:0;pointer-events:none';
 document.body.appendChild(tv);
-function wantThumb(id, key, t) { if (THUMB.has(id) || thumbQ.some(q => q.id === id)) return; thumbQ.push({ id, key, t }); runThumbs(); }
+// hover previews jump the queue and replace any older hover request
+function wantThumb(id, key, t, cb, hover) {
+  if (THUMB.has(id)) { cb && cb(THUMB.get(id)); return; }
+  if (hover) { for (let i = thumbQ.length - 1; i >= 0; i--) if (thumbQ[i].hover) thumbQ.splice(i, 1); thumbQ.unshift({ id, key, t, cb, hover }); }
+  else if (!thumbQ.some(q => q.id === id)) thumbQ.push({ id, key, t, cb });
+  runThumbs();
+}
+let tvUrl = '', tvFile = null;
 function grabFrame(file, t) {
   return new Promise(res => {
-    const u = URL.createObjectURL(file); let done = false;
-    const fin = v => { if (done) return; done = true; tv.onloadedmetadata = tv.onseeked = tv.onerror = null; URL.revokeObjectURL(u); res(v); };
-    tv.onloadedmetadata = () => { tv.currentTime = Math.max(0, Math.min(t, (tv.duration || t) - 0.2)); };
+    let done = false;
+    const fin = v => { if (done) return; done = true; tv.onloadedmetadata = tv.onseeked = tv.onerror = null; res(v); };
+    const seek = () => { tv.currentTime = Math.max(0, Math.min(t, (tv.duration || t) - 0.2)); };
     tv.onseeked = () => { try { const c = document.createElement('canvas'); c.width = 160; c.height = 90; c.getContext('2d').drawImage(tv, 0, 0, 160, 90); fin(c.toDataURL('image/jpeg', 0.6)); } catch (_) { fin(''); } };
     tv.onerror = () => fin('');
-    tv.src = u; setTimeout(() => fin(''), 8000);
+    if (tvFile === file && tv.readyState >= 1) seek();   // same clip: just seek, no reload
+    else { if (tvUrl) URL.revokeObjectURL(tvUrl); tvFile = file; tvUrl = URL.createObjectURL(file); tv.onloadedmetadata = seek; tv.src = tvUrl; }
+    setTimeout(() => fin(''), 8000);
   });
 }
 async function runThumbs() {
   if (thumbBusy) return; thumbBusy = true;
   while (thumbQ.length) {
-    const q = thumbQ.shift(), e = S.byKey.get(q.key), c = e && (e.front && e.front.ok ? e.front : okClips(e)[0]); if (!c) continue;
+    const q = thumbQ.shift(), e = S.byKey.get(q.key); if (e && e.pending) await ensureEntry(e);
+    const c = e && (e.front && e.front.ok ? e.front : okClips(e)[0]); if (!c) continue;
     const th = await grabFrame(c.file, q.t); THUMB.set(q.id, th);
     document.querySelectorAll(`.tile[data-th="${CSS.escape(q.id)}"]`).forEach(el => { if (th) el.style.backgroundImage = `url(${th})`; });
+    q.cb && q.cb(th);
   }
-  tv.removeAttribute('src'); tv.load(); thumbBusy = false;
+  thumbBusy = false;
+}
+
+/* saving moments and the highlight reel as videos */
+async function exportMoments(items, reelName) {
+  if (!items.length) return;
+  await Promise.all(items.flatMap(it => it.segs.map(s => ensureEntry(S.byKey.get(s.key)))));
+  const cam = $('exCam').value, audio = $('exAudio').value === 'keep';
+  const trip = safeName($('exportName').value);
+  if (canPickDir && !S.saveDir) { const ok = await chooseSaveDir(); if (!ok) return; }
+  const cams = cam === 'all' ? CAMS.filter(c => S.entries.some(e => e[c])) : [cam];
+  const jobs = [];
+  for (const c of cams) {
+    const label = camName(c); let missing = 0;
+    const segsOf = it => it.segs.map(s => { const e = S.byKey.get(s.key), clip = e && e[c]; if (!clip || !clip.ok) { missing++; return null; } return { clip, start: s.start, end: Math.min(s.end, clip.duration), mute: it.mute }; }).filter(Boolean);
+    if (reelName) { const segs = items.flatMap(segsOf); if (segs.length) jobs.push({ segs, file: `${trip} - ${safeName(reelName)} - ${label}.mp4` }); }
+    else items.forEach(it => { const segs = segsOf(it); if (segs.length) jobs.push({ segs, file: `${trip} - ${safeName(it.label)} - ${label}.mp4` }); });
+    if (missing) toast(`${label} video is missing for part of this, so that part was skipped.`, 'warn', 8000);
+  }
+  if (!jobs.length) { toast('Nothing to save for that camera.', 'warn'); return; }
+  progress(true, 'Saving…', '', 0);
+  const saved = []; const warns = new Set();
+  try {
+    for (let k = 0; k < jobs.length; k++) {
+      const j = jobs[k];
+      progress(true, `Saving ${k + 1} of ${jobs.length}`, j.file, k / jobs.length);
+      await new Promise(r => setTimeout(r, 30));
+      const s0 = j.segs[0], e0 = S.entries.find(x => clipsOf(x).includes(s0.clip));
+      const r = D.buildExport(j.segs, { audio, creation: e0 ? new Date(e0.when.getTime() + D.snapSegment(s0.clip, s0.start, s0.end).start * 1000) : null });
+      r.warnings.forEach(w => warns.add(w));
+      saved.push(await saveBlob(r.blob, j.file)); progress(true, null, null, (k + 1) / jobs.length);
+    }
+  } catch (e) {
+    progress(false); toast('Saving failed: ' + esc(e.message), 'bad', 12000); return;
+  }
+  progress(false);
+  warns.forEach(w => toast(esc(w), 'warn', 8000));
+  const where = saved[0].where;
+  toast(`Saved <b>${saved.length}</b> video${saved.length > 1 ? 's' : ''} to <b>${esc(where)}</b>:<br>${saved.map(s => esc(s.name)).join('<br>')}`, 'good', 12000);
+  $('exStatus').textContent = `Last saved: ${saved.length} file${saved.length > 1 ? 's' : ''} → ${where}`;
 }
 
 /* ---------- GPS, HUD and map ---------- */
@@ -1656,49 +1757,9 @@ async function saveBlob(blob, name, sub) {
   setTimeout(() => URL.revokeObjectURL(u), 120000);
   return { where: 'Downloads', name };
 }
-const safeName = s => (s || 'Drive').replace(/[\\/:*?"<>|]+/g, '-').trim() || 'Drive';
+const safeName = s => (s || 'Trip').replace(/[\\/:*?"<>|]+/g, '-').trim() || 'Trip';
 
 /* ---------- export ---------- */
-async function doExport() {
-  if (!S.timeline.length) return;
-  await Promise.all(S.movie.map(m => ensureEntry(S.byKey.get(m.key))));
-  const cam = $('exCam').value, mode = $('exMode').value, audio = $('exAudio').value === 'keep';
-  const name = safeName($('exportName').value);
-  if (canPickDir && !S.saveDir) { const ok = await chooseSaveDir(); if (!ok) return; }
-  const cams = cam === 'all' ? CAMS.filter(c => S.entries.some(e => e[c])) : [cam];
-  const jobs = [];
-  for (const c of cams) {
-    const segs = []; const missing = [];
-    S.timeline.forEach((s, i) => { const e = S.byKey.get(s.key); const clip = e && e[c]; if (clip && clip.ok) segs.push({ clip, start: s.start, end: Math.min(s.end, clip.duration), mute: s.mute, n: i + 1 }); else missing.push(i + 1); });
-    if (missing.length) toast(`${camName(c)} video is missing for part of your video (${missing.length} piece${missing.length > 1 ? 's' : ''}), so that part was skipped.`, 'warn', 8000);
-    if (!segs.length) continue;
-    const label = camName(c);
-    if (mode === 'one') jobs.push({ segs, file: `${name} - ${label}.mp4` });
-    else segs.forEach(s => jobs.push({ segs: [s], file: `${name} - ${pad(s.n)} - ${label}.mp4` }));
-  }
-  if (!jobs.length) { toast('Nothing to export for that camera.', 'warn'); return; }
-  progress(true, 'Exporting…', '', 0);
-  const saved = []; const warns = new Set();
-  try {
-    for (let k = 0; k < jobs.length; k++) {
-      const j = jobs[k];
-      progress(true, `Exporting ${k + 1} of ${jobs.length}`, j.file, k / jobs.length);
-      await new Promise(r => setTimeout(r, 30));
-      const s0 = j.segs[0], e0 = S.entries.find(x => clipsOf(x).includes(s0.clip));
-      const r = D.buildExport(j.segs, { audio, creation: e0 ? new Date(e0.when.getTime() + D.snapSegment(s0.clip, s0.start, s0.end).start * 1000) : null });
-      r.warnings.forEach(w => warns.add(w));
-      const res = await saveBlob(r.blob, j.file);
-      saved.push(res); progress(true, null, null, (k + 1) / jobs.length);
-    }
-  } catch (e) {
-    progress(false); toast('Export failed: ' + esc(e.message), 'bad', 12000); return;
-  }
-  progress(false);
-  warns.forEach(w => toast(esc(w), 'warn', 8000));
-  const where = saved[0].where;
-  toast(`Saved <b>${saved.length}</b> video${saved.length > 1 ? 's' : ''} to <b>${esc(where)}</b>:<br>${saved.map(s => esc(s.name)).join('<br>')}`, 'good', 12000);
-  $('exStatus').textContent = `Last export: ${saved.length} file${saved.length > 1 ? 's' : ''} → ${where}`;
-}
 
 /* ---------- copy kept originals ---------- */
 async function copyKept() {
@@ -1723,9 +1784,8 @@ $('btnCopyKept').onclick = copyKept;
 /* ---------- project files & autosave ---------- */
 function projectData() {
   const files = k => { const e = S.byKey.get(k); return e ? clipsOf(e).map(c => c.rel) : []; };
-  return { app: 'Dashcam Studio', version: 2, name: $('exportName').value, saved: new Date().toISOString(),
-    movie: S.movie.map(m => ({ key: m.key, files: files(m.key), start: +m.start.toFixed(3), end: +m.end.toFixed(3) })), removed: S.removed, muted: S.muted,
-    sections: S.timeline.map(s => ({ key: s.key, files: files(s.key), start: +s.start.toFixed(3), end: +s.end.toFixed(3), mute: s.mute })) };
+  return { app: 'Dashcam Studio', version: 3, name: $('exportName').value, saved: new Date().toISOString(),
+    moments: S.moments.map(m => ({ id: m.id, name: m.name, mute: m.mute, reel: m.reel, segs: m.segs.map(x => ({ key: x.key, files: files(x.key), start: +x.start.toFixed(3), end: +x.end.toFixed(3) })) })) };
 }
 function resolveKey(sec) {
   if (S.byKey.has(sec.key)) return sec.key;
@@ -1733,28 +1793,47 @@ function resolveKey(sec) {
   const e = S.entries.find(x => clipsOf(x).some(c => names.includes(c.file.name.toLowerCase())));
   return e ? e.key : null;
 }
-function loadProject(p) {
-  if (!p || !(Array.isArray(p.movie) || Array.isArray(p.sections))) throw new Error('not a Dashcam Studio edit file');
-  let miss = 0; snap();
-  const items = p.movie || p.sections;
-  S.movie = items.map(s => { const k = resolveKey(s); if (!k) miss++; return k ? { key: k, start: s.start, end: s.end } : null; }).filter(Boolean);
-  if (p.movie && !miss) { S.removed = p.removed || []; S.muted = p.muted || []; }
-  else { S.removed = []; mvLayout(); S.muted = []; S.movie.forEach((m, i) => { if (!p.movie && items[i] && items[i].mute) S.muted = rangeAdd(S.muted, m.off, m.off + m.end - m.start); }); }
-  if (p.name) $('exportName').value = p.name;
-  S.mA = S.mB = null; changed();
-  if (miss) toast(`${miss} clip${miss > 1 ? 's' : ''} in that edit aren't loaded. Open the folder with those clips, then open the edit again.`, 'warn', 9000);
-  else { toast('Opened your saved edit.', 'good', 3000); mvSeek(0, false); }
+// older edit files (a list of sections) open as one moment
+function momentsFromFile(p) {
+  if (Array.isArray(p.moments)) return p.moments;
+  const items = p.movie || p.sections; if (!Array.isArray(items)) return null;
+  return items.length ? [{ id: 'imported', name: p.name || 'Imported edit', mute: false, reel: true, segs: items }] : [];
 }
-function saveTimelineLocal() { try { localStorage.setItem('dashcam-studio.last', JSON.stringify(projectData())); } catch (_) {} }
+// add moments whose clips are loaded; returns how many were added and how many were missing
+function addMoments(list) {
+  let added = 0, miss = 0;
+  for (const m of list) {
+    if (S.moments.some(x => x.id === m.id)) continue;
+    const segs = m.segs.map(x => { const k = resolveKey(x); return k ? { key: k, start: x.start, end: x.end } : null; });
+    if (!segs.length || segs.some(x => !x)) { miss++; continue; }
+    S.moments.push({ id: m.id || Math.random().toString(36).slice(2), name: m.name || 'Moment', mute: !!m.mute, reel: m.reel !== false, segs, thumb: '' }); added++;
+  }
+  S.moments.sort((a, b) => (momWhen(a) || 0) - (momWhen(b) || 0));
+  return { added, miss };
+}
+function loadProject(p) {
+  const list = p && momentsFromFile(p); if (!list) throw new Error('not a Dashcam Studio moments file');
+  snap(); const r = addMoments(list);
+  if (p.name) $('exportName').value = p.name;
+  momChanged();
+  if (r.miss) toast(`${r.miss} moment${r.miss > 1 ? 's' : ''} use clips that aren't loaded. Open the folder with those clips, then open the file again.`, 'warn', 9000);
+  else toast(`Opened ${r.added} moment${r.added !== 1 ? 's' : ''}.`, 'good', 3000);
+}
+function saveTimelineLocal() {
+  try {
+    // keep moments from other folders that aren't open right now
+    let old = []; try { old = (JSON.parse(localStorage.getItem('dashcam-studio.last') || 'null') || {}).moments || []; } catch (_) {}
+    const cur = projectData(), ids = new Set(cur.moments.map(m => m.id));
+    cur.moments.push(...old.filter(m => !ids.has(m.id) && !m.segs.every(x => resolveKey(x))));
+    localStorage.setItem('dashcam-studio.last', JSON.stringify(cur));
+  } catch (_) {}
+}
+// moments you saved earlier come back by themselves when their clips are opened again
 function restoreTimelineOffer() {
-  if (S.movie.length) return;
   let p = null; try { p = JSON.parse(localStorage.getItem('dashcam-studio.last') || 'null'); } catch (_) {}
-  const items = p && (p.movie || p.sections); if (!items || !items.length) return;
-  const ok = items.filter(resolveKey).length; if (!ok) return;
-  const t = document.createElement('div'); t.className = 'toast';
-  t.innerHTML = `Your last video edit (${fmt(items.reduce((a, s) => a + s.end - s.start, 0))} of clips) uses clips from this folder. <button class="primary" style="margin-left:8px">Restore it</button>`;
-  t.querySelector('button').onclick = () => { loadProject(p); t.remove(); };
-  $('toasts').appendChild(t); setTimeout(() => t.remove(), 20000);
+  const list = p && momentsFromFile(p); if (!list || !list.length) return;
+  const r = addMoments(list); if (!r.added) return;
+  momChanged(); toast(`Brought back <b>${r.added}</b> moment${r.added > 1 ? 's' : ''} you saved earlier.`, 'good', 5000);
 }
 
 /* ---------- diagnostic ---------- */
@@ -1778,14 +1857,13 @@ async function saveDiagnostic() {
 /* ---------- wiring ---------- */
 function syncKindSeg() { document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === S.kind)); }
 $('btnOpen').onclick = $('pkFolder').onclick = () => $('inFolder').click();
-$('btnOpen2').onclick = $('btnAddFiles').onclick = openPicker;
+$('btnOpen2').onclick = () => openPicker(); $('btnAddFiles').onclick = () => openPicker(true);
 $('inFolder').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
 $('btnSaveDir').onclick = chooseSaveDir;
-$('daySel').onchange = ev => { S.day = ev.target.value; renderList(true); };
+$('daySel').onchange = ev => { S.day = ev.target.value; renderList(true); buildDay(); };
 $('kindSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.kind = b.dataset.k; syncKindSeg(); renderList(true); };
-$('clipList').onclick = ev => { const mg = ev.target.closest('[data-merge]'); if (mg) { const i = +mg.dataset.merge; mergeEntries(S.shown.slice(i, i + +mg.dataset.n)); return; } const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
-$('btnAddAll').onclick = addAllShown;
-$('bPlay').onclick = () => { if (!vA.src) return; if (vA.paused) vA.play().catch(() => {}); else { vA.pause(); if (S.mvPlaying) { S.mvPlaying = false; mvDraw(); } } };
+$('clipList').onclick = ev => { const dv = ev.target.closest('[data-drive]'); if (dv) { selectClip(+dv.dataset.drive, 0, false); return; } const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
+$('bPlay').onclick = () => { if (!vA.src) return; if (vA.paused) vA.play().catch(() => {}); else vA.pause(); };
 $('bBack').onclick = () => { vA.currentTime = Math.max(0, vA.currentTime - 5); };
 $('bFwd').onclick = () => { vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 5); };
 $('bPrev').onclick = () => { if (vA.currentTime > 3) vA.currentTime = 0; else nextClip(-1, !vA.paused); };
@@ -1807,15 +1885,14 @@ function buildCamOptions() {
 $('thirdName').value = thirdName;
 $('thirdName').onchange = ev => { thirdName = ev.target.value; try { localStorage.setItem('dashcam-studio.third', thirdName); } catch (_) {} buildCamOptions(); renderList(false); layout(); updateInfo(); };
 $('bAuto').onclick = () => { S.autoNext = !S.autoNext; $('bAuto').classList.toggle('on', S.autoNext); };
-$('bAddClip').onclick = () => mergeEntries([curEntry()]);
 $('bFollow').onclick = () => { S.follow = !S.follow; $('bFollow').classList.toggle('on', S.follow); if (S.follow && lastPos && map) map.easeTo({ center: [lastPos.lon, lastPos.lat] }); };
 $('bFit').onclick = () => { if (map && S.dayBounds) { S.follow = false; $('bFollow').classList.remove('on'); map.fitBounds(S.dayBounds, { padding: 40, maxZoom: 15 }); } };
-$('bExport').onclick = doExport;
-$('bTlClear').onclick = startOver;
-$('bWatch').onclick = watchToggle; $('bMarkA').onclick = () => markAt('a'); $('bMarkB').onclick = () => markAt('b'); $('bClearMarks').onclick = clearMarks;
-$('bDelPart').onclick = deletePart; $('bKeepPart').onclick = keepPart; $('bMutePart').onclick = mutePart; $('bPutBack').onclick = putBack; $('bUndo').onclick = undo;
+$('bMarkA').onclick = () => markAt('a'); $('bMarkB').onclick = () => markAt('b'); $('bClearMarks').onclick = clearMarks; $('bSaveMo').onclick = saveMoment;
+$('bSaveEach').onclick = () => exportMoments(S.moments.map(m => ({ label: m.name, segs: m.segs, mute: m.mute })));
+$('bSaveReel').onclick = () => exportMoments(S.moments.filter(m => m.reel).map(m => ({ label: m.name, segs: m.segs, mute: m.mute })), 'Highlights');
+$('bWatchReel').onclick = watchReel; $('bUndo').onclick = undo;
 window.addEventListener('resize', () => { if (S.movie.length) mvRender(); });
-$('bProjSave').onclick = async () => { if (!S.movie.length) { toast('Your video is empty.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - edit.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
+$('bProjSave').onclick = async () => { if (!S.moments.length) { toast('No moments saved yet.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - moments.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
 $('bProjOpen').onclick = () => $('inProject').click();
 $('inProject').onchange = async ev => { const f = ev.target.files[0]; ev.target.value = ''; if (!f) return; try { loadProject(JSON.parse(await f.text())); } catch (e) { toast('Couldn\'t open that edit file: ' + esc(e.message), 'bad'); } };
 $('btnHelp').onclick = () => { $('help').style.display = 'flex'; };
@@ -1829,9 +1906,8 @@ document.addEventListener('keydown', ev => {
   if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
   if ($('picker').classList.contains('open')) { if (ev.key === 'Escape') closePicker(); return; }
   const k = ev.key;
-  if (k === ' ' && ev.shiftKey) { ev.preventDefault(); watchToggle(); return; }
   const act = { ' ': () => $('bPlay').click(), ArrowLeft: () => $('bBack').click(), ArrowRight: () => $('bFwd').click(), ',': () => $('bStepB').click(), '.': () => $('bStepF').click(),
-    i: () => markAt('a'), o: () => markAt('b'), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), x: deletePart, Delete: deletePart, Backspace: deletePart, Escape: () => { clearMarks(); $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
+    i: () => markAt('a'), o: () => markAt('b'), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), Enter: () => { if (marked()) saveMoment(); }, Escape: () => { clearMarks(); $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
   if (act) { ev.preventDefault(); act(); }
 });
 
@@ -1876,9 +1952,9 @@ function addToSlot(cam, files) {
   if (!n && files.length) toast('No new MP4 or MOV files there.', 'warn', 3000);
   renderPicker();
 }
-function openPicker() {
+function openPicker(files) {
   $('pkTitle').textContent = S.entries.length ? 'Add more footage' : 'Open your dashcam footage';
-  $('picker').classList.add('open'); renderPicker();
+  $('picker').classList.add('open'); showPickerFiles(files === true);
 }
 function closePicker() { $('picker').classList.remove('open'); for (const c of CAMS) PK[c] = []; if (!S.entries.length) $('overlay').style.display = 'flex'; }
 function slotTimes(list) {
@@ -1916,14 +1992,11 @@ function renderPicker() {
       ${show.map(r => `<tr><td>${r.when ? fmtClock(r.when) : '?'}${r.kind !== 'normal' ? ` <span class="badge ${r.kind === 'event' ? 'ev' : 'pk'}">${r.kind === 'event' ? 'Locked' : 'Parked'}</span>` : ''}</td>${used.map(c => r[c] ? `<td class="y" style="color:${SLOT[c].dot}">✓</td>` : '<td class="no">missing</td>').join('')}</tr>`).join('')}</table>
       ${list.length > show.length ? `<div class="more">and ${list.length - show.length} more</div>` : ''}`;
   }
-  $('pkOpen').disabled = !all.length; $('pkMerge').disabled = !all.length;
-  $('pkMerge').textContent = list.length > 1 ? `Open and merge ${list.length} recordings` : 'Open and merge';
+  $('pkOpen').disabled = !all.length; $('pkOpen').style.display = $('pkFiles').style.display === 'none' ? 'none' : '';
   $('pkCancel').style.display = S.entries.length || all.length ? '' : 'none';
 }
-async function pickerLoad(merge) {
-  const files = CAMS.flatMap(c => PK[c]); if (!files.length) return;
-  const added = await loadFiles(files);
-  if (merge && added && added.length) mergeEntries(added);
+async function pickerLoad() {
+  const files = CAMS.flatMap(c => PK[c]); if (files.length) await loadFiles(files);
 }
 $('slots').addEventListener('click', ev => {
   const cl = ev.target.closest('[data-clear]'); if (cl) { ev.stopPropagation(); PK[cl.dataset.clear] = []; renderPicker(); return; }
@@ -1941,11 +2014,12 @@ $('slots').addEventListener('drop', async ev => {
 });
 $('pkCancel').onclick = closePicker;
 $('pkOpen').onclick = () => pickerLoad(false);
-$('pkMerge').onclick = () => pickerLoad(true);
+$('pkShowFiles').onclick = ev => { ev.preventDefault(); showPickerFiles(true); };
+function showPickerFiles(on) { $('pkFiles').style.display = on ? '' : 'none'; $('pkMore').style.display = on ? 'none' : ''; renderPicker(); }
 $('picker').addEventListener('click', ev => { if (ev.target.id === 'picker' && S.entries.length) closePicker(); });
 
 (async () => {
-  initMap(); changed(); layout(); openPicker();
+  initMap(); mvRender(); renderMoments(); layout(); openPicker();
   if (!canPickDir) { $('saveName').textContent = 'Safari downloads folder'; if (!/Safari/.test(navigator.userAgent) || /Chrome|Edg/.test(navigator.userAgent)) $('saveName').textContent = 'Downloads'; $('btnSaveDir').textContent = 'How to change…'; }
   const h = await idb.get('saveDir'); if (h) { S.saveDir = h; $('saveName').textContent = h.name; }
 })();
