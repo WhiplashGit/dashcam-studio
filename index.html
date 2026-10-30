@@ -171,23 +171,38 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .drive .dt{flex:1;min-width:0;font-size:12px;color:var(--dim);line-height:1.35}
 .drive .dt b{color:var(--text);display:block;font-size:12.5px}
 .drive button{padding:4px 10px;font-size:12px}
-/* edit timeline track */
-.tl-tools{display:flex;gap:6px;align-items:center;padding:0 12px 8px;flex-wrap:wrap}
-.tl-tools .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
-.tl-tools .selinfo{color:var(--dim);font-variant-numeric:tabular-nums;margin-left:4px}
-.tl-tools .grow{flex:1}
-.cards{overflow-x:auto;padding:6px 12px 12px;min-height:104px}
-.cards .empty{color:var(--faint);padding:24px 4px}
-.track{position:relative;height:80px;display:flex;align-items:stretch;user-select:none;-webkit-user-select:none;width:max-content;min-width:100%}
-.piece{position:relative;flex:0 0 auto;height:100%;border-radius:6px;margin-right:3px;background:#2a3140 center/cover no-repeat;overflow:hidden;border:2px solid #3a4252;cursor:pointer}
-.piece:hover{border-color:#5a6478}
-.piece.sel{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
-.piece.drag{opacity:.4}.piece.over{border-color:var(--accent)}
-.piece .pl,.piece .pd,.piece .pm{position:absolute;font-size:11px;font-weight:700;background:rgba(0,0,0,.7);border-radius:3px;padding:0 4px;white-space:nowrap;pointer-events:none}
-.piece .pl{left:4px;top:3px}.piece .pd{right:4px;bottom:3px;font-weight:600}.piece .pm{left:4px;bottom:3px;background:var(--bad)}
-.seam{flex:0 0 auto;width:16px;margin-right:3px;display:flex;align-items:center;justify-content:center;color:var(--warn);font-size:13px;pointer-events:none}
-.playhead{position:absolute;top:-6px;bottom:-4px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
-.playhead::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;border-top-color:#fff}
+/* my video editor */
+.ed-empty{color:var(--dim);padding:18px 14px 22px;font-size:14px;line-height:1.5}
+.ed-guide{padding:2px 12px 10px;font-size:14px;line-height:1.45;color:var(--text)}
+.ed-guide .dim{color:var(--faint);font-size:12.5px}
+.ed-guide b.red{color:#ff8f8f}.ed-guide b.green{color:#7fe0a8}
+.ed-barwrap{padding:24px 12px 4px}
+.movie{position:relative;height:74px;border-radius:8px;background:#222833;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.strip{position:absolute;inset:0;border-radius:8px;overflow:hidden}
+.strip .tile{position:absolute;top:0;bottom:0;background:#2a3140 center/cover no-repeat}
+.movie .rm{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(12,14,18,.88) 0 8px,rgba(40,44,52,.88) 8px 16px);display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
+.movie .rm span,.movie .mu span{font-size:11.5px;font-weight:700;color:#c9ced8;background:rgba(0,0,0,.6);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.movie .mu{position:absolute;top:0;height:16px;background:rgba(61,139,253,.55);display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
+.movie .mu span{background:none;padding:0;font-size:11px}
+.selr{position:absolute;top:-6px;bottom:-6px;background:rgba(245,200,75,.28);border:3px solid #f5c84b;border-radius:6px;display:none;z-index:2}
+.selr .h{position:absolute;top:50%;width:14px;height:34px;margin-top:-17px;background:#f5c84b;border-radius:4px;cursor:ew-resize}
+.selr .h[data-h="a"]{left:-9px}.selr .h[data-h="b"]{right:-9px}
+.selr .sellen{position:absolute;left:50%;top:-22px;transform:translateX(-50%);background:#f5c84b;color:#111;font-weight:700;font-size:11.5px;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.mk{position:absolute;top:-8px;bottom:-8px;width:4px;margin-left:-2px;background:#f5c84b;border-radius:2px;display:none;z-index:2}
+.mk::after{content:"start";position:absolute;top:-16px;left:4px;font-size:11px;font-weight:700;color:#f5c84b}
+.playhead{position:absolute;top:-10px;bottom:-10px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
+.playhead span{position:absolute;top:-6px;left:50%;transform:translate(-50%,-100%);background:#fff;color:#111;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bartip{position:absolute;bottom:-22px;transform:translateX(-50%);background:#000;color:#fff;padding:1px 6px;border-radius:4px;font-size:11px;display:none;pointer-events:none;white-space:nowrap;z-index:4}
+.ruler{display:flex;justify-content:space-between;color:var(--faint);font-size:11.5px;padding:6px 2px 0;font-variant-numeric:tabular-nums}
+.ed-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px 12px}
+.ed-actions .sep{width:1px;height:28px;background:var(--line);margin:0 2px}
+button.big{padding:9px 14px;font-size:14px;font-weight:600;border-radius:8px}
+button.mark{border-color:#7a6326;color:#f5d27a}
+button.mark.done{background:rgba(245,200,75,.18);border-color:#f5c84b}
+button.danger:not(:disabled){background:#4a1f24;border-color:#a54548;color:#ffd0d0}
+button.danger:hover:not(:disabled){background:#5c252b}
+button.ok:not(:disabled){background:#173a2a;border-color:#2f8a5a;color:#c9f3dc}
+button.ok:hover:not(:disabled){background:#1d4733}
 .dropzone.active::after{content:"Drop your dashcam folder";position:fixed;inset:12px;border:3px dashed var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:rgba(15,17,21,.85);z-index:2000}
 </style>
 </head>
@@ -258,13 +273,8 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
           <button id="bAuto" class="on" title="Play the next clip automatically when one ends">Auto-next</button>
         </div>
         <div class="btnrow">
-          <button id="bIn" title="Mark the start of a section (I)">Mark in <kbd style="opacity:.6">I</kbd></button>
-          <button id="bOut" title="Mark the end of a section (O)">Mark out <kbd style="opacity:.6">O</kbd></button>
-          <span class="inout" id="inout">No section marked</span>
-          <button id="bClear" title="Clear in/out marks">Clear</button>
-          <div class="grow"></div>
-          <button id="bWhole" title="Add this entire clip to the edit timeline">Add whole clip</button>
-          <button class="primary" id="bAdd" title="Add the marked section to the edit timeline (A)">Add section <kbd style="opacity:.7">A</kbd></button>
+          <span class="dim" style="color:var(--faint)">Want just this one clip?</span>
+          <button id="bAddClip" title="Add the clip in the player to the end of your video at the bottom">＋ Add this clip to my video</button>
         </div>
       </div>
     </section>
@@ -283,34 +293,47 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 
   <section class="tl">
     <div class="tl-head">
-      <h3>Edit timeline</h3><span class="sum" id="tlSum"></span>
-      <button id="bProjOpen" title="Open a saved edit (project file)">Open edit…</button>
-      <button id="bProjSave" title="Save this edit as a small project file so you can reopen it later">Save edit</button>
-      <button id="bTlClear" title="Remove every section">Clear all</button>
+      <h3>My video</h3><span class="sum" id="tlSum"></span>
+      <button id="bProjOpen" title="Open an edit you saved earlier">Open saved edit…</button>
+      <button id="bProjSave" title="Save this edit as a small file so you can carry on later">Save edit for later</button>
+      <button id="bTlClear" title="Clear your video and start again">Start over</button>
     </div>
-    <div class="tl-tools" id="tlTools">
-      <button id="bTlPlay" class="primary" title="Play the timeline from the playhead, skipping everything you've cut (Shift+Space)">▶ Play edit</button>
-      <div class="sep"></div>
-      <button id="bCut" title="Split the piece at the playhead (C)">✂ Cut at playhead <kbd style="opacity:.6">C</kbd></button>
-      <button id="bCutOut" title="Remove the part between your in and out marks from the timeline (X)">Cut out marked <kbd style="opacity:.6">X</kbd></button>
-      <button id="bDel" title="Remove the selected piece (Delete)">Delete piece <kbd style="opacity:.6">⌫</kbd></button>
-      <button id="bMute" title="Silence the selected piece in the export">🔇 Mute piece</button>
-      <button id="bTrim" title="Fine-tune the selected piece's start and end with Mark in / Mark out in the player">Trim in player</button>
-      <div class="sep"></div>
-      <button id="bUndo" title="Undo the last timeline change (⌘Z)">↶ Undo</button>
-      <span class="selinfo" id="selInfo"></span>
-      <div class="grow"></div>
-      <button class="icon" id="bZoomOut" title="Zoom out">−</button><button id="bZoomFit" title="Fit the whole edit">Fit</button><button class="icon" id="bZoomIn" title="Zoom in">+</button>
+    <div class="ed-empty" id="edEmpty"><b>Put your clips together here.</b> Click <b>Merge</b> next to a drive in the list on the left, and its clips join up into one video in this space. Then you can cut out the parts you don't want.</div>
+    <div id="edBar" style="display:none">
+      <div class="ed-guide" id="edGuide"></div>
+      <div class="ed-barwrap">
+        <div class="movie" id="movie">
+          <div class="strip" id="strip"></div><div id="ovl"></div>
+          <div class="selr" id="selr"><span class="h" data-h="a"></span><span class="sellen" id="selLen"></span><span class="h" data-h="b"></span></div>
+          <div class="mk" id="mkA"></div>
+          <div class="playhead" id="playhead"><span id="phTime"></span></div>
+          <div class="bartip" id="barTip"></div>
+        </div>
+        <div class="ruler"><span id="rulA"></span><span id="rulB"></span></div>
+      </div>
+      <div class="ed-actions">
+        <button class="big primary" id="bWatch" title="Play your video, skipping the parts you deleted (Shift+Space)">▶ Watch my video</button>
+        <div class="sep"></div>
+        <button class="big mark" id="bMarkA" title="Mark where a part begins, at the point the video is showing now (I)">⟦ Mark start</button>
+        <button class="big mark" id="bMarkB" title="Mark where the part ends, at the point the video is showing now (O)">Mark end ⟧</button>
+        <button id="bClearMarks" title="Remove the marks (Esc)">Clear marks</button>
+        <div class="sep"></div>
+        <button class="big danger" id="bDelPart" title="Cut the marked part out of your video (Delete)">✕ Delete marked part</button>
+        <button class="big ok" id="bKeepPart" title="Keep only the marked part and delete everything else">✓ Keep only marked part</button>
+        <button class="big" id="bMutePart" title="Make the marked part silent in your saved video">🔇 Make it silent</button>
+        <div class="sep"></div>
+        <button class="big" id="bPutBack" title="Bring back a part you deleted or silenced: click on it in the bar first">↺ Put back</button>
+        <button class="big" id="bUndo" title="Undo your last change (⌘Z)">↶ Undo</button>
+      </div>
     </div>
-    <div class="cards" id="cards"></div>
     <div class="tl-head exportbar" style="border-top:1px solid var(--line);padding:10px 12px">
       <label>Name <input type="text" id="exportName" value="Drive"></label>
       <label>Camera <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
-      <label>Output <select id="exMode"><option value="one">One combined video</option><option value="each">One video per section</option></select></label>
-      <label>Sound <select id="exAudio"><option value="keep">Keep (muted sections silent)</option><option value="remove">Remove all sound</option></select></label>
+      <label>Output <select id="exMode"><option value="one">One combined video</option><option value="each">One video per kept part</option></select></label>
+      <label>Sound <select id="exAudio"><option value="keep">Keep (silent parts stay silent)</option><option value="remove">Remove all sound</option></select></label>
       <div style="flex:1"></div>
       <span id="exStatus" style="color:var(--dim)"></span>
-      <button class="primary" id="bExport" disabled>Export</button>
+      <button class="primary big" id="bExport" disabled title="Save your finished video as a file">💾 Save my video</button>
     </div>
   </section>
 </div>
@@ -321,17 +344,16 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
   <h2>Dashcam Studio — how it works</h2>
   <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, locked after a bump or the emergency button, and parked). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
   <p><b>Keeping clips:</b> click the ☆ beside a clip (or press <kbd>K</kbd>) to keep it. Kept clips stay starred next time you open the folder. The <b>★ Kept</b> tab lists them from every day: use <b>Add all to edit</b> to put them on the timeline, or <b>Copy originals</b> to copy the untouched files into a "Kept clips" folder inside your save folder, safe from the dashcam's loop recording.</p>
-  <p><b>Merging and cutting:</b> clips recorded back to back are grouped into drives in the list. Click <b>Merge</b> on a drive to lay all of its clips end to end in the edit timeline. Click anywhere on the timeline to jump there, then press <kbd>C</kbd> to cut at the playhead. Select a piece you don't want and press <kbd>⌫</kbd> to remove it. Or mark in (<kbd>I</kbd>) and out (<kbd>O</kbd>) around the unwanted part and press <kbd>X</kbd> to cut it out. <b>Play edit</b> plays the result, skipping what you removed. <kbd>⌘Z</kbd> undoes.</p>
-  <p><b>Picking sections:</b> you can also build an edit the other way round: mark the start (<kbd>I</kbd>) and end (<kbd>O</kbd>) of what you want to keep and add it (<kbd>A</kbd>). Drag pieces to reorder them.</p>
-  <p><b>Export</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
+  <p><b>Making your video:</b> clips recorded back to back are grouped into drives in the list. Click <b>Merge</b> on a drive and its clips join up into one video in <b>My video</b> at the bottom.</p>
+  <p><b>Cutting out a part:</b> play the video, or click on the bar, to where the part begins and press <b>Mark start</b>. Go to where it ends and press <b>Mark end</b>. The part turns yellow. Then press <b>Delete marked part</b> to cut it out, or <b>Keep only marked part</b> to throw away everything else. You can also drag across the bar to mark a part, and drag the yellow handles to adjust it. Deleted parts stay on the bar, greyed out: click one and press <b>Put back</b> to bring it back. <b>Watch my video</b> plays the result, and <b>Undo</b> takes back your last change.</p>
+  <p><b>Save my video</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
   <p><b>Save folder:</b> in Chrome, choose a folder once and every export goes straight into it. Other browsers save to Downloads. From there, drag the files into Photos or iMovie.</p>
   <table>
     <tr><td><kbd>Space</kbd></td><td>Play / pause</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 5 s</td></tr>
     <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>Frame back / forward</td><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous clip</td></tr>
-    <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark in / out</td><td><kbd>A</kbd></td><td>Add section</td></tr>
+    <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark start / end</td><td><kbd>⇧ Space</kbd></td><td>Watch my video</td></tr>
     <tr><td><kbd>S</kbd></td><td>Switch main camera</td><td><kbd>M</kbd></td><td>Mute playback</td></tr>
-    <tr><td><kbd>C</kbd></td><td>Cut the timeline at the playhead</td><td><kbd>X</kbd></td><td>Cut out the marked part</td></tr>
-    <tr><td><kbd>⌫</kbd></td><td>Delete the selected piece</td><td><kbd>⌘Z</kbd></td><td>Undo a timeline change</td></tr>
+    <tr><td><kbd>⌫</kbd></td><td>Delete the marked part</td><td><kbd>⌘Z</kbd></td><td>Undo</td></tr>
     <tr><td><kbd>K</kbd></td><td>Keep / un-keep this clip</td><td></td><td></td></tr>
   </table>
   <p><b>TriPro third camera:</b> <select id="thirdName"><option value="Separate front">Separate front camera</option><option value="Bumper">Bumper camera</option><option value="Cabin">Cabin camera</option><option value="Camera 3">Other</option></select> <span style="color:var(--dim)">(sets the label used on screen and in export file names)</span></p>
@@ -893,8 +915,8 @@ const okClips = e => clipsOf(e).filter(c => c.ok);
 const S = {
   entries: [], byKey: new Map(), day: null, kind: 'all', shown: [], cur: -1,
   layout: 'pip', mainCam: 'front', autoNext: true, follow: true,
-  inT: null, outT: null, timeline: [], editing: -1, saveDir: null, stopAt: null, previewing: false,
-  tlSel: -1, tlPlaying: false, tlZoom: 0, undo: [],
+  timeline: [], saveDir: null, stopAt: null, previewing: false,
+  movie: [], removed: [], muted: [], mA: null, mB: null, mvPos: null, mvPlaying: false, undo: [],
 };
 
 /* ---------- utilities ---------- */
@@ -955,16 +977,19 @@ function kindOf(rel) { const r = rel.toLowerCase(); if (/park/.test(r)) return '
 async function loadFiles(files) {
   files = files.filter(f => /\.(mp4|mov)$/i.test(f.name) && !f.name.startsWith('._') && f.size > 0);
   if (!files.length) { toast('No MP4 or MOV video files were found there.', 'warn'); return; }
-  progress(true, 'Reading clips…', `0 of ${files.length}`, 0);
-  const clips = [];
-  await pool(files, 8, async (f) => {
-    const c = await D.openClip(f);
-    c.rel = f._rel || f.webkitRelativePath || f.name;
+  // the list is built from file names alone; each clip's own details are read later, only when needed
+  const clips = files.map(f => {
+    const rel = f._rel || f.webkitRelativePath || f.name;
     // files chosen for a camera box keep that camera and pair by file name alone, whichever folder they came from
-    c.cam = f._cam || camOf(c.rel); c.key = f._cam ? pairKey(c.rel.split('/').pop()) + '|' + kindOf(c.rel) : pairKey(c.rel);
-    c.when = timeFromName(c.rel) || (c.ok && await D.firstGpsTime(c)) || c.creation || new Date(f.lastModified);
-    clips.push(c);
-  }, done => progress(true, null, `${done} of ${files.length}`, done / files.length));
+    const cam = f._cam || camOf(rel), key = f._cam ? pairKey(rel.split('/').pop()) + '|' + kindOf(rel) : pairKey(rel);
+    return { file: f, name: f.name, size: f.size, rel, cam, key, when: timeFromName(rel), ok: true, pending: true, duration: 0 };
+  });
+  const noTime = clips.filter(c => !c.when);   // unusual names: the recording time has to come from inside the file
+  if (noTime.length) {
+    progress(true, 'Reading clips…', `0 of ${noTime.length}`, 0);
+    await pool(noTime, 8, async c => { await readClip(c); c.when = (c.ok && await D.firstGpsTime(c)) || c.creation || new Date(c.file.lastModified); },
+      done => progress(true, null, `${done} of ${noTime.length}`, done / noTime.length));
+  }
 
   // pair front/rear
   const map = new Map();
@@ -983,11 +1008,10 @@ async function loadFiles(files) {
   for (const e of map.values()) if (!existing.has(e.key)) { S.entries.push(e); added.push(e); }
   S.entries.sort((a, b) => a.when - b.when || a.key.localeCompare(b.key));
   S.byKey = new Map(S.entries.map(e => [e.key, e]));
-  S.entries.forEach(e => { const ok = okClips(e); e.main = ok[0] || clipsOf(e)[0]; e.day = dayKey(e.when); e.ok = ok.length > 0; e.dur = ok.length ? ok[0].duration : 0; });
+  S.entries.forEach(e => { e.day = dayKey(e.when); e.pending = clipsOf(e).some(c => c.pending); finishEntry(e); });
   buildCamOptions();
   progress(false);
-  const bad = clips.filter(c => !c.ok).length;
-  toast(`Loaded <b>${clips.length}</b> files as <b>${map.size}</b> clips` + (bad ? ` · ${bad} damaged file${bad > 1 ? 's' : ''} labelled` : '') + '.', 'good');
+  toast(`Found <b>${clips.length}</b> files: <b>${map.size}</b> clips.`, 'good', 3000);
   $('overlay').style.display = 'none';
   closePicker();
   buildDays();
@@ -995,12 +1019,28 @@ async function loadFiles(files) {
   return added.sort((a, b) => a.when - b.when);
 }
 
+/* reading a clip's details (length, cameras' tracks, GPS) only touches its small index, never the video */
+function readClip(c) {
+  if (!c.pending) return Promise.resolve(c);
+  if (!c.readP) c.readP = D.openClip(c.file).then(r => { const { rel, cam, key, when } = c; Object.assign(c, r, { rel, cam, key, when, pending: false }); return c; });
+  return c.readP;
+}
+function finishEntry(e) { const ok = okClips(e); e.main = ok[0] || clipsOf(e)[0]; e.ok = ok.length > 0; e.dur = ok.length ? ok[0].duration : 0; }
+function ensureEntry(e) {
+  if (!e || !e.pending) return Promise.resolve(e);
+  if (!e.readP) e.readP = Promise.all(clipsOf(e).map(readClip)).then(() => { e.pending = false; finishEntry(e); listRefreshSoon(); return e; });
+  return e.readP;
+}
+let listTimer = 0;
+function listRefreshSoon() { if (listTimer) return; listTimer = setTimeout(() => { listTimer = 0; renderList(false, true); }, 300); }
+
 /* clips recorded back to back (next starts within a few seconds of the last one ending) form one drive */
 function drivesOf(list) {
   const out = []; let cur = null;
   for (const e of list) {
     const p = cur && cur[cur.length - 1];
-    const gap = p ? (e.when - p.when) / 1000 - (p.dur || 180) : Infinity;
+    const pd = p && (p.pending ? Math.min((e.when - p.when) / 1000, 600) : p.dur || 180);   // length not read yet: assume it runs up to the next clip
+    const gap = p ? (e.when - p.when) / 1000 - pd : Infinity;
     if (p && e.day === p.day && e.kind === p.kind && gap > -5 && gap <= 15) cur.push(e); else out.push(cur = [e]);
   }
   return out;
@@ -1015,7 +1055,7 @@ function buildDays() {
   renderList(true);
 }
 
-function renderList(selectFirst) {
+function renderList(selectFirst, quiet) {
   S.shown = S.kind === 'kept' ? S.entries.filter(isKept) : S.entries.filter(e => e.day === S.day && (S.kind === 'all' || e.kind === S.kind));
   const multiDay = S.kind === 'kept' && new Set(S.shown.map(e => e.day)).size > 1;
   const L = $('clipList');
@@ -1034,7 +1074,7 @@ function renderList(selectFirst) {
     const errs = clipsOf(e).filter(c => !c.ok);
     if (errs.length) b.push(`<span class="badge err" title="${esc(errs.map(c => c.error).join(' '))}">${!e.ok ? 'Damaged' : errs.map(c => camName(c.cam)).join(' + ') + ' damaged'}</span>`);
     const kept = isKept(e);
-    return head + `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
+    return head + `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.pending ? '…' : e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
   }).join('') || `<div style="padding:20px;color:var(--faint)">${S.kind === 'kept' ? 'No kept clips yet. Click the ☆ beside any clip (or press K) to keep it.' : 'No clips of this type on this day.'}</div>`;
   const day = S.entries.filter(e => e.day === S.day), cnt = { all: day.length, kept: S.entries.filter(isKept).length };
   for (const k of ['normal', 'event', 'parking']) cnt[k] = day.filter(e => e.kind === k).length;
@@ -1051,13 +1091,13 @@ function renderList(selectFirst) {
   $('btnAddAll').disabled = !S.shown.some(e => e.ok);
   $('btnCopyKept').style.display = S.kind === 'kept' && S.shown.length ? '' : 'none';
   $('daySel').disabled = S.kind === 'kept';
-  drawDayRoutes();
+  if (!quiet) { drawDayRoutes(); pool(S.shown.filter(e => e.pending), 2, ensureEntry); }
   if (selectFirst) { const k = S.shown.findIndex(e => e.ok); if (k >= 0) selectClip(k, 0, false); }
-  else markCurrent();
+  else markCurrent(quiet);
 }
-function markCurrent() {
+function markCurrent(noScroll) {
   document.querySelectorAll('.clip').forEach(el => el.classList.toggle('cur', +el.dataset.i === S.cur));
-  const el = document.querySelector('.clip.cur'); if (el) el.scrollIntoView({ block: 'nearest' });
+  const el = document.querySelector('.clip.cur'); if (el && !noScroll) el.scrollIntoView({ block: 'nearest' });
 }
 
 /* ---------- playback ---------- */
@@ -1078,8 +1118,8 @@ const liveSubs = () => SUBS.filter(v => v.getAttribute('src'));
 async function selectClip(i, t = 0, play = false) {
   const e = S.shown[i]; if (!e) return;
   S.cur = i; markCurrent();
-  S.inT = S.outT = null; S.stopAt = null;
-  if (S.editing >= 0 && S.timeline[S.editing].key !== e.key) setEditing(-1);
+  S.stopAt = null;
+  if (e.pending) { await ensureEntry(e); if (curEntry() !== e) return; }
   updateInOut();
   if (!e.ok) {
     [vA, ...SUBS].forEach(v => setSrc(v, null)); layout();
@@ -1130,7 +1170,7 @@ vA.addEventListener('pause', () => { SUBS.forEach(v => v.pause()); $('bPlay').te
 vA.addEventListener('seeking', () => { if (isFinite(vA.currentTime)) liveSubs().forEach(v => { v.currentTime = Math.min(vA.currentTime, (v.duration || 1e9) - 0.05); }); });
 vA.addEventListener('ratechange', () => { SUBS.forEach(v => { v.playbackRate = vA.playbackRate; }); });
 vA.addEventListener('ended', () => {
-  if (S.tlPlaying) { const i = S.timeline.findIndex((s, k) => k >= S.tlSel && s.key === (curEntry() || {}).key); tlAdvance(i < 0 ? S.tlSel : i); return; }
+  if (S.mvPlaying) { const T = mvNow(); if (T != null) { const m = itemAt(T); mvJump(m.off + m.end - m.start); } return; }
   if (S.previewing) { S.previewing = false; return; } if (S.autoNext) nextClip(1, true);
 });
 vA.addEventListener('error', () => {
@@ -1147,7 +1187,7 @@ function tick(force) {
   $('tCur').textContent = fmt(t); $('tDur').textContent = fmt(d);
   const p = d ? t / d * 100 : 0;
   $('scrubFill').style.width = p + '%'; $('scrubKnob').style.left = p + '%';
-  updateHud(t); tlPlayhead();
+  updateHud(t); mvTick();
 }
 (function loop() { if (!vA.paused || S.dragging) tick(); requestAnimationFrame(loop); })();
 vA.addEventListener('timeupdate', () => { if (vA.paused) tick(); });
@@ -1163,210 +1203,277 @@ vA.addEventListener('timeupdate', () => { if (vA.paused) tick(); });
 })();
 
 /* ---------- in / out & timeline ---------- */
-function updateInOut() {
-  const d = vA.duration || 0, sel = $('scrubSel');
-  const a = S.inT, b = S.outT;
-  if (a == null && b == null) { $('inout').textContent = 'No section marked'; sel.style.display = 'none'; }
-  else {
-    const s = a ?? 0, e = b ?? d;
-    $('inout').textContent = `${fmt(s, true)} → ${fmt(e, true)}  (${fmt(e - s, true)})`;
-    if (d) { sel.style.display = 'block'; sel.style.left = (s / d * 100) + '%'; sel.style.width = ((e - s) / d * 100) + '%'; }
-  }
-  $('bAdd').innerHTML = S.editing >= 0 ? 'Update section ' + (S.editing + 1) : 'Add section <kbd style="opacity:.7">A</kbd>';
+/* ---------- my video: merged clips shown and edited as one continuous video ----------
+   S.movie lists source pieces {key, start, end} played end to end. S.removed and S.muted are
+   [from, to] ranges in seconds of that combined video. S.timeline (what export uses) is derived. */
+function updateInOut() { mvDraw(); }
+const mvTotal = () => S.movie.reduce((a, m) => a + (m.end - m.start), 0);
+function mvLayout() { let o = 0; for (const m of S.movie) { m.off = o; o += m.end - m.start; } return o; }
+function rangeAdd(list, a, b) {
+  const out = [];
+  for (const r of [...list, [a, b]].sort((x, y) => x[0] - y[0])) { const l = out[out.length - 1]; if (l && r[0] <= l[1] + 0.05) l[1] = Math.max(l[1], r[1]); else out.push([r[0], r[1]]); }
+  return out;
 }
-function markIn() { if (!vA.duration) return; S.inT = vA.currentTime; if (S.outT != null && S.outT <= S.inT) S.outT = null; updateInOut(); }
-function markOut() { if (!vA.duration) return; S.outT = vA.currentTime; if (S.inT != null && S.inT >= S.outT) S.inT = null; updateInOut(); }
+function rangeSub(list, a, b) {
+  const out = [];
+  for (const [x, y] of list) { if (y <= a || x >= b) { out.push([x, y]); continue; } if (a - x > 0.1) out.push([x, a]); if (y - b > 0.1) out.push([b, y]); }
+  return out;
+}
+const rangeAt = (list, T) => list.find(r => T >= r[0] && T < r[1]);
+const overlaps = (list, a, b) => list.some(r => r[1] > a && r[0] < b);
+const keptLength = () => { let k = mvTotal(); for (const r of S.removed) k -= r[1] - r[0]; return Math.max(0, k); };
+function itemAt(T) { return S.movie.find(m => T < m.off + m.end - m.start) || S.movie[S.movie.length - 1]; }
+function clockAt(T) { const m = itemAt(T), e = m && S.byKey.get(m.key); return e ? fmtClock(new Date(e.when.getTime() + (m.start + T - m.off) * 1000)) : ''; }
 
-function thumbNow() {
-  try { const c = document.createElement('canvas'); c.width = 176; c.height = 99; c.getContext('2d').drawImage(vA, 0, 0, 176, 99); return c.toDataURL('image/jpeg', 0.7); } catch (_) { return ''; }
+// the player's position as a time in my video, or null when the clip on screen isn't part of it
+function mvNow() {
+  const e = curEntry(); if (!e || !vA.getAttribute('src') || vA.readyState < 1) return null;
+  const t = vA.currentTime, mine = S.movie.filter(m => m.key === e.key);
+  const m = mine.find(m => t >= m.start - 0.05 && t < m.end) || mine.find(m => t >= m.start - 0.05 && t <= m.end + 0.05);
+  return m ? m.off + Math.min(Math.max(t, m.start), m.end) - m.start : null;
 }
-function addSection(whole) {
-  const e = curEntry(); if (!e || !e.ok || !vA.duration) { toast('Open a clip first.', 'warn', 3000); return; }
-  const d = e.dur || vA.duration;
-  let s = whole ? 0 : (S.inT ?? 0), en = whole ? d : (S.outT ?? d);
-  if (en - s < 0.2) { toast('That section is too short. Mark an in point (I) and an out point (O).', 'warn', 4000); return; }
-  const sec = { key: e.key, start: s, end: en, mute: false, thumb: thumbNow() };
-  snap();
-  if (S.editing >= 0 && !whole) { sec.mute = S.timeline[S.editing].mute; S.timeline[S.editing] = sec; toast(`Section ${S.editing + 1} updated.`, 'good', 2500); setEditing(-1); }
-  else { S.timeline.push(sec); }
-  const snap = D.snapSegment(e.main.ok ? e.main : mainClip(e), s, en);
-  if (s - snap.start > 0.05) toast(`Section will start at ${fmt(snap.start, true)}, the nearest keyframe before your mark.`, '', 3500);
-  S.inT = S.outT = null; updateInOut(); renderTimeline();
-}
-function addAllShown() { mergeEntries(S.shown); }
-
-/* lay whole clips end to end in the timeline so unwanted parts can be cut out */
-function mergeEntries(list) {
-  const ok = list.filter(e => e.ok && e.dur > 0); if (!ok.length) { toast('Those clips can\'t be played, so there is nothing to merge.', 'warn'); return; }
-  snap();
-  const first = S.timeline.length;
-  for (const e of ok) S.timeline.push({ key: e.key, start: 0, end: e.dur, mute: false, thumb: '' });
-  S.tlZoom = 0; S.tlSel = first; renderTimeline();
-  tlSeek(first, 0, false);
-  toast(`Merged <b>${ok.length}</b> clip${ok.length > 1 ? 's' : ''} (${fmt(ok.reduce((a, e) => a + e.dur, 0))}) into the timeline. Click the timeline to jump around, press <b>C</b> to cut, then select a piece you don't want and press <b>⌫</b>.`, 'good', 9000);
-}
-
-/* undo for every timeline change */
-function snap() { S.undo.push(S.timeline.map(s => ({ ...s }))); if (S.undo.length > 60) S.undo.shift(); }
-function undo() {
-  if (!S.undo.length) { toast('Nothing to undo.', '', 2000); return; }
-  S.timeline = S.undo.pop(); S.tlSel = Math.min(S.tlSel, S.timeline.length - 1); S.editing = -1;
-  renderTimeline(); updateInOut();
-}
-
-function setEditing(i) { S.editing = i; renderTimeline(); updateInOut(); }
-// does piece b carry straight on from piece a in the original recording?
-function continues(a, b) {
-  if (a.key === b.key) return Math.abs(a.end - b.start) < 0.05;
-  const ea = S.byKey.get(a.key), eb = S.byKey.get(b.key); if (!ea || !eb) return false;
-  if (b.start > 0.05 || ea.dur - a.end > 0.3) return false;
-  const gap = (eb.when - ea.when) / 1000 - ea.dur; return gap > -5 && gap <= 15;
-}
-function renderTimeline() {
-  const C = $('cards'), T = S.timeline;
-  if (S.tlSel >= T.length) S.tlSel = T.length - 1;
-  if (!T.length) {
-    C.innerHTML = '<div class="empty">Nothing here yet. Click <b>Merge</b> on a drive in the clip list to lay its clips out here, ready to cut. Or mark a section in the player (<b>I</b> at the start, <b>O</b> at the end) and add it (<b>A</b>).</div>';
-  } else {
-    const tot = T.reduce((a, s) => a + (s.end - s.start), 0);
-    const seams = T.filter((s, i) => i && !continues(T[i - 1], s)).length;
-    const avail = Math.max(240, C.clientWidth - 26 - T.length * 3 - seams * 19);
-    const pps = S.tlZoom || avail / tot;
-    S.tlPps = pps;
-    C.innerHTML = '<div class="track" id="track">' + T.map((s, i) => {
-      const e = S.byKey.get(s.key);
-      const when = e ? fmtClock(new Date(e.when.getTime() + s.start * 1000)) : 'missing clip';
-      const w = Math.max(26, (s.end - s.start) * pps);
-      if (!s.thumb) wantThumb(s);
-      return (i && !continues(T[i - 1], s) ? '<div class="seam" title="Cut">✂</div>' : '') +
-        `<div class="piece${S.tlSel === i ? ' sel' : ''}" draggable="true" data-i="${i}" style="width:${w.toFixed(1)}px;${s.thumb ? `background-image:url(${s.thumb})` : ''}" title="${esc(when)} · ${fmt(s.end - s.start)}${e ? ' · ' + esc(e.main.rel) : ''}">` +
-        `<span class="pl">${i + 1} · ${when}</span><span class="pd">${fmt(s.end - s.start)}</span>${s.mute ? '<span class="pm">MUTED</span>' : ''}</div>`;
-    }).join('') + '<div class="playhead" id="playhead"></div></div>';
-  }
-  const tot = T.reduce((a, s) => a + (s.end - s.start), 0);
-  $('tlSum').textContent = T.length ? `${T.length} piece${T.length > 1 ? 's' : ''} · ${fmt(tot)} total` : '';
-  $('bExport').disabled = !T.length;
-  tlTools(); tlPlayhead(true);
-  saveTimelineLocal();
-}
-function tlTools() {
-  const s = S.timeline[S.tlSel], e = s && S.byKey.get(s.key);
-  $('selInfo').textContent = s ? `Piece ${S.tlSel + 1} of ${S.timeline.length}: ${e ? fmtClock(new Date(e.when.getTime() + s.start * 1000)) : ''} · ${fmt(s.end - s.start, true)}` : (S.timeline.length ? 'Click a piece to select it' : '');
-  $('bDel').disabled = $('bMute').disabled = $('bTrim').disabled = !s;
-  $('bMute').textContent = s && s.mute ? '🔊 Unmute piece' : '🔇 Mute piece';
-  $('bTlPlay').disabled = !S.timeline.length;
-  $('bTlPlay').textContent = S.tlPlaying ? '❚❚ Pause edit' : '▶ Play edit';
-  $('bUndo').disabled = !S.undo.length;
-  ['bZoomOut', 'bZoomFit', 'bZoomIn'].forEach(id => { $(id).disabled = !S.timeline.length; });
-}
-// which piece is the player showing right now?
-function tlCurrent() {
-  const e = curEntry(); if (!e || !vA.getAttribute('src') || vA.readyState < 1 || vA.seeking) return -1;
-  const t = vA.currentTime, T = S.timeline, s = T[S.tlSel];
-  if (s && s.key === e.key && t >= s.start - 0.05 && t <= s.end + 0.05) return S.tlSel;
-  return T.findIndex(x => x.key === e.key && t >= x.start && t < x.end);
-}
-function tlPlayhead(force) {
-  const ph = $('playhead'); if (!ph) return;
-  const i = tlCurrent();
-  if (i < 0) { ph.style.display = 'none'; return; }
-  if (i !== S.tlSel) { S.tlSel = i; document.querySelectorAll('.piece').forEach(p => p.classList.toggle('sel', +p.dataset.i === i)); tlTools(); }
-  const s = S.timeline[i], el = document.querySelector(`.piece[data-i="${i}"]`); if (!el) return;
-  const x = el.offsetLeft + Math.min(1, Math.max(0, (vA.currentTime - s.start) / (s.end - s.start))) * el.offsetWidth;
-  ph.style.display = 'block'; ph.style.left = x + 'px';
-  const C = $('cards');
-  if (!vA.paused && (x < C.scrollLeft + 20 || x > C.scrollLeft + C.clientWidth - 40)) C.scrollLeft = x - 60;
-  // playing the edit: jump over whatever was cut
-  if (S.tlPlaying && !vA.paused && vA.currentTime >= s.end - 0.04) tlAdvance(i);
-}
-function tlAdvance(i) {
-  if (i + 1 < S.timeline.length) tlSeek(i + 1, S.timeline[i + 1].start, true);
-  else { S.tlPlaying = false; vA.pause(); tlTools(); }
-}
-// show piece i in the player at time t of its clip
-function tlSeek(i, t, play) {
-  const s = S.timeline[i]; if (!s) return;
-  const e = S.byKey.get(s.key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
-  S.tlSel = i; document.querySelectorAll('.piece').forEach(p => p.classList.toggle('sel', +p.dataset.i === i)); tlTools();
+function mvSeek(T, play) {
+  if (!S.movie.length) return;
+  T = Math.max(0, Math.min(T, mvTotal() - 0.02));
+  const m = itemAt(T), e = S.byKey.get(m.key);
+  if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
+  const t = m.start + (T - m.off);
+  S.mvPos = T;
   if (curEntry() === e && vA.getAttribute('src')) {
     if (Math.abs(vA.currentTime - t) > 0.04) vA.currentTime = t;
     if (play && vA.paused) vA.play().catch(() => {});
-    return;
+    mvDraw(); return;
   }
   if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
   let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
+  S.mvHold = performance.now() + 500;
   selectClip(k, t, play);
 }
-function tlPlayToggle() {
-  if (!S.timeline.length) return;
-  if (S.tlPlaying) { S.tlPlaying = false; vA.pause(); tlTools(); return; }
-  S.tlPlaying = true; S.previewing = false; S.stopAt = null;
-  const i = tlCurrent();
-  if (i >= 0 && vA.currentTime < S.timeline[i].end - 0.1) { S.tlSel = i; vA.play().catch(() => {}); }
-  else tlSeek(Math.max(0, S.tlSel), S.timeline[Math.max(0, S.tlSel)].start, true);
-  tlTools();
+
+/* watching my video skips the deleted parts */
+function mvJump(T) {
+  for (let r; (r = rangeAt(S.removed, T)); ) T = r[1];
+  if (T >= mvTotal() - 0.05) { S.mvPlaying = false; vA.pause(); mvDraw(); return; }
+  mvSeek(T, true);
+}
+function mvTick() {
+  const T = mvNow(); if (T != null) S.mvPos = T;
+  mvPlayhead(T);
+  if (!S.mvPlaying || vA.paused || vA.seeking || T == null || performance.now() < (S.mvHold || 0)) return;
+  if (rangeAt(S.removed, T)) { mvJump(T); return; }
+  const m = itemAt(T);
+  if (vA.currentTime >= m.end - 0.04) mvJump(m.off + m.end - m.start);
+}
+function watchToggle() {
+  if (!S.movie.length) return;
+  if (S.mvPlaying) { S.mvPlaying = false; vA.pause(); mvDraw(); return; }
+  S.mvPlaying = true; S.previewing = false; S.stopAt = null;
+  let T = mvNow(); if (T == null || T >= mvTotal() - 0.3) T = S.mvPos != null && S.mvPos < mvTotal() - 0.3 ? S.mvPos : 0;
+  mvJump(T); mvDraw();
 }
 
-/* cutting */
-function cutAtPlayhead() {
-  const i = tlCurrent();
-  if (i < 0) { toast('Move the playhead onto the timeline first: click the piece where you want to cut.', 'warn', 4000); return; }
-  const s = S.timeline[i], t = vA.currentTime;
-  if (t - s.start < 0.2 || s.end - t < 0.2) { toast('That\'s already the edge of a piece.', '', 2500); return; }
-  snap();
-  S.timeline.splice(i, 1, { ...s, end: t }, { ...s, start: t, thumb: '', _tq: false });
-  S.tlSel = i + 1; S.editing = -1; renderTimeline();
-}
-function cutOutMarked() {
-  const e = curEntry(); if (!e) return;
-  const a = S.inT ?? null, b = S.outT ?? null;
-  if (a == null || b == null) { toast('Mark the start (I) and end (O) of the part you want to remove, then press X.', 'warn', 4500); return; }
-  const out = []; let hit = 0;
-  for (const s of S.timeline) {
-    if (s.key !== e.key || b <= s.start || a >= s.end) { out.push(s); continue; }
-    hit++;
-    if (a - s.start >= 0.2) out.push({ ...s, end: a });
-    if (s.end - b >= 0.2) out.push({ ...s, start: b, thumb: '', _tq: false });
+/* putting clips together */
+function addAllShown() { mergeEntries(S.shown); }
+async function mergeEntries(list) {
+  list = list.filter(Boolean);
+  if (list.some(e => e.pending)) {
+    progress(true, 'Getting clips ready…', '', 0);
+    await pool(list, 3, ensureEntry, d => progress(true, null, `${d} of ${list.length}`, d / list.length));
+    progress(false);
   }
-  if (!hit) { toast('The marked part isn\'t in the timeline. Merge this clip\'s drive first.', 'warn', 4500); return; }
-  snap(); S.timeline = out; S.inT = S.outT = null; S.editing = -1; updateInOut(); renderTimeline();
-  toast(`Cut out ${fmt(b - a, true)}.`, 'good', 2500);
+  const ok = list.filter(e => e && e.ok && e.dur > 0); if (!ok.length) { toast('Those clips can\'t be played, so there is nothing to add.', 'warn'); return; }
+  snap();
+  const was = mvTotal();
+  for (const e of ok) S.movie.push({ key: e.key, start: 0, end: e.dur });
+  S.mA = S.mB = null; changed();
+  mvSeek(was, false);
+  toast(`${was ? 'Added' : 'Joined'} <b>${ok.length}</b> clip${ok.length > 1 ? 's' : ''} (${fmt(ok.reduce((a, e) => a + e.dur, 0))}) ${was ? 'to the end of' : 'into'} your video at the bottom.`, 'good', 5000);
 }
-function deletePiece() {
-  const i = S.tlSel; if (i < 0 || !S.timeline[i]) return;
-  snap(); S.timeline.splice(i, 1); S.editing = -1;
-  S.tlSel = Math.min(i, S.timeline.length - 1); renderTimeline();
-  if (S.tlSel >= 0) tlSeek(S.tlSel, S.timeline[S.tlSel].start, false);
-}
-function zoom(f) { if (!S.timeline.length) return; S.tlZoom = f ? Math.min(60, Math.max(0.01, (S.tlZoom || S.tlPps || 1) * f)) : 0; renderTimeline(); }
 
-$('cards').addEventListener('click', ev => {
-  const p = ev.target.closest('.piece'); if (!p) return;
-  const i = +p.dataset.i, s = S.timeline[i], r = p.getBoundingClientRect();
-  const f = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
-  S.tlPlaying = false;
-  tlSeek(i, s.start + f * (s.end - s.start) * 0.999, false);
-});
-(function dnd() {
-  let from = -1; const C = $('cards');
-  C.addEventListener('dragstart', ev => { const c = ev.target.closest('.piece'); if (!c) return; from = +c.dataset.i; c.classList.add('drag'); ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', 'piece'); });
-  C.addEventListener('dragend', () => { from = -1; document.querySelectorAll('.piece').forEach(c => c.classList.remove('drag', 'over')); });
-  C.addEventListener('dragover', ev => { const c = ev.target.closest('.piece'); if (from < 0 || !c) return; ev.preventDefault(); document.querySelectorAll('.piece').forEach(x => x.classList.toggle('over', x === c)); });
-  C.addEventListener('drop', ev => { const c = ev.target.closest('.piece'); if (from < 0 || !c) return; ev.preventDefault(); ev.stopPropagation(); const to = +c.dataset.i; if (to !== from) { snap(); const [m] = S.timeline.splice(from, 1); S.timeline.splice(to, 0, m); S.tlSel = to; } from = -1; S.editing = -1; renderTimeline(); updateInOut(); });
+/* undo covers every change to my video */
+function snap() { S.undo.push(JSON.stringify({ m: S.movie.map(({ key, start, end }) => ({ key, start, end })), r: S.removed, u: S.muted })); if (S.undo.length > 80) S.undo.shift(); }
+function undo() {
+  if (!S.undo.length) { toast('Nothing to undo.', '', 2000); return; }
+  const u = JSON.parse(S.undo.pop()); S.movie = u.m; S.removed = u.r; S.muted = u.u; S.mA = S.mB = null; changed();
+}
+function changed() { mvLayout(); mvDerive(); mvRender(); saveTimelineLocal(); }
+function mvDerive() {
+  const segs = [];
+  for (const m of S.movie) {
+    const A = m.off, B = A + m.end - m.start;
+    let keep = [[A, B]]; for (const r of S.removed) keep = rangeSub(keep, r[0], r[1]);
+    for (const [x, y] of keep) {
+      const cuts = [x, y]; for (const r of S.muted) for (const c of r) if (c > x && c < y) cuts.push(c);
+      cuts.sort((p, q) => p - q);
+      for (let i = 0; i < cuts.length - 1; i++) { const p = cuts[i], q = cuts[i + 1]; if (q - p < 0.1) continue; segs.push({ key: m.key, start: m.start + p - A, end: m.start + q - A, mute: !!rangeAt(S.muted, (p + q) / 2) }); }
+    }
+  }
+  S.timeline = segs;
+}
+
+/* marking and the three choices */
+const marked = () => S.mA != null && S.mB != null && S.mB - S.mA >= 0.2;
+function markAt(which) {
+  if (!S.movie.length) { toast('First put your clips together: click <b>Merge</b> next to a drive in the list.', 'warn', 5000); return; }
+  const T = mvNow();
+  if (T == null) { toast('The clip in the player isn\'t part of your video. Click the video bar at the bottom to go back to it.', 'warn', 5000); return; }
+  if (which === 'a') { S.mA = T; if (S.mB != null && S.mB <= T) S.mB = null; }
+  else { S.mB = T; if (S.mA == null) { S.mA = S.mB; S.mB = null; toast('Marked the start. Now find where the part ends and press <b>Mark end</b>.', '', 4000); } else if (S.mB < S.mA) [S.mA, S.mB] = [S.mB, S.mA]; }
+  mvDraw();
+}
+function clearMarks() { S.mA = S.mB = null; mvDraw(); }
+function deletePart() {
+  if (!marked()) { toast('First mark the start and the end of the part you want to delete.', 'warn', 4000); return; }
+  const a = S.mA, b = S.mB; snap(); S.removed = rangeAdd(S.removed, a, b); S.mA = S.mB = null; changed();
+  mvSeek(b, false);
+  toast(`Deleted ${fmt(b - a)}. Changed your mind? Press <b>Undo</b>.`, 'good', 4000);
+}
+function keepPart() {
+  if (!marked()) { toast('First mark the start and the end of the part you want to keep.', 'warn', 4000); return; }
+  const a = S.mA, b = S.mB, tot = mvTotal(); snap();
+  if (a > 0.05) S.removed = rangeAdd(S.removed, 0, a);
+  if (tot - b > 0.05) S.removed = rangeAdd(S.removed, b, tot);
+  S.mA = S.mB = null; changed(); mvSeek(a, false);
+  toast(`Kept ${fmt(b - a)} and deleted the rest. Changed your mind? Press <b>Undo</b>.`, 'good', 4000);
+}
+function mutePart() {
+  if (!marked()) { toast('First mark the start and the end of the part you want silent.', 'warn', 4000); return; }
+  const a = S.mA, b = S.mB, all = S.muted.some(r => r[0] <= a + 0.05 && r[1] >= b - 0.05); snap();
+  S.muted = all ? rangeSub(S.muted, a, b) : rangeAdd(S.muted, a, b);
+  S.mA = S.mB = null; changed();
+}
+// what "Put back" would restore: the marked part, or the deleted/silenced part under the playhead
+function putBackRange() {
+  if (marked()) return overlaps(S.removed, S.mA, S.mB) || overlaps(S.muted, S.mA, S.mB) ? [S.mA, S.mB] : null;
+  const T = S.mvPos; if (T == null) return null;
+  return rangeAt(S.removed, T) || rangeAt(S.muted, T) || null;
+}
+function putBack() {
+  const r = putBackRange(); if (!r) return;
+  snap(); S.removed = rangeSub(S.removed, r[0], r[1]); S.muted = rangeSub(S.muted, r[0], r[1]); S.mA = S.mB = null; changed();
+}
+function startOver() {
+  if (!S.movie.length) return;
+  snap(); S.movie = []; S.removed = []; S.muted = []; S.mA = S.mB = null; S.mvPlaying = false; changed();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Your video was cleared. <button style="margin-left:8px">Undo</button>';
+  t.querySelector('button').onclick = () => { undo(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000);
+}
+
+/* drawing the bar */
+const pct = T => (T / (mvTotal() || 1) * 100).toFixed(3) + '%';
+function mvRender() {
+  const tot = mvTotal(), has = S.movie.length > 0;
+  $('edEmpty').style.display = has ? 'none' : 'block';
+  $('edBar').style.display = has ? 'block' : 'none';
+  $('bExport').disabled = !S.timeline.length;
+  if (has) {
+    // film strip: one picture every ~110 px, taken from that moment of the video
+    const w = $('movie').clientWidth || 800, n = Math.max(4, Math.min(40, Math.round(w / 110)));
+    $('strip').innerHTML = Array.from({ length: n }, (_, i) => {
+      const T = (i + 0.5) * tot / n, m = itemAt(T), id = m.key + '@' + Math.round(m.start + T - m.off);
+      const th = THUMB.get(id); if (!th) wantThumb(id, m.key, m.start + T - m.off);
+      return `<div class="tile" data-th="${esc(id)}" style="left:${(i / n * 100).toFixed(3)}%;width:${(100 / n).toFixed(3)}%;${th ? `background-image:url(${th})` : ''}"></div>`;
+    }).join('');
+    $('rulA').textContent = clockAt(0);
+    $('rulB').textContent = clockAt(tot - 0.01);
+  }
+  mvDraw();
+}
+function mvDraw() {
+  S.mvInRm = S.mvPos != null && !!rangeAt(S.removed, S.mvPos);
+  const tot = mvTotal(), has = S.movie.length > 0;
+  const kept = keptLength();
+  $('tlSum').textContent = has ? (S.removed.length ? `${fmt(kept)} long, from ${fmt(tot)} of recording` : `${fmt(tot)} long`) : '';
+  if (has) {
+    $('ovl').innerHTML = S.removed.map(r => `<div class="rm" style="left:${pct(r[0])};width:${pct(r[1] - r[0])}" title="Deleted (${fmt(r[1] - r[0])}). Click it, then Put back, to bring it back."><span>Deleted</span></div>`).join('') +
+      S.muted.map(r => `<div class="mu" style="left:${pct(r[0])};width:${pct(r[1] - r[0])}" title="Silent (${fmt(r[1] - r[0])})"><span>🔇</span></div>`).join('');
+    const sel = $('selr'), mk = $('mkA');
+    if (S.mA != null && S.mB != null) { sel.style.display = 'block'; sel.style.left = pct(S.mA); sel.style.width = pct(S.mB - S.mA); mk.style.display = 'none'; $('selLen').textContent = fmt(S.mB - S.mA); }
+    else { sel.style.display = 'none'; mk.style.display = S.mA != null ? 'block' : 'none'; if (S.mA != null) mk.style.left = pct(S.mA); }
+  }
+  // the clip scrubber shows the marked part too, where it falls in this clip
+  const sc = $('scrubSel'), e = curEntry(), d = vA.duration || 0;
+  let shown = false;
+  if (e && d && S.mA != null) {
+    const a = S.mA, b = S.mB ?? S.mA;
+    for (const m of S.movie) if (m.key === e.key) {
+      const x = Math.max(a, m.off), y = Math.min(b, m.off + m.end - m.start);
+      if (y >= x) { const s = m.start + x - m.off, en = m.start + y - m.off; sc.style.left = (s / d * 100) + '%'; sc.style.width = Math.max(0.3, (en - s) / d * 100) + '%'; shown = true; break; }
+    }
+  }
+  sc.style.display = shown ? 'block' : 'none';
+  mvGuide(); mvButtons();
+}
+function mvPlayhead(T) {
+  const ph = $('playhead'); if (!ph) return;
+  if (T == null || !S.movie.length) { ph.style.display = 'none'; return; }
+  ph.style.display = 'block'; ph.style.left = pct(T); $('phTime').textContent = clockAt(T);
+  const inRm = !!rangeAt(S.removed, T);
+  if (inRm !== S.mvInRm) { S.mvInRm = inRm; mvGuide(); mvButtons(); }
+}
+function mvGuide() {
+  const g = $('edGuide');
+  if (!S.movie.length) { g.innerHTML = ''; return; }
+  let h;
+  if (S.mA != null && S.mB != null) h = `<b>Step 3.</b> The yellow part is marked (${fmt(S.mB - S.mA)}). Press <b class="red">Delete marked part</b> to cut it out, or <b class="green">Keep only marked part</b> to throw away everything else.`;
+  else if (S.mA != null) h = '<b>Step 2.</b> Now play on, or click the bar, to where that part ends. Then press <b>Mark end</b>.';
+  else if (S.mvInRm) h = 'You\'re looking at a part you deleted (it\'s greyed out on the bar and won\'t be in your video). Press <b>Put back</b> to bring it back.';
+  else h = '<b>Step 1.</b> Play the video, or click on the bar, to find where a part you want to delete (or keep) begins. Then press <b>Mark start</b>. <span class="dim">You can also drag across the bar to mark a part.</span>';
+  g.innerHTML = h;
+}
+function mvButtons() {
+  const has = S.movie.length > 0, mk = marked();
+  $('bWatch').disabled = !has; $('bWatch').innerHTML = S.mvPlaying ? '❚❚ Pause' : '▶ Watch my video';
+  $('bMarkA').disabled = $('bMarkB').disabled = !has;
+  $('bMarkA').classList.toggle('done', S.mA != null); $('bMarkB').classList.toggle('done', S.mB != null);
+  $('bDelPart').disabled = $('bKeepPart').disabled = $('bMutePart').disabled = !mk;
+  $('bMutePart').innerHTML = mk && S.muted.some(r => r[0] <= S.mA + 0.05 && r[1] >= S.mB - 0.05) ? '🔊 Sound back on' : '🔇 Make it silent';
+  $('bClearMarks').style.display = S.mA != null ? '' : 'none';
+  $('bPutBack').disabled = !putBackRange();
+  $('bUndo').disabled = !S.undo.length;
+  $('bTlClear').disabled = $('bProjSave').disabled = !has;
+}
+
+/* clicking and dragging on the bar */
+(function () {
+  const M = $('movie'); let drag = null;
+  const T = ev => { const r = M.getBoundingClientRect(); return Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * mvTotal(); };
+  M.addEventListener('pointerdown', ev => {
+    if (!S.movie.length) return;
+    const h = ev.target.closest('.h'); M.setPointerCapture(ev.pointerId);
+    drag = { x: ev.clientX, t0: T(ev), handle: h ? h.dataset.h : null, moved: false };
+  });
+  M.addEventListener('pointermove', ev => {
+    const r = M.getBoundingClientRect(), tip = $('barTip');
+    if (S.movie.length && ev.clientX >= r.left && ev.clientX <= r.right) { tip.style.display = 'block'; tip.style.left = (ev.clientX - r.left) + 'px'; tip.textContent = clockAt(T(ev)); }
+    if (!drag) return;
+    if (!drag.moved && Math.abs(ev.clientX - drag.x) < 5) return;
+    drag.moved = true; const t = T(ev);
+    if (drag.handle === 'a') S.mA = Math.min(t, S.mB - 0.2);
+    else if (drag.handle === 'b') S.mB = Math.max(t, S.mA + 0.2);
+    else { S.mA = Math.min(drag.t0, t); S.mB = Math.max(drag.t0, t); }
+    mvDraw();
+  });
+  M.addEventListener('pointerleave', () => { $('barTip').style.display = 'none'; });
+  M.addEventListener('pointerup', ev => {
+    if (!drag) return; const d = drag; drag = null;
+    if (!d.moved) { S.mvPlaying = false; mvSeek(T(ev), false); }
+    else { if (S.mB - S.mA < 0.2) S.mB = null; mvSeek(S.mA, false); }
+  });
 })();
 
-/* timeline thumbnails, made one at a time from a hidden video */
-const thumbQ = []; let thumbBusy = false;
+/* film strip pictures, made one at a time from a hidden video */
+const THUMB = new Map(), thumbQ = []; let thumbBusy = false;
 const tv = document.createElement('video'); tv.muted = true; tv.playsInline = true; tv.preload = 'auto';
 tv.style.cssText = 'position:fixed;left:0;top:0;width:4px;height:4px;opacity:0;pointer-events:none';
 document.body.appendChild(tv);
-function wantThumb(s) { if (s.thumb || s._tq) return; s._tq = true; thumbQ.push(s); runThumbs(); }
+function wantThumb(id, key, t) { if (THUMB.has(id) || thumbQ.some(q => q.id === id)) return; thumbQ.push({ id, key, t }); runThumbs(); }
 function grabFrame(file, t) {
   return new Promise(res => {
     const u = URL.createObjectURL(file); let done = false;
     const fin = v => { if (done) return; done = true; tv.onloadedmetadata = tv.onseeked = tv.onerror = null; URL.revokeObjectURL(u); res(v); };
-    tv.onloadedmetadata = () => { tv.currentTime = Math.min(t, (tv.duration || t) - 0.1); };
-    tv.onseeked = () => { try { const c = document.createElement('canvas'); c.width = 160; c.height = 90; c.getContext('2d').drawImage(tv, 0, 0, 160, 90); fin(c.toDataURL('image/jpeg', 0.65)); } catch (_) { fin(''); } };
+    tv.onloadedmetadata = () => { tv.currentTime = Math.max(0, Math.min(t, (tv.duration || t) - 0.2)); };
+    tv.onseeked = () => { try { const c = document.createElement('canvas'); c.width = 160; c.height = 90; c.getContext('2d').drawImage(tv, 0, 0, 160, 90); fin(c.toDataURL('image/jpeg', 0.6)); } catch (_) { fin(''); } };
     tv.onerror = () => fin('');
     tv.src = u; setTimeout(() => fin(''), 8000);
   });
@@ -1374,26 +1481,18 @@ function grabFrame(file, t) {
 async function runThumbs() {
   if (thumbBusy) return; thumbBusy = true;
   while (thumbQ.length) {
-    const s = thumbQ.shift(); if (!S.timeline.includes(s)) continue;
-    const e = S.byKey.get(s.key), c = e && (e.front && e.front.ok ? e.front : okClips(e)[0]); if (!c) continue;
-    s.thumb = await grabFrame(c.file, s.start + Math.min(1, (s.end - s.start) / 2));
-    const i = S.timeline.indexOf(s), el = document.querySelector(`.piece[data-i="${i}"]`);
-    if (el && s.thumb) el.style.backgroundImage = `url(${s.thumb})`;
+    const q = thumbQ.shift(), e = S.byKey.get(q.key), c = e && (e.front && e.front.ok ? e.front : okClips(e)[0]); if (!c) continue;
+    const th = await grabFrame(c.file, q.t); THUMB.set(q.id, th);
+    document.querySelectorAll(`.tile[data-th="${CSS.escape(q.id)}"]`).forEach(el => { if (th) el.style.backgroundImage = `url(${th})`; });
   }
   tv.removeAttribute('src'); tv.load(); thumbBusy = false;
-}
-
-function openSection(i, play) {
-  const s = S.timeline[i]; const e = S.byKey.get(s.key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
-  if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
-  let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
-  selectClip(k, s.start, play).then(() => { S.inT = s.start; S.outT = s.end; updateInOut(); vA.addEventListener('loadedmetadata', updateInOut, { once: true }); if (play) { S.stopAt = s.end; S.previewing = true; } });
 }
 
 /* ---------- GPS, HUD and map ---------- */
 async function ensureGps(e) {
   if (e.gps) return e.gps;
   if (!e.gpsP) e.gpsP = (async () => {
+    await ensureEntry(e);
     let pts = [];
     for (const c of okClips(e)) { if (c.gps) { try { pts = await D.loadGps(c); } catch (_) {} if (pts.length) break; } }
     e.gps = pts; return pts;
@@ -1562,6 +1661,7 @@ const safeName = s => (s || 'Drive').replace(/[\\/:*?"<>|]+/g, '-').trim() || 'D
 /* ---------- export ---------- */
 async function doExport() {
   if (!S.timeline.length) return;
+  await Promise.all(S.movie.map(m => ensureEntry(S.byKey.get(m.key))));
   const cam = $('exCam').value, mode = $('exMode').value, audio = $('exAudio').value === 'keep';
   const name = safeName($('exportName').value);
   if (canPickDir && !S.saveDir) { const ok = await chooseSaveDir(); if (!ok) return; }
@@ -1570,7 +1670,7 @@ async function doExport() {
   for (const c of cams) {
     const segs = []; const missing = [];
     S.timeline.forEach((s, i) => { const e = S.byKey.get(s.key); const clip = e && e[c]; if (clip && clip.ok) segs.push({ clip, start: s.start, end: Math.min(s.end, clip.duration), mute: s.mute, n: i + 1 }); else missing.push(i + 1); });
-    if (missing.length) toast(`${camName(c)} video is missing for section${missing.length > 1 ? 's' : ''} ${missing.join(', ')}, so ${missing.length > 1 ? 'they were' : 'it was'} skipped.`, 'warn', 8000);
+    if (missing.length) toast(`${camName(c)} video is missing for part of your video (${missing.length} piece${missing.length > 1 ? 's' : ''}), so that part was skipped.`, 'warn', 8000);
     if (!segs.length) continue;
     const label = camName(c);
     if (mode === 'one') jobs.push({ segs, file: `${name} - ${label}.mp4` });
@@ -1621,7 +1721,12 @@ async function copyKept() {
 $('btnCopyKept').onclick = copyKept;
 
 /* ---------- project files & autosave ---------- */
-function projectData() { return { app: 'Dashcam Studio', version: 1, name: $('exportName').value, saved: new Date().toISOString(), sections: S.timeline.map(s => { const e = S.byKey.get(s.key); return { key: s.key, files: e ? clipsOf(e).map(c => c.rel) : s.files || [], start: +s.start.toFixed(3), end: +s.end.toFixed(3), mute: s.mute }; }) }; }
+function projectData() {
+  const files = k => { const e = S.byKey.get(k); return e ? clipsOf(e).map(c => c.rel) : []; };
+  return { app: 'Dashcam Studio', version: 2, name: $('exportName').value, saved: new Date().toISOString(),
+    movie: S.movie.map(m => ({ key: m.key, files: files(m.key), start: +m.start.toFixed(3), end: +m.end.toFixed(3) })), removed: S.removed, muted: S.muted,
+    sections: S.timeline.map(s => ({ key: s.key, files: files(s.key), start: +s.start.toFixed(3), end: +s.end.toFixed(3), mute: s.mute })) };
+}
 function resolveKey(sec) {
   if (S.byKey.has(sec.key)) return sec.key;
   const names = (sec.files || []).map(f => f.split('/').pop().toLowerCase());
@@ -1629,22 +1734,25 @@ function resolveKey(sec) {
   return e ? e.key : null;
 }
 function loadProject(p) {
-  if (!p || !Array.isArray(p.sections)) throw new Error('not a Dashcam Studio edit file');
+  if (!p || !(Array.isArray(p.movie) || Array.isArray(p.sections))) throw new Error('not a Dashcam Studio edit file');
   let miss = 0; snap();
-  S.timeline = p.sections.map(s => { const k = resolveKey(s); if (!k) miss++; return k ? { key: k, start: s.start, end: s.end, mute: !!s.mute, thumb: '' } : null; }).filter(Boolean);
+  const items = p.movie || p.sections;
+  S.movie = items.map(s => { const k = resolveKey(s); if (!k) miss++; return k ? { key: k, start: s.start, end: s.end } : null; }).filter(Boolean);
+  if (p.movie && !miss) { S.removed = p.removed || []; S.muted = p.muted || []; }
+  else { S.removed = []; mvLayout(); S.muted = []; S.movie.forEach((m, i) => { if (!p.movie && items[i] && items[i].mute) S.muted = rangeAdd(S.muted, m.off, m.off + m.end - m.start); }); }
   if (p.name) $('exportName').value = p.name;
-  S.editing = -1; renderTimeline(); updateInOut();
-  if (miss) toast(`${miss} section${miss > 1 ? 's' : ''} refer to clips that aren't loaded. Open the folder with those clips, then open the edit again.`, 'warn', 9000);
-  else toast(`Opened edit with ${S.timeline.length} sections.`, 'good', 3000);
+  S.mA = S.mB = null; changed();
+  if (miss) toast(`${miss} clip${miss > 1 ? 's' : ''} in that edit aren't loaded. Open the folder with those clips, then open the edit again.`, 'warn', 9000);
+  else { toast('Opened your saved edit.', 'good', 3000); mvSeek(0, false); }
 }
 function saveTimelineLocal() { try { localStorage.setItem('dashcam-studio.last', JSON.stringify(projectData())); } catch (_) {} }
 function restoreTimelineOffer() {
-  if (S.timeline.length) return;
+  if (S.movie.length) return;
   let p = null; try { p = JSON.parse(localStorage.getItem('dashcam-studio.last') || 'null'); } catch (_) {}
-  if (!p || !p.sections || !p.sections.length) return;
-  const ok = p.sections.filter(resolveKey).length; if (!ok) return;
+  const items = p && (p.movie || p.sections); if (!items || !items.length) return;
+  const ok = items.filter(resolveKey).length; if (!ok) return;
   const t = document.createElement('div'); t.className = 'toast';
-  t.innerHTML = `Your last edit (${p.sections.length} sections) uses clips from this folder. <button class="primary" style="margin-left:8px">Restore it</button>`;
+  t.innerHTML = `Your last video edit (${fmt(items.reduce((a, s) => a + s.end - s.start, 0))} of clips) uses clips from this folder. <button class="primary" style="margin-left:8px">Restore it</button>`;
   t.querySelector('button').onclick = () => { loadProject(p); t.remove(); };
   $('toasts').appendChild(t); setTimeout(() => t.remove(), 20000);
 }
@@ -1677,7 +1785,7 @@ $('daySel').onchange = ev => { S.day = ev.target.value; renderList(true); };
 $('kindSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.kind = b.dataset.k; syncKindSeg(); renderList(true); };
 $('clipList').onclick = ev => { const mg = ev.target.closest('[data-merge]'); if (mg) { const i = +mg.dataset.merge; mergeEntries(S.shown.slice(i, i + +mg.dataset.n)); return; } const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
 $('btnAddAll').onclick = addAllShown;
-$('bPlay').onclick = () => { if (!vA.src) return; if (vA.paused) vA.play().catch(() => {}); else { vA.pause(); if (S.tlPlaying) { S.tlPlaying = false; tlTools(); } } };
+$('bPlay').onclick = () => { if (!vA.src) return; if (vA.paused) vA.play().catch(() => {}); else { vA.pause(); if (S.mvPlaying) { S.mvPlaying = false; mvDraw(); } } };
 $('bBack').onclick = () => { vA.currentTime = Math.max(0, vA.currentTime - 5); };
 $('bFwd').onclick = () => { vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 5); };
 $('bPrev').onclick = () => { if (vA.currentTime > 3) vA.currentTime = 0; else nextClip(-1, !vA.paused); };
@@ -1686,7 +1794,7 @@ $('bStepB').onclick = () => { vA.pause(); vA.currentTime = Math.max(0, vA.curren
 $('bStepF').onclick = () => { vA.pause(); vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 1 / 30); };
 $('rate').onchange = ev => { vA.playbackRate = +ev.target.value; };
 $('bVol').onclick = () => { vA.muted = !vA.muted; $('bVol').textContent = vA.muted ? '🔇' : '🔊'; };
-function reloadKeep() { const t = vA.currentTime, p = !vA.paused, a = S.inT, b = S.outT, ed = S.editing; if (S.cur < 0) { layout(); return; } selectClip(S.cur, t, p); S.inT = a; S.outT = b; S.editing = ed; vA.addEventListener('loadedmetadata', updateInOut, { once: true }); updateInOut(); }
+function reloadKeep() { const t = vA.currentTime, p = !vA.paused; if (S.cur < 0) { layout(); return; } selectClip(S.cur, t, p); vA.addEventListener('loadedmetadata', updateInOut, { once: true }); }
 $('layoutSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.layout = b.dataset.l; reloadKeep(); };
 const swap = () => { const ok = okClips(curEntry()); if (ok.length < 2) return; const cur = mainClip(); S.mainCam = ok[(ok.indexOf(cur) + 1) % ok.length].cam; reloadKeep(); };
 $('bSwap').onclick = swap;
@@ -1699,22 +1807,15 @@ function buildCamOptions() {
 $('thirdName').value = thirdName;
 $('thirdName').onchange = ev => { thirdName = ev.target.value; try { localStorage.setItem('dashcam-studio.third', thirdName); } catch (_) {} buildCamOptions(); renderList(false); layout(); updateInfo(); };
 $('bAuto').onclick = () => { S.autoNext = !S.autoNext; $('bAuto').classList.toggle('on', S.autoNext); };
-$('bIn').onclick = markIn; $('bOut').onclick = markOut;
-$('bClear').onclick = () => { S.inT = S.outT = null; setEditing(-1); };
-$('bAdd').onclick = () => addSection(false);
-$('bWhole').onclick = () => addSection(true);
+$('bAddClip').onclick = () => mergeEntries([curEntry()]);
 $('bFollow').onclick = () => { S.follow = !S.follow; $('bFollow').classList.toggle('on', S.follow); if (S.follow && lastPos && map) map.easeTo({ center: [lastPos.lon, lastPos.lat] }); };
 $('bFit').onclick = () => { if (map && S.dayBounds) { S.follow = false; $('bFollow').classList.remove('on'); map.fitBounds(S.dayBounds, { padding: 40, maxZoom: 15 }); } };
 $('bExport').onclick = doExport;
-$('bTlClear').onclick = () => { if (!S.timeline.length) return; snap(); S.timeline = []; S.editing = -1; S.tlSel = -1; S.tlPlaying = false; renderTimeline(); updateInOut();
-  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Timeline cleared. <button style="margin-left:8px">Undo</button>'; t.querySelector('button').onclick = () => { undo(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000); };
-$('bTlPlay').onclick = tlPlayToggle;
-$('bCut').onclick = cutAtPlayhead; $('bCutOut').onclick = cutOutMarked; $('bDel').onclick = deletePiece; $('bUndo').onclick = undo;
-$('bMute').onclick = () => { const s = S.timeline[S.tlSel]; if (!s) return; snap(); s.mute = !s.mute; renderTimeline(); };
-$('bTrim').onclick = () => { const i = S.tlSel; if (i < 0) return; S.tlPlaying = false; setEditing(i); openSection(i, false); toast('Move the playhead and use Mark in / Mark out, then <b>Update section</b>.', '', 5000); };
-$('bZoomIn').onclick = () => zoom(1.6); $('bZoomOut').onclick = () => zoom(1 / 1.6); $('bZoomFit').onclick = () => zoom(0);
-window.addEventListener('resize', () => { if (!S.tlZoom && S.timeline.length) renderTimeline(); });
-$('bProjSave').onclick = async () => { if (!S.timeline.length) { toast('The timeline is empty.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - edit.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
+$('bTlClear').onclick = startOver;
+$('bWatch').onclick = watchToggle; $('bMarkA').onclick = () => markAt('a'); $('bMarkB').onclick = () => markAt('b'); $('bClearMarks').onclick = clearMarks;
+$('bDelPart').onclick = deletePart; $('bKeepPart').onclick = keepPart; $('bMutePart').onclick = mutePart; $('bPutBack').onclick = putBack; $('bUndo').onclick = undo;
+window.addEventListener('resize', () => { if (S.movie.length) mvRender(); });
+$('bProjSave').onclick = async () => { if (!S.movie.length) { toast('Your video is empty.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - edit.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
 $('bProjOpen').onclick = () => $('inProject').click();
 $('inProject').onchange = async ev => { const f = ev.target.files[0]; ev.target.value = ''; if (!f) return; try { loadProject(JSON.parse(await f.text())); } catch (e) { toast('Couldn\'t open that edit file: ' + esc(e.message), 'bad'); } };
 $('btnHelp').onclick = () => { $('help').style.display = 'flex'; };
@@ -1728,9 +1829,9 @@ document.addEventListener('keydown', ev => {
   if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
   if ($('picker').classList.contains('open')) { if (ev.key === 'Escape') closePicker(); return; }
   const k = ev.key;
-  if (k === ' ' && ev.shiftKey) { ev.preventDefault(); tlPlayToggle(); return; }
+  if (k === ' ' && ev.shiftKey) { ev.preventDefault(); watchToggle(); return; }
   const act = { ' ': () => $('bPlay').click(), ArrowLeft: () => $('bBack').click(), ArrowRight: () => $('bFwd').click(), ',': () => $('bStepB').click(), '.': () => $('bStepF').click(),
-    i: markIn, o: markOut, a: () => addSection(false), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), c: cutAtPlayhead, x: cutOutMarked, Delete: deletePiece, Backspace: deletePiece, Escape: () => { $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
+    i: () => markAt('a'), o: () => markAt('b'), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), x: deletePart, Delete: deletePart, Backspace: deletePart, Escape: () => { clearMarks(); $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
   if (act) { ev.preventDefault(); act(); }
 });
 
@@ -1844,7 +1945,7 @@ $('pkMerge').onclick = () => pickerLoad(true);
 $('picker').addEventListener('click', ev => { if (ev.target.id === 'picker' && S.entries.length) closePicker(); });
 
 (async () => {
-  initMap(); renderTimeline(); layout(); openPicker();
+  initMap(); changed(); layout(); openPicker();
   if (!canPickDir) { $('saveName').textContent = 'Safari downloads folder'; if (!/Safari/.test(navigator.userAgent) || /Chrome|Edg/.test(navigator.userAgent)) $('saveName').textContent = 'Downloads'; $('btnSaveDir').textContent = 'How to change…'; }
   const h = await idb.get('saveDir'); if (h) { S.saveDir = h; $('saveName').textContent = h.name; }
 })();
