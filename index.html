@@ -487,6 +487,7 @@ async function openClip(file) {
     clip.duration = clip.video ? clip.video.end / clip.video.timescale : m.duration / m.timescale;
     clip.ok = !!clip.video && clip.video.n > 0;
     if (!clip.ok) clip.error = 'No video in this file.';
+    if (clip.ok && clip.gps) await fixGpsTiming(clip);
   } catch (e) {
     clip.error = 'Could not read this file (' + e.message + ').';
   }
@@ -508,6 +509,26 @@ function decodeWolfbox(b) {
   const r = (o) => dv.getUint32(o, true);
   const utc = Date.UTC(r(112), r(108) - 1, r(104), r(160), r(164), r(168));
   return { fix: true, lat, lon, knots: g(0x48), heading: g(0x58), alt: g(0xe8), utc: isFinite(utc) ? utc : null };
+}
+
+/* Some G900 firmwares stamp one-per-second GPS samples 0.2 s apart, so the
+   track covers only a fifth of the video. When the fixes' own UTC clock spans
+   clearly disagree with the sample times, rescale the track to the UTC clock. */
+async function fixGpsTiming(clip) {
+  const t = clip.gps, n = t.n;
+  if (n < 2) return;
+  const fixAt = async (i) => { try { const d = decodeWolfbox(await readBytes(t.file || clip.file, t.off[i], t.size[i])); return d && d.fix && d.utc ? d : null; } catch (_) { return null; } };
+  let i0 = -1, i1 = -1, a = null, b = null;
+  for (let i = 0; i < Math.min(n, 10) && !a; i++) if ((a = await fixAt(i))) i0 = i;
+  for (let i = n - 1; i > Math.max(i0, n - 11) && !b; i--) if ((b = await fixAt(i))) i1 = i;
+  if (!a || !b) return;
+  const spanT = (t.dts[i1] - t.dts[i0]) / t.timescale, spanU = (b.utc - a.utc) / 1000;
+  if (spanT <= 0 || spanU <= 0 || spanU < 10 || spanU > clip.duration + 5) return;
+  const k = spanU / spanT;
+  if (k > 0.67 && k < 1.5) return;
+  for (let i = 0; i < n; i++) { t.dts[i] = Math.round(t.dts[i] * k); t.dur[i] = Math.max(1, Math.round(t.dur[i] * k)); }
+  t.end = Math.round(t.end * k);
+  t.rescaled = k;
 }
 
 async function loadGps(clip) {
