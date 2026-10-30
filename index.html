@@ -1856,7 +1856,24 @@ async function saveDiagnostic() {
 
 /* ---------- wiring ---------- */
 function syncKindSeg() { document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === S.kind)); }
-$('btnOpen').onclick = $('pkFolder').onclick = () => $('inFolder').click();
+// Chrome's folder chooser shows a scary "Upload N files to this site?" prompt, though nothing leaves the computer.
+// Its folder-access picker asks "Let this site view files?" instead, and reads files only when they're used.
+async function openFolder() {
+  if (!canPickDir) { $('inFolder').click(); return; }
+  let dir; try { dir = await window.showDirectoryPicker({ id: 'footage', mode: 'read' }); } catch (e) { if (e.name !== 'AbortError') $('inFolder').click(); return; }
+  progress(true, 'Finding clips…', '', 0);
+  const out = [];
+  const walk = async (h, path) => {
+    for await (const x of h.values()) {
+      if (x.kind === 'directory') { if (!x.name.startsWith('.')) await walk(x, path + x.name + '/'); }
+      else if (/\.(mp4|mov)$/i.test(x.name) && !x.name.startsWith('._')) { const f = await x.getFile(); f._rel = path + x.name; out.push(f); if (out.length % 25 === 0) progress(true, null, `${out.length} found`, 0); }
+    }
+  };
+  try { await walk(dir, dir.name + '/'); } catch (e) { progress(false); toast('Couldn\'t read that folder: ' + esc(e.message), 'bad'); return; }
+  progress(false);
+  loadFiles(out);
+}
+$('btnOpen').onclick = $('pkFolder').onclick = openFolder;
 $('btnOpen2').onclick = () => openPicker(); $('btnAddFiles').onclick = () => openPicker(true);
 $('inFolder').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
 $('btnSaveDir').onclick = chooseSaveDir;
