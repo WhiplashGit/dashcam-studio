@@ -977,16 +977,20 @@ const TOK = {
 const ONE = { front: 'fa', rear: 'rb', third: 'ic' };   // single letters glued to digits: ..._120000F
 const TOKRE = c => new RegExp('(?:(?:^|[_\\-. ])(?:' + TOK[c] + ')|(?<=\\d)[' + ONE[c] + '])$', 'i');
 const DIRRE = c => new RegExp('^(' + TOK[c].split('|').filter(x => x.length > 1).join('|') + '|' + TOK[c].split('|')[0] + ')$', 'i');
+// folders named for a camera plus a type, like WolfBox's front_norm / rear_emer
+const DIRWORD = c => new RegExp('(^|[_\\- ])(' + TOK[c].split('|').filter(x => x.length > 2).join('|') + ')([_\\- ]|$)', 'i');
+const dirCam = p => ['third', 'rear', 'front'].find(c => DIRRE(c).test(p) || DIRWORD(c).test(p));
 function camOf(rel) {
   const parts = rel.split('/'); const name = parts.pop().replace(/\.[^.]+$/, '');
   for (const c of ['third', 'rear', 'front']) if (TOKRE(c).test(name)) return c;
-  for (const p of parts.reverse()) for (const c of ['third', 'rear', 'front']) if (DIRRE(c).test(p)) return c;
+  for (const p of parts.reverse()) { const c = dirCam(p); if (c) return c; }
   return 'front';
 }
 function pairKey(rel) {
   const parts = rel.split('/'); let name = parts.pop().replace(/\.[^.]+$/, '');
   for (const c of CAMS) name = name.replace(TOKRE(c), '');
-  const dir = parts.filter(p => !CAMS.some(c => DIRRE(c).test(p))).join('/');
+  // drop the camera from folder names so front_norm/x_F and rear_norm/x_R pair up (norm and emer stay apart)
+  const dir = parts.filter(p => !CAMS.some(c => DIRRE(c).test(p))).map(p => CAMS.reduce((q, c) => q.replace(DIRWORD(c), '$1$3'), p)).join('/');
   return (dir + '/' + name).toLowerCase();
 }
 function timeFromName(rel) {
@@ -995,7 +999,7 @@ function timeFromName(rel) {
   if (m) { const d = new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]); if (!isNaN(d)) return d; }
   return null;
 }
-function kindOf(rel) { const r = rel.toLowerCase(); if (/park/.test(r)) return 'parking'; if (/(event|emr|emerg|lock|protect|urgent|\bro\b|sos)/.test(r)) return 'event'; return 'normal'; }
+function kindOf(rel) { const r = rel.toLowerCase(); if (/park/.test(r)) return 'parking'; if (/(event|emr|emer|lock|protect|urgent|\bro\b|sos)/.test(r)) return 'event'; return 'normal'; }
 
 async function loadFiles(files) {
   files = files.filter(f => /\.(mp4|mov)$/i.test(f.name) && !f.name.startsWith('._') && f.size > 0);
@@ -1974,8 +1978,17 @@ const isVideo = f => /\.(mp4|mov)$/i.test(f.name) && !f.name.startsWith('._') &&
 function addToSlot(cam, files) {
   const have = new Set(CAMS.flatMap(c => PK[c]).map(f => f.name + ':' + f.size));
   let n = 0;
-  for (const f of files.filter(isVideo)) { const id = f.name + ':' + f.size; if (have.has(id)) continue; have.add(id); f._cam = cam; PK[cam].push(f); n++; }
+  const moved = {};
+  for (const f of files.filter(isVideo)) {
+    const id = f.name + ':' + f.size; if (have.has(id)) continue; have.add(id);
+    // a file whose name or folder says it's another camera goes in that camera's box
+    const rel = f._rel || f.webkitRelativePath || f.name, said = camOf(rel), sure = said !== 'front' || TOKRE('front').test(f.name.replace(/\.[^.]+$/, '')) || rel.split('/').some(p => dirCam(p) === 'front');
+    const to = sure && said !== cam ? said : cam; if (to !== cam) moved[to] = (moved[to] || 0) + 1;
+    f._cam = to; PK[to].push(f); n++;
+  }
   if (!n && files.length) toast('No new MP4 or MOV files there.', 'warn', 3000);
+  const mv = Object.entries(moved).map(([c, k]) => `${k} ${c === 'third' ? SLOT.third.name() : SLOT[c].name} file${k > 1 ? 's' : ''}`);
+  if (mv.length) toast(`Sorted ${mv.join(' and ')} into ${mv.length > 1 ? 'their own boxes' : 'its own box'}, going by the file names.`, 'good', 5000);
   renderPicker();
 }
 function openPicker(files) {
