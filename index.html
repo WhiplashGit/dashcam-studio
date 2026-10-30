@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashcam Studio — WolfBox G900 Pro</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#0f1115;--panel:#171a21;--panel2:#1e222b;--line:#2a2f3a;--text:#e7e9ee;--dim:#9aa3b2;--faint:#6b7383;
+  --accent:#3d8bfd;--accent2:#2a6fd6;--good:#36c27a;--warn:#f0a63a;--bad:#ef5d5d;--sel:rgba(61,139,253,.18);
+  --r:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-size:13px}
+button,select,input{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+button:hover:not(:disabled){border-color:#3a4252;background:#252a35}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:hover:not(:disabled){background:var(--accent2)}
+button.icon{padding:6px 8px;min-width:32px}
+button.on{background:var(--sel);border-color:var(--accent);color:#cfe0ff}
+select,input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.app{display:grid;grid-template-rows:52px 1fr auto;height:100vh}
+header{display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+header .brand{font-weight:700;font-size:15px;letter-spacing:.2px;margin-right:6px}
+header .brand span{color:var(--dim);font-weight:500}
+header .spacer{flex:1}
+.savechip{display:flex;align-items:center;gap:6px;color:var(--dim)}
+.savechip b{color:var(--text);font-weight:600}
+main{display:grid;grid-template-columns:290px minmax(0,1fr) minmax(320px,30%);min-height:0}
+/* sidebar */
+aside{display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel);min-height:0}
+.side-top{padding:10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.side-top .row{display:flex;gap:6px}
+.side-top select{flex:1;min-width:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;border-radius:0;flex:1;padding:5px 4px;background:transparent;color:var(--dim)}
+.seg button.on{background:var(--sel);color:#cfe0ff}
+.list{overflow:auto;flex:1}
+.clip{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 12px;border-bottom:1px solid #20242d;cursor:pointer}
+.clip:hover{background:#1c2029}
+.clip.cur{background:var(--sel);box-shadow:inset 3px 0 0 var(--accent)}
+.clip .t{font-weight:600;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.star{background:none;border:0;padding:0 2px;font-size:16px;line-height:1;color:#5b6475;cursor:pointer}
+.star:hover{color:#f5c84b;background:none}
+.star.on{color:#f5c84b}
+.clip.kept{box-shadow:inset 3px 0 0 #f5c84b}
+.clip.kept.cur{box-shadow:inset 3px 0 0 var(--accent)}
+.clip .m{color:var(--faint);font-size:12px;grid-column:1/3;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{font-size:10.5px;padding:1px 6px;border-radius:10px;background:#262b36;color:var(--dim);font-weight:600}
+.badge.f{color:#9cc3ff}.badge.r{color:#ffd28a}.badge.t{color:#d9b3ff}.badge.g{color:#8fe3b3}.badge.ev{background:#4a2a1d;color:#ffb08a}.badge.pk{background:#232f4a;color:#a9c1ff}.badge.err{background:#4a1f24;color:#ff9a9a}
+.side-foot{padding:8px 10px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;display:flex;justify-content:space-between;gap:6px;align-items:center;flex-wrap:wrap}
+.side-foot #listSum{white-space:nowrap}
+/* player */
+.player{display:flex;flex-direction:column;min-width:0;min-height:0;background:#000}
+.stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
+.tile{position:absolute;background:#000;overflow:hidden}
+.tile video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.tile .camlabel{left:8px;bottom:8px}
+.tile.s1,.tile.s2{cursor:pointer}
+.stage .tile.off{display:none}
+.stage.pip .t0{inset:0}
+.stage.pip .s1,.stage.pip .s2{right:14px;width:28%;height:28%;border:2px solid rgba(255,255,255,.25);border-radius:6px;z-index:2}
+.stage.pip .s1{bottom:14px}.stage.pip .s2{bottom:calc(28% + 24px)}
+.stage.side .t0{left:0;top:0;width:50%;height:100%}.stage.side .s1{left:50%;top:0;width:50%;height:100%}
+.stage.side.n3 .t0{width:62%}.stage.side.n3 .s1{left:62%;width:38%;height:50%}.stage.side.n3 .s2{left:62%;top:50%;width:38%;height:50%}
+.stage.single .t0{inset:0}.stage.single .s1,.stage.single .s2{display:none}
+.hud{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:3;pointer-events:none}
+.hud div{background:rgba(10,12,16,.72);backdrop-filter:blur(6px);padding:5px 9px;border-radius:6px;font-variant-numeric:tabular-nums;font-weight:600}
+.hud .spd{font-size:18px}
+.hud .spd small{font-size:11px;color:var(--dim);margin-left:3px}
+.camlabel{position:absolute;z-index:3;font-size:11px;font-weight:700;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px;pointer-events:none}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;text-align:center;padding:30px}
+.overlay .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;max-width:520px}
+.overlay h2{margin:0 0 8px;font-size:18px}
+.overlay p{color:var(--dim);margin:0 0 14px;line-height:1.5}
+.controls{background:var(--panel);border-top:1px solid var(--line);padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px}
+.scrubwrap{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums;color:var(--dim)}
+.scrub{position:relative;flex:1;height:22px;cursor:pointer}
+.scrub .bar{position:absolute;left:0;right:0;top:9px;height:4px;background:#2b303b;border-radius:2px}
+.scrub .sel{position:absolute;top:6px;height:10px;background:rgba(240,166,58,.35);border-left:2px solid var(--warn);border-right:2px solid var(--warn);display:none}
+.scrub .fill{position:absolute;left:0;top:9px;height:4px;background:var(--accent);border-radius:2px}
+.scrub .knob{position:absolute;top:4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(61,139,253,.4)}
+.scrub .tip{position:absolute;top:-22px;transform:translateX(-50%);background:#000;padding:2px 6px;border-radius:4px;font-size:11px;display:none;color:#fff}
+.btnrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btnrow .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.btnrow .grow{flex:1}
+.inout{color:var(--warn);font-variant-numeric:tabular-nums;min-width:150px}
+/* map */
+.mapcol{display:flex;flex-direction:column;border-left:1px solid var(--line);background:var(--panel);min-height:0}
+#map{flex:1;min-height:200px;background:#1a1d23}
+.mapbar{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.mapbar a{color:#9cc3ff;text-decoration:none;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+.mapbar a:hover{border-color:#3a4252}
+.info{padding:10px 12px;border-top:1px solid var(--line);color:var(--dim);font-size:12px;line-height:1.6}
+.info b{color:var(--text);font-weight:600}
+.nomap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--faint);padding:20px;text-align:center}
+/* timeline */
+.tl{border-top:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column}
+.tl-head{display:flex;align-items:center;gap:8px;padding:8px 12px;flex-wrap:wrap}
+.tl-head h3{margin:0;font-size:13px;margin-right:6px}
+.tl-head .sum{color:var(--dim);margin-right:auto}
+.cards{display:flex;gap:10px;overflow-x:auto;padding:4px 12px 12px;min-height:118px}
+.cards .empty{color:var(--faint);padding:30px 4px}
+.card{flex:0 0 176px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;position:relative}
+.card.editing{border-color:var(--warn);box-shadow:0 0 0 1px var(--warn)}
+.card.drag{opacity:.4}
+.card.over{border-color:var(--accent)}
+.card .th{height:72px;background:#000 center/cover no-repeat;position:relative}
+.card .num{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}
+.card .dur{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 6px;font-size:11px}
+.card .mutedtag{position:absolute;left:6px;bottom:6px;background:var(--bad);border-radius:4px;padding:1px 6px;font-size:10.5px;font-weight:700}
+.card .bd{padding:6px 8px;display:flex;align-items:center;gap:4px}
+.card .bd .lbl{flex:1;font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.card .bd button{padding:2px 6px;font-size:12px;min-width:0}
+.exportbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.exportbar label{color:var(--dim);display:flex;gap:6px;align-items:center}
+#exportName{width:190px}
+.toasts{position:fixed;right:16px;top:62px;display:flex;flex-direction:column;gap:8px;z-index:1000;max-width:420px}
+.toast{background:#232835;border:1px solid var(--line);border-left:4px solid var(--accent);padding:10px 12px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);line-height:1.45}
+.toast.good{border-left-color:var(--good)}.toast.bad{border-left-color:var(--bad)}.toast.warn{border-left-color:var(--warn)}
+.progress{position:fixed;inset:0;background:rgba(5,6,8,.7);display:none;align-items:center;justify-content:center;z-index:900}
+.progress .card2{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;width:380px}
+.progress .pbar{height:6px;background:#2b303b;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress .pbar div{height:100%;width:0;background:var(--accent);transition:width .15s}
+.modal{position:fixed;inset:0;background:rgba(5,6,8,.7);display:none;align-items:center;justify-content:center;z-index:950}
+.modal .card2{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;width:560px;max-height:85vh;overflow:auto;line-height:1.6}
+.modal h2{margin-top:0;font-size:17px}
+.modal kbd{background:#2b303b;border:1px solid #3a4252;border-bottom-width:2px;border-radius:4px;padding:0 6px;font-size:12px}
+.modal table{border-collapse:collapse;width:100%}.modal td{padding:4px 6px;border-bottom:1px solid #232733;vertical-align:top}
+.leaflet-container{background:#1a1d23}
+.headarrow{width:22px;height:22px}
+.dropzone.active::after{content:"Drop your dashcam folder";position:fixed;inset:12px;border:3px dashed var(--accent);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:rgba(15,17,21,.85);z-index:2000}
+</style>
+</head>
+<body class="dropzone">
+<div class="app">
+  <header>
+    <div class="brand">Dashcam Studio <span>· WolfBox G900 Pro &amp; TriPro</span></div>
+    <button class="primary" id="btnOpen" title="Choose the dashcam folder (for example the SD card's DCIM folder)">Open folder…</button>
+    <button id="btnAddFiles" title="Add individual video files">Add files…</button>
+    <input type="file" id="inFolder" webkitdirectory directory multiple hidden>
+    <input type="file" id="inFiles" accept=".mp4,.MP4,.mov,.MOV" multiple hidden>
+    <input type="file" id="inProject" accept=".json,application/json" hidden>
+    <div class="spacer"></div>
+    <div class="savechip">Save folder: <b id="saveName">not chosen</b><button id="btnSaveDir">Choose…</button></div>
+    <button class="icon" id="btnHelp" title="Help and keyboard shortcuts">?</button>
+  </header>
+
+  <main>
+    <aside>
+      <div class="side-top">
+        <div class="row"><select id="daySel"><option>No clips loaded</option></select></div>
+        <div class="seg" id="kindSeg">
+          <button data-k="all" class="on">All</button><button data-k="normal">Driving</button><button data-k="event">Event</button><button data-k="parking">Parking</button><button data-k="kept" title="Clips you've starred to keep, from every day">★ Kept</button>
+        </div>
+      </div>
+      <div class="list" id="clipList"></div>
+      <div class="side-foot"><span id="listSum">—</span><span style="display:flex;gap:6px"><button id="btnCopyKept" style="display:none" title="Copy the original files of every kept clip (all cameras) into your save folder, so the dashcam can't record over them">Copy originals</button><button id="btnAddAll" disabled title="Add every clip shown in this list to the edit timeline, in order">Add all to edit</button></span></div>
+    </aside>
+
+    <section class="player">
+      <div class="stage pip" id="stage">
+        <div class="tile t0" id="tA"><video id="vA" playsinline preload="auto"></video><div class="camlabel" id="labA"></div></div>
+        <div class="tile s1 off" id="tB" title="Click to make this the main camera"><video id="vB" playsinline preload="auto" muted></video><div class="camlabel" id="labB"></div></div>
+        <div class="tile s2 off" id="tC" title="Click to make this the main camera"><video id="vC" playsinline preload="auto" muted></video><div class="camlabel" id="labC"></div></div>
+        <div class="hud" id="hud" style="display:none"></div>
+        <div class="overlay" id="overlay">
+          <div class="card">
+            <h2>Open your dashcam footage</h2>
+            <p>Choose the folder from the G900 Pro's SD card (or a copy on your Mac). Every clip in it and its sub-folders loads in recording order, with the front, rear and (on a TriPro) third camera matched up automatically.</p>
+            <button class="primary" id="btnOpen2">Open folder…</button>
+            <p style="margin:14px 0 0;font-size:12px">Or drag the folder onto this window. Nothing is uploaded; everything stays on your Mac.</p>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="scrubwrap">
+          <span id="tCur">0:00</span>
+          <div class="scrub" id="scrub"><div class="bar"></div><div class="sel" id="scrubSel"></div><div class="fill" id="scrubFill"></div><div class="knob" id="scrubKnob" style="left:0"></div><div class="tip" id="scrubTip"></div></div>
+          <span id="tDur">0:00</span>
+        </div>
+        <div class="btnrow">
+          <button class="icon" id="bPrev" title="Previous clip (P)">⏮</button>
+          <button class="icon" id="bBack" title="Back 5 seconds (←)">↺5</button>
+          <button class="icon primary" id="bPlay" title="Play / pause (Space)" style="min-width:44px">▶</button>
+          <button class="icon" id="bFwd" title="Forward 5 seconds (→)">5↻</button>
+          <button class="icon" id="bNext" title="Next clip (N)">⏭</button>
+          <button class="icon" id="bStepB" title="Previous frame (,)">‹</button>
+          <button class="icon" id="bStepF" title="Next frame (.)">›</button>
+          <select id="rate" title="Playback speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select>
+          <button class="icon" id="bVol" title="Mute playback sound (M). This doesn't affect exports.">🔊</button>
+          <div class="sep"></div>
+          <div class="seg" id="layoutSeg" title="Camera layout">
+            <button data-l="pip" class="on">Picture-in-picture</button><button data-l="side">Side by side</button><button data-l="single">Single</button>
+          </div>
+          <button id="bSwap" title="Switch the main camera (S). You can also click a small video.">Switch camera ⇄</button>
+          <button id="bAuto" class="on" title="Play the next clip automatically when one ends">Auto-next</button>
+        </div>
+        <div class="btnrow">
+          <button id="bIn" title="Mark the start of a section (I)">Mark in <kbd style="opacity:.6">I</kbd></button>
+          <button id="bOut" title="Mark the end of a section (O)">Mark out <kbd style="opacity:.6">O</kbd></button>
+          <span class="inout" id="inout">No section marked</span>
+          <button id="bClear" title="Clear in/out marks">Clear</button>
+          <div class="grow"></div>
+          <button id="bWhole" title="Add this entire clip to the edit timeline">Add whole clip</button>
+          <button class="primary" id="bAdd" title="Add the marked section to the edit timeline (A)">Add section <kbd style="opacity:.7">A</kbd></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="mapcol">
+      <div id="map"></div>
+      <div class="mapbar">
+        <button id="bFollow" class="on" title="Keep the map centred on the car">Follow car</button>
+        <button id="bFit" title="Show the whole day's route">Whole day</button>
+        <a id="lnkGmaps" href="#" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a id="lnkSv" href="#" target="_blank" rel="noopener">Street View</a>
+      </div>
+      <div class="info" id="clipInfo">No clip selected.</div>
+    </section>
+  </main>
+
+  <section class="tl">
+    <div class="tl-head">
+      <h3>Edit timeline</h3><span class="sum" id="tlSum">Mark sections in the player, then add them here. Drag cards to reorder.</span>
+      <button id="bProjOpen" title="Open a saved edit (project file)">Open edit…</button>
+      <button id="bProjSave" title="Save this edit as a small project file so you can reopen it later">Save edit</button>
+      <button id="bTlClear" title="Remove every section">Clear all</button>
+    </div>
+    <div class="cards" id="cards"><div class="empty">No sections yet. Play a clip, press <b>I</b> at the start and <b>O</b> at the end of what you want, then <b>A</b>. Gaps between sections are cut out automatically.</div></div>
+    <div class="tl-head exportbar" style="border-top:1px solid var(--line);padding:10px 12px">
+      <label>Name <input type="text" id="exportName" value="Drive"></label>
+      <label>Camera <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
+      <label>Output <select id="exMode"><option value="one">One combined video</option><option value="each">One video per section</option></select></label>
+      <label>Sound <select id="exAudio"><option value="keep">Keep (muted sections silent)</option><option value="remove">Remove all sound</option></select></label>
+      <div style="flex:1"></div>
+      <span id="exStatus" style="color:var(--dim)"></span>
+      <button class="primary" id="bExport" disabled>Export</button>
+    </div>
+  </section>
+</div>
+
+<div class="progress" id="progress"><div class="card2"><b id="progTitle">Working…</b><div id="progText" style="color:var(--dim);margin-top:4px"></div><div class="pbar"><div id="progBar"></div></div></div></div>
+
+<div class="modal" id="help"><div class="card2">
+  <h2>Dashcam Studio — how it works</h2>
+  <p><b>Open folder</b> loads every clip in recording order, matches each front clip with its rear (and TriPro third-camera) partners, and sorts them by day and type (driving, event, parking). Clips that are damaged, usually from a power cut mid-recording, are labelled instead of playing blank.</p>
+  <p><b>Keeping clips:</b> click the ☆ beside a clip (or press <kbd>K</kbd>) to keep it. Kept clips stay starred next time you open the folder. The <b>★ Kept</b> tab lists them from every day: use <b>Add all to edit</b> to put them on the timeline, or <b>Copy originals</b> to copy the untouched files into a "Kept clips" folder inside your save folder, safe from the dashcam's loop recording.</p>
+  <p><b>Editing:</b> mark the start (<kbd>I</kbd>) and end (<kbd>O</kbd>) of what you want to keep and add it (<kbd>A</kbd>). Add sections from as many clips as you like; everything between sections is dropped. Click a card to adjust it, toggle 🔇 to silence that section, and drag cards to reorder.</p>
+  <p><b>Export</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
+  <p><b>Save folder:</b> in Chrome, choose a folder once and every export goes straight into it. Other browsers save to Downloads. From there, drag the files into Photos or iMovie.</p>
+  <table>
+    <tr><td><kbd>Space</kbd></td><td>Play / pause</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 5 s</td></tr>
+    <tr><td><kbd>,</kbd> <kbd>.</kbd></td><td>Frame back / forward</td><td><kbd>N</kbd> <kbd>P</kbd></td><td>Next / previous clip</td></tr>
+    <tr><td><kbd>I</kbd> <kbd>O</kbd></td><td>Mark in / out</td><td><kbd>A</kbd></td><td>Add section</td></tr>
+    <tr><td><kbd>S</kbd></td><td>Switch main camera</td><td><kbd>M</kbd></td><td>Mute playback</td></tr>
+    <tr><td><kbd>K</kbd></td><td>Keep / un-keep this clip</td><td></td><td></td></tr>
+  </table>
+  <p><b>TriPro third camera:</b> <select id="thirdName"><option value="Bumper">Bumper camera</option><option value="Cabin">Cabin camera</option><option value="Camera 3">Other</option></select> <span style="color:var(--dim)">(sets the label used on screen and in export file names)</span></p>
+  <p style="margin-bottom:0"><button id="bDiag" title="Save a tiny file describing the current clip (no video) for troubleshooting">Save diagnostic file for current clip</button> <button id="bHelpClose" class="primary" style="float:right">Close</button></p>
+</div></div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* DashMP4 — MP4 reading, WolfBox GPS decoding and lossless export.
+   Runs in browsers and in Node (for tests). No dependencies. */
+(function (root) {
+'use strict';
+
+/* ---------- byte helpers ---------- */
+const u32 = (b, o) => ((b[o] << 24) | (b[o + 1] << 16) | (b[o + 2] << 8) | b[o + 3]) >>> 0;
+const i32 = (b, o) => (b[o] << 24) | (b[o + 1] << 16) | (b[o + 2] << 8) | b[o + 3];
+const u16 = (b, o) => (b[o] << 8) | b[o + 1];
+const u64 = (b, o) => u32(b, o) * 4294967296 + u32(b, o + 4);
+const cc = (b, o) => String.fromCharCode(b[o], b[o + 1], b[o + 2], b[o + 3]);
+
+async function readBytes(file, start, len) {
+  return new Uint8Array(await file.slice(start, start + len).arrayBuffer());
+}
+function bytesEqual(a, b) {
+  if (!a || !b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+/* ---------- box parsing ---------- */
+function children(b, start, end) {
+  const out = [];
+  let p = start;
+  while (p + 8 <= end) {
+    let size = u32(b, p);
+    const type = cc(b, p + 4);
+    let hdr = 8;
+    if (size === 1) { size = u64(b, p + 8); hdr = 16; }
+    else if (size === 0) size = end - p;
+    if (size < hdr || p + size > end) break;
+    out.push({ type, start: p, size, body: p + hdr, end: p + size });
+    p += size;
+  }
+  return out;
+}
+const find = (b, box, type) => box && children(b, box.body, box.end).find(c => c.type === type);
+function path(b, box, ...types) {
+  let cur = box;
+  for (const t of types) { cur = find(b, cur, t); if (!cur) return null; }
+  return cur;
+}
+const raw = (b, box) => box ? b.slice(box.start, box.end) : null;
+
+async function scanTop(file) {
+  const boxes = [];
+  let pos = 0;
+  while (pos + 8 <= file.size) {
+    const h = await readBytes(file, pos, 16);
+    let size = u32(h, 0);
+    const type = cc(h, 4);
+    if (!/^[\x20-\x7e]{4}$/.test(type)) break;
+    if (size === 1) size = u64(h, 8);
+    else if (size === 0) size = file.size - pos;
+    if (size < 8) break;
+    boxes.push({ type, start: pos, size, truncated: pos + size > file.size });
+    pos += size;
+  }
+  return boxes;
+}
+
+/* ---------- moov / sample tables ---------- */
+function parseTrak(b, trak) {
+  const tkhd = find(b, trak, 'tkhd');
+  const mdia = find(b, trak, 'mdia');
+  const mdhd = find(b, mdia, 'mdhd');
+  const hdlr = find(b, mdia, 'hdlr');
+  const minf = find(b, mdia, 'minf');
+  const stbl = find(b, minf, 'stbl');
+  if (!tkhd || !mdhd || !hdlr || !stbl) return null;
+
+  const t = {};
+  const tv = b[tkhd.body];
+  t.id = u32(b, tkhd.body + (tv ? 20 : 12));
+  const wo = tkhd.body + (tv ? 88 : 76);
+  t.width = u32(b, wo) / 65536;
+  t.height = u32(b, wo + 4) / 65536;
+  t.matrix = b.slice(wo - 36, wo);
+
+  const mv = b[mdhd.body];
+  t.timescale = u32(b, mdhd.body + (mv ? 20 : 12));
+  t.duration = mv ? u64(b, mdhd.body + 24) : u32(b, mdhd.body + 16);
+  t.lang = b.slice(mdhd.body + (mv ? 32 : 20), mdhd.body + (mv ? 34 : 22));
+  t.handler = cc(b, hdlr.body + 8);
+  t.hdlr = raw(b, hdlr);
+  t.mhd = raw(b, children(b, minf.body, minf.end).find(c => /mhd$/.test(c.type)));
+
+  const stsd = find(b, stbl, 'stsd');
+  t.stsd = raw(b, stsd);
+  const entry = stsd.body + 8;
+  t.format = cc(b, entry + 4);
+  if (t.handler === 'soun') {
+    t.channels = u16(b, entry + 8 + 16);
+    t.sampleBits = u16(b, entry + 8 + 18);
+    if (t.format === 'mp4a') t.aac = parseAAC(t.stsd);
+  }
+
+  // sizes
+  const stsz = find(b, stbl, 'stsz');
+  if (!stsz) throw new Error('Unsupported sample-size table');
+  const constSize = u32(b, stsz.body + 4);
+  const n = u32(b, stsz.body + 8);
+  const size = new Uint32Array(n);
+  for (let i = 0; i < n; i++) size[i] = constSize || u32(b, stsz.body + 12 + i * 4);
+
+  // timing
+  const dts = new Float64Array(n), dur = new Uint32Array(n);
+  const stts = find(b, stbl, 'stts');
+  let s = 0, time = 0;
+  if (stts) {
+    const ne = u32(b, stts.body + 4);
+    for (let e = 0; e < ne && s < n; e++) {
+      const count = u32(b, stts.body + 8 + e * 8), delta = u32(b, stts.body + 12 + e * 8);
+      for (let k = 0; k < count && s < n; k++, s++) { dts[s] = time; dur[s] = delta; time += delta; }
+    }
+  }
+  for (; s < n; s++) { dts[s] = time; dur[s] = s ? dur[s - 1] : 1; time += dur[s]; }
+
+  let cto = null;
+  const ctts = find(b, stbl, 'ctts');
+  if (ctts) {
+    cto = new Int32Array(n);
+    const ne = u32(b, ctts.body + 4), signed = b[ctts.body] === 1;
+    let i = 0;
+    for (let e = 0; e < ne && i < n; e++) {
+      const count = u32(b, ctts.body + 8 + e * 8);
+      const off = signed ? i32(b, ctts.body + 12 + e * 8) : u32(b, ctts.body + 12 + e * 8);
+      for (let k = 0; k < count && i < n; k++) cto[i++] = off;
+    }
+  }
+
+  let sync = null;
+  const stss = find(b, stbl, 'stss');
+  if (stss) {
+    sync = new Uint8Array(n);
+    const ne = u32(b, stss.body + 4);
+    for (let e = 0; e < ne; e++) { const k = u32(b, stss.body + 8 + e * 4) - 1; if (k < n) sync[k] = 1; }
+  }
+
+  // offsets
+  const stco = find(b, stbl, 'stco'), co64 = find(b, stbl, 'co64');
+  const stsc = find(b, stbl, 'stsc');
+  const chunkOffsets = [];
+  if (stco) { const c = u32(b, stco.body + 4); for (let i = 0; i < c; i++) chunkOffsets.push(u32(b, stco.body + 8 + i * 4)); }
+  else if (co64) { const c = u32(b, co64.body + 4); for (let i = 0; i < c; i++) chunkOffsets.push(u64(b, co64.body + 8 + i * 8)); }
+  const scEntries = [];
+  const ns = u32(b, stsc.body + 4);
+  for (let e = 0; e < ns; e++) scEntries.push([u32(b, stsc.body + 8 + e * 12), u32(b, stsc.body + 12 + e * 12)]);
+  const off = new Float64Array(n);
+  let si = 0, ei = 0;
+  for (let c = 0; c < chunkOffsets.length && si < n; c++) {
+    while (ei + 1 < scEntries.length && scEntries[ei + 1][0] <= c + 1) ei++;
+    let p = chunkOffsets[c];
+    for (let k = 0; k < scEntries[ei][1] && si < n; k++, si++) { off[si] = p; p += size[si]; }
+  }
+
+  Object.assign(t, { n: si, off, size, dts, dur, cto, sync, end: time });
+  return t;
+}
+
+function parseAAC(stsd) {
+  // find esds inside the sample entry and read AudioSpecificConfig
+  for (let i = 8; i + 8 < stsd.length; i++) {
+    if (cc(stsd, i) !== 'esds') continue;
+    let p = i + 8;
+    const readLen = () => { let l = 0; for (let k = 0; k < 4; k++) { const c = stsd[p++]; l = (l << 7) | (c & 0x7f); if (!(c & 0x80)) break; } return l; };
+    while (p < stsd.length) {
+      const tag = stsd[p++]; readLen();
+      if (tag === 0x03) { p += 2; const f = stsd[p++]; if (f & 0x80) p += 2; if (f & 0x40) p += 1 + stsd[p]; if (f & 0x20) p += 2; }
+      else if (tag === 0x04) p += 13;
+      else if (tag === 0x05) {
+        const objectType = stsd[p] >> 3, channelConfig = (stsd[p + 1] >> 3) & 0x0f;
+        return { objectType, channelConfig };
+      } else break;
+    }
+  }
+  return null;
+}
+
+function parseMoov(b) {
+  const moov = find(b, { body: 0, end: b.length }, 'moov');
+  const mvhd = find(b, moov, 'mvhd');
+  const v = b[mvhd.body];
+  const creation = v ? u64(b, mvhd.body + 4) : u32(b, mvhd.body + 4);
+  const timescale = u32(b, mvhd.body + (v ? 20 : 12));
+  const duration = v ? u64(b, mvhd.body + 24) : u32(b, mvhd.body + 16);
+  const tracks = [];
+  for (const c of children(b, moov.body, moov.end)) {
+    if (c.type !== 'trak') continue;
+    try { const t = parseTrak(b, c); if (t) tracks.push(t); } catch (e) { /* skip odd track */ }
+  }
+  return { creation, timescale, duration, tracks };
+}
+
+/* ---------- clip ---------- */
+async function openClip(file) {
+  const clip = { file, name: file.name, size: file.size, ok: false };
+  try {
+    const top = await scanTop(file);
+    const moovBox = top.find(x => x.type === 'moov' && !x.truncated);
+    if (!moovBox) {
+      clip.error = top.some(x => x.type === 'mdat')
+        ? 'Incomplete recording: the camera stopped before finishing this file (usually power cut).'
+        : 'Not a readable MP4 file.';
+      return clip;
+    }
+    const ftyp = top.find(x => x.type === 'ftyp' && x.size < 4096);
+    clip.ftyp = ftyp ? await readBytes(file, ftyp.start, ftyp.size) : null;
+    const m = parseMoov(await readBytes(file, moovBox.start, moovBox.size));
+    clip.creation = m.creation ? new Date((m.creation - 2082844800) * 1000) : null;
+    clip.tracks = m.tracks;
+    clip.video = m.tracks.find(t => t.handler === 'vide' && t.n > 0);
+    clip.audio = m.tracks.find(t => t.handler === 'soun' && t.n > 0);
+    clip.gps = m.tracks.find(t => t.format === 'gpmd' && t.n > 0);
+    clip.duration = clip.video ? clip.video.end / clip.video.timescale : m.duration / m.timescale;
+    clip.ok = !!clip.video && clip.video.n > 0;
+    if (!clip.ok) clip.error = 'No video in this file.';
+  } catch (e) {
+    clip.error = 'Could not read this file (' + e.message + ').';
+  }
+  return clip;
+}
+
+/* ---------- WolfBox G900 / Redtiger GPS (gpmd binary) ----------
+   Layout per ExifTool QuickTimeStream.pl ProcessWolfbox: little-endian
+   int64 value/scale pairs; lat/lon in DDMM.MMMM; speed in knots. */
+function decodeWolfbox(b) {
+  if (!b || b.length < 0xf8) return null;
+  const tag = String.fromCharCode.apply(null, b.subarray(136, 157));
+  if (!/^0{16}[A-Z]{4}/.test(tag) && tag !== 'https://www.redtiger\0') return null;
+  const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  const g = p => { const v = Number(dv.getBigInt64(p, true)), s = Number(dv.getBigInt64(p + 8, true)); return v / (s || 1); };
+  const dm = x => { const d = Math.trunc(x / 100); return d + (x - d * 100) / 60; };
+  const lat = dm(g(0xb0)), lon = dm(g(0xc0));
+  if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180 || (lat === 0 && lon === 0)) return { fix: false };
+  const r = (o) => dv.getUint32(o, true);
+  const utc = Date.UTC(r(112), r(108) - 1, r(104), r(160), r(164), r(168));
+  return { fix: true, lat, lon, knots: g(0x48), heading: g(0x58), alt: g(0xe8), utc: isFinite(utc) ? utc : null };
+}
+
+async function loadGps(clip) {
+  const t = clip.gps;
+  if (!t) return [];
+  const pts = [];
+  const jobs = [];
+  for (let i = 0; i < t.n; i++) {
+    jobs.push(readBytes(t.file || clip.file, t.off[i], t.size[i]).then(b => {
+      const d = decodeWolfbox(b);
+      if (d && d.fix) { d.t = t.dts[i] / t.timescale; pts.push(d); }
+    }).catch(() => {}));
+  }
+  await Promise.all(jobs);
+  pts.sort((a, b) => a.t - b.t);
+  return pts;
+}
+
+/* ---------- export (lossless splice / trim / mute) ---------- */
+const SILENT_AAC = { 1: new Uint8Array([0x01, 0x18, 0x20, 0x07]), 2: new Uint8Array([0x21, 0x10, 0x04, 0x60, 0x8c, 0x1c]) };
+
+function silenceFor(track) {
+  if (!track) return null;
+  if (track.format === 'mp4a') {
+    const ch = (track.aac && track.aac.channelConfig) || track.channels;
+    const lc = !track.aac || track.aac.objectType === 2;
+    return lc && SILENT_AAC[ch] ? { kind: 'frame', bytes: SILENT_AAC[ch] } : null;
+  }
+  if (['sowt', 'twos', 'lpcm', 'in24', 'in32', 'fl32', 'fl64', 'raw '].includes(track.format)) return { kind: 'fill', value: track.format === 'raw ' ? 0x80 : 0 };
+  if (track.format === 'ulaw') return { kind: 'fill', value: 0xff };
+  if (track.format === 'alaw') return { kind: 'fill', value: 0xd5 };
+  return null;
+}
+
+function lowerBound(arr, n, x) { let lo = 0, hi = n; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] < x) lo = m + 1; else hi = m; } return lo; }
+
+/** Where a segment will actually start/end after keyframe snapping (seconds). */
+function snapSegment(clip, start, end) {
+  const v = clip.video, ts = v.timescale, n = v.n;
+  let i0 = Math.min(lowerBound(v.dts, n, start * ts + 1), n) - 1;
+  if (i0 < 0) i0 = 0;
+  if (v.sync) { while (i0 > 0 && !v.sync[i0]) i0--; if (!v.sync[i0]) { i0 = 0; } }
+  let i1 = Math.min(lowerBound(v.dts, n, end * ts - 1), n);
+  if (i1 <= i0) i1 = Math.min(i0 + 1, n);
+  return { i0, i1, start: v.dts[i0] / ts, end: (v.dts[i1 - 1] + v.dur[i1 - 1]) / ts };
+}
+
+function compatible(tracks) {
+  const a = tracks[0];
+  return tracks.every(t => t && t.timescale === a.timescale && t.format === a.format &&
+    (t.handler !== 'vide' || (t.width === a.width && t.height === a.height)));
+}
+/* stsd with the volatile 'btrt' (bitrate) payload zeroed, for comparing headers */
+function normStsd(stsd) {
+  const c = stsd.slice();
+  for (let i = 4; i + 16 <= c.length; i++) if (cc(c, i) === 'btrt' && u32(c, i - 4) === 20) c.fill(0, i + 4, i + 16);
+  return c;
+}
+function descTable() {
+  const list = [];
+  return {
+    list,
+    index(t) { const n = normStsd(t.stsd); let k = list.findIndex(x => bytesEqual(x.norm, n)); if (k < 0) { list.push({ norm: n, raw: t.stsd }); k = list.length - 1; } return k + 1; },
+  };
+}
+
+/**
+ * segments: [{clip, start, end, mute}]  (seconds within clip)
+ * opts: {audio: true|false}
+ * returns {blob, duration, warnings[]}
+ */
+function buildExport(segments, opts = {}) {
+  if (!segments.length) throw new Error('Nothing to export.');
+  const warnings = [];
+  const vids = segments.map(s => s.clip.video);
+  if (!compatible(vids)) throw new Error('These clips use different video formats (for example front and rear camera). Export each camera separately.');
+  const V = vids[0];
+
+  let useAudio = opts.audio !== false && segments.every(s => s.clip.audio);
+  if (useAudio && !compatible(segments.map(s => s.clip.audio))) { useAudio = false; warnings.push('Audio formats differ between clips, so audio was left out.'); }
+  if (opts.audio !== false && !useAudio && !segments.every(s => s.clip.audio)) warnings.push('Some clips have no audio track, so audio was left out.');
+  const A = useAudio ? segments[0].clip.audio : null;
+  const silence = silenceFor(A);
+  if (A && segments.some(s => s.mute) && !silence) { throw new Error('Muting sections isn\'t supported for this audio format (' + A.format + '). Choose "Remove all audio" instead.'); }
+
+  const withGps = segments.filter(s => s.clip.gps).map(s => s.clip.gps);
+  const G = withGps.length && compatible(withGps) ? withGps[0] : null;
+
+  const vts = V.timescale, ats = A && A.timescale, gts = G && G.timescale;
+  const out = { v: [], a: [], g: [] };
+  const desc = { v: descTable(), a: descTable(), g: descTable() };   // samples: {file, off, size, data, dur, cto, sync, t}
+  let vTicks = 0, aTicks = 0;
+  const gTimes = [];
+  let anyCto = false;
+
+  for (const seg of segments) {
+    const c = seg.clip, v = c.video;
+    const { i0, i1, start: s0, end: s1 } = snapSegment(c, seg.start, seg.end);
+    const segOut0 = vTicks / vts;
+    const vd = desc.v.index(v), ad = A ? desc.a.index(c.audio) : 0, gd = G && c.gps ? desc.g.index(c.gps) : 0;
+    for (let i = i0; i < i1; i++) {
+      if (v.cto) anyCto = true;
+      out.v.push({ file: v.file || c.file, off: v.off[i], size: v.size[i], dur: v.dur[i], cto: v.cto ? v.cto[i] : 0, sync: v.sync ? v.sync[i] : 1, t: vTicks / vts, desc: vd });
+      vTicks += v.dur[i];
+    }
+    const segLen = vTicks / vts - segOut0;
+
+    if (A) {
+      const a = c.audio;
+      const target = (segOut0 + segLen) * ats;
+      let j = Math.max(0, lowerBound(a.dts, a.n, s0 * ats - (a.dur[0] || 1024) / 2));
+      const fill = (dur) => {
+        const sz = silence.kind === 'frame' ? silence.bytes.length : null;
+        return { dur, t: aTicks / ats, silent: true, sz };
+      };
+      while (aTicks + (a.dur[Math.min(j, a.n - 1)] || 1024) / 2 < target) {
+        if (j < a.n) {
+          const s = { file: a.file || c.file, off: a.off[j], size: a.size[j], dur: a.dur[j], t: aTicks / ats, desc: ad };
+          if (seg.mute) { s.silent = true; s.file = null; if (silence.kind === 'frame') s.size = silence.bytes.length; }
+          out.a.push(s); aTicks += a.dur[j]; j++;
+        } else if (silence && silence.kind === 'frame') {
+          const d = a.dur[a.n - 1] || 1024; const s = fill(d); s.size = s.sz; s.desc = ad; out.a.push(s); aTicks += d;
+        } else break;
+      }
+    }
+
+    if (G && c.gps) {
+      const g = c.gps;
+      for (let k = 0; k < g.n; k++) {
+        const ts = g.dts[k] / gts;
+        if (ts >= s0 - 1e-6 && ts < s1) { out.g.push({ file: g.file || c.file, off: g.off[k], size: g.size[k], t: segOut0 + (ts - s0), desc: gd }); }
+      }
+    }
+  }
+  const totalSec = vTicks / vts;
+  // GPS durations from output times
+  out.g.forEach((s, k) => {
+    const next = k + 1 < out.g.length ? out.g[k + 1].t : totalSec;
+    const from = k === 0 ? 0 : s.t;
+    s.dur = Math.max(1, Math.round((next - from) * gts));
+    if (k === 0) s.t = 0;
+  });
+
+  // interleave all samples by output time
+  const all = [];
+  out.v.forEach(s => { s.track = 0; all.push(s); });
+  out.a.forEach(s => { s.track = 1; all.push(s); });
+  out.g.forEach(s => { s.track = 2; all.push(s); });
+  all.sort((x, y) => x.t - y.t || x.track - y.track);
+
+  const ftyp = segments[0].clip.ftyp || box('ftyp', str('isom'), be32(512), str('isomiso2mp41'));
+  const parts = [ftyp, null /* mdat header */];
+  let pos = ftyp.length + 16, mdatSize = 16;
+  let curFile = null, curStart = 0, curEnd = 0;
+  const flush = () => { if (curFile) parts.push(curFile.slice(curStart, curEnd)); curFile = null; };
+  const silentChunk = silence && silence.kind === 'frame' ? silence.bytes : null;
+  for (const s of all) {
+    s.pos = pos;
+    if (s.silent) {
+      flush();
+      if (silentChunk) parts.push(silentChunk);
+      else { const z = new Uint8Array(s.size); if (silence.value) z.fill(silence.value); parts.push(z); }
+    } else if (curFile === s.file && curEnd === s.off) {
+      curEnd += s.size;
+    } else {
+      flush(); curFile = s.file; curStart = s.off; curEnd = s.off + s.size;
+    }
+    pos += s.size; mdatSize += s.size;
+  }
+  flush();
+  const mh = new Uint8Array(16);
+  mh.set(be32(1), 0); mh.set(str('mdat'), 4); mh.set(be64(mdatSize), 8);
+  parts[1] = mh;
+
+  // moov
+  const movieTs = 1000;
+  const traks = [];
+  let nextId = 1;
+  traks.push(trakBox(V, out.v, nextId++, movieTs, { cto: anyCto, flags: 3, descs: desc.v.list }));
+  if (A) traks.push(trakBox(A, out.a, nextId++, movieTs, { flags: 3, descs: desc.a.list }));
+  if (G && out.g.length) traks.push(trakBox(G, out.g, nextId++, movieTs, { flags: 0, descs: desc.g.list }));
+  const cDate = opts.creation || segments[0].clip.creation;
+  const creation = cDate ? Math.round(cDate.getTime() / 1000) + 2082844800 : 0;
+  const durMovie = Math.round(totalSec * movieTs);
+  const mvhd = fullbox('mvhd', 0, 0, be32(creation), be32(creation), be32(movieTs), be32(durMovie),
+    be32(0x00010000), be16(0x0100), new Uint8Array(10), unityMatrix(), new Uint8Array(24), be32(nextId));
+  parts.push(box('moov', mvhd, ...traks));
+
+  return { blob: new Blob(parts, { type: 'video/mp4' }), duration: totalSec, warnings, hasAudio: !!A, hasGps: !!(G && out.g.length) };
+}
+
+function trakBox(src, samples, id, movieTs, o) {
+  const ts = src.timescale;
+  const mediaDur = samples.reduce((a, s) => a + s.dur, 0);
+  const movieDur = Math.round(mediaDur / ts * movieTs);
+  const isVideo = src.handler === 'vide', isAudio = src.handler === 'soun';
+  const tkhd = fullbox('tkhd', 0, o.flags, be32(0), be32(0), be32(id), be32(0), be32(movieDur), new Uint8Array(8),
+    be16(0), be16(0), be16(isAudio ? 0x0100 : 0), be16(0), src.matrix && src.matrix.length === 36 ? src.matrix : unityMatrix(),
+    be32(Math.round((src.width || 0) * 65536)), be32(Math.round((src.height || 0) * 65536)));
+  const mdhd = fullbox('mdhd', 0, 0, be32(0), be32(0), be32(ts), be32(mediaDur), src.lang || new Uint8Array([0x55, 0xc4]), be16(0));
+  // stts
+  const stts = rle(samples.map(s => s.dur));
+  const sttsB = fullbox('stts', 0, 0, be32(stts.length), ...stts.flatMap(([c, d]) => [be32(c), be32(d)]));
+  const descs = o.descs && o.descs.length ? o.descs : [{ raw: src.stsd }];
+  const stsdB = descs.length === 1 ? descs[0].raw : fullbox('stsd', 0, 0, be32(descs.length), ...descs.map(d => d.raw.slice(16)));
+  const stblKids = [stsdB, sttsB];
+  if (o.cto) {
+    const ct = rle(samples.map(s => s.cto | 0));
+    const neg = ct.some(([, d]) => d < 0);
+    stblKids.push(fullbox('ctts', neg ? 1 : 0, 0, be32(ct.length), ...ct.flatMap(([c, d]) => [be32(c), be32(d >>> 0)])));
+  }
+  if (isVideo && samples.some(s => !s.sync)) {
+    const idx = []; samples.forEach((s, i) => { if (s.sync) idx.push(i + 1); });
+    stblKids.push(fullbox('stss', 0, 0, be32(idx.length), ...idx.map(be32)));
+  }
+  const same = samples.every(s => s.size === samples[0].size);
+  stblKids.push(same ? fullbox('stsz', 0, 0, be32(samples[0].size), be32(samples.length))
+    : fullbox('stsz', 0, 0, be32(0), be32(samples.length), u32arr(samples.map(s => s.size))));
+  const sc = [];
+  samples.forEach((s, i) => { const d = s.desc || 1; if (!sc.length || sc[sc.length - 1][2] !== d) sc.push([i + 1, 1, d]); });
+  stblKids.push(fullbox('stsc', 0, 0, be32(sc.length), ...sc.flatMap(e => e.map(be32))));
+  const big = samples.length && samples[samples.length - 1].pos > 0xfffffff0;
+  stblKids.push(big ? fullbox('co64', 0, 0, be32(samples.length), ...samples.map(s => be64(s.pos)))
+    : fullbox('stco', 0, 0, be32(samples.length), u32arr(samples.map(s => s.pos))));
+  const dinf = box('dinf', fullbox('dref', 0, 0, be32(1), fullbox('url ', 0, 1)));
+  const mhd = src.mhd || (isVideo ? fullbox('vmhd', 0, 1, new Uint8Array(8)) : isAudio ? fullbox('smhd', 0, 0, new Uint8Array(4)) : fullbox('nmhd', 0, 0));
+  const minf = box('minf', mhd, dinf, box('stbl', ...stblKids));
+  const kids = [tkhd];
+  if (o.cto && samples.length && samples[0].cto > 0) {
+    kids.push(box('edts', fullbox('elst', 0, 0, be32(1), be32(movieDur), be32(samples[0].cto), be32(0x00010000))));
+  }
+  kids.push(box('mdia', mdhd, src.hdlr, minf));
+  return box('trak', ...kids);
+}
+
+/* ---------- writers ---------- */
+function str(s) { const a = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function be32(v) { const a = new Uint8Array(4); a[0] = v >>> 24; a[1] = v >>> 16; a[2] = v >>> 8; a[3] = v; return a; }
+function be16(v) { return new Uint8Array([(v >> 8) & 255, v & 255]); }
+function be64(v) { const a = new Uint8Array(8); a.set(be32(Math.floor(v / 4294967296)), 0); a.set(be32(v >>> 0), 4); return a; }
+function u32arr(list) { const a = new Uint8Array(list.length * 4); const dv = new DataView(a.buffer); list.forEach((v, i) => dv.setUint32(i * 4, v)); return a; }
+function unityMatrix() { const m = new Uint8Array(36); m.set(be32(0x00010000), 0); m.set(be32(0x00010000), 16); m.set(be32(0x40000000), 32); return m; }
+function concat(list) { let n = 0; for (const x of list) n += x.length; const o = new Uint8Array(n); let p = 0; for (const x of list) { o.set(x, p); p += x.length; } return o; }
+function box(type, ...kids) { const body = concat(kids.filter(Boolean)); const o = new Uint8Array(8 + body.length); o.set(be32(o.length), 0); o.set(str(type), 4); o.set(body, 8); return o; }
+function fullbox(type, version, flags, ...kids) { return box(type, new Uint8Array([version, flags >> 16 & 255, flags >> 8 & 255, flags & 255]), ...kids); }
+function rle(list) { const out = []; for (const v of list) { const l = out[out.length - 1]; if (l && l[1] === v) l[0]++; else out.push([1, v]); } return out; }
+
+async function firstGpsTime(clip) {
+  const t = clip.gps; if (!t) return null;
+  for (let i = 0; i < Math.min(t.n, 5); i++) {
+    try { const d = decodeWolfbox(await readBytes(t.file || clip.file, t.off[i], t.size[i])); if (d && d.fix && d.utc) return new Date(d.utc - t.dts[i] / t.timescale * 1000); } catch (e) {}
+  }
+  return null;
+}
+root.DashMP4 = { firstGpsTime, openClip, loadGps, decodeWolfbox, buildExport, snapSegment, scanTop };
+if (typeof module !== 'undefined') module.exports = root.DashMP4;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function(){
+'use strict';
+const D = window.DashMP4;
+const $ = id => document.getElementById(id);
+const vA = $('vA'), vB = $('vB'), vC = $('vC'), SUBS = [vB, vC];
+const CAMS = ['front', 'rear', 'third'];
+let thirdName = 'Bumper'; try { thirdName = localStorage.getItem('dashcam-studio.third') || 'Bumper'; } catch (_) {}
+const camName = c => c === 'front' ? 'Front' : c === 'rear' ? 'Rear' : thirdName;
+const clipsOf = e => e ? CAMS.map(c => e[c]).filter(Boolean) : [];
+const okClips = e => clipsOf(e).filter(c => c.ok);
+
+const S = {
+  entries: [], byKey: new Map(), day: null, kind: 'all', shown: [], cur: -1,
+  layout: 'pip', mainCam: 'front', autoNext: true, follow: true,
+  inT: null, outT: null, timeline: [], editing: -1, saveDir: null, stopAt: null, previewing: false,
+};
+
+/* ---------- utilities ---------- */
+const pad = n => String(n).padStart(2, '0');
+function fmt(t, ms) { if (!isFinite(t)) t = 0; const s = Math.max(0, t); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  const ss = ms ? sec.toFixed(1).padStart(4, '0') : pad(Math.floor(sec)); return (h ? h + ':' + pad(m) : m) + ':' + ss; }
+const fmtClock = d => d ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }) : '';
+const dayKey = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const dayLabel = k => { const [y, m, dd] = k.split('-').map(Number); return new Date(y, m - 1, dd).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function toast(msg, kind = '', ms = 6000) { const t = document.createElement('div'); t.className = 'toast ' + kind; t.innerHTML = msg; $('toasts').appendChild(t); setTimeout(() => t.remove(), ms); }
+function progress(on, title, text, frac) { const p = $('progress'); p.style.display = on ? 'flex' : 'none'; if (title != null) $('progTitle').textContent = title; if (text != null) $('progText').textContent = text; if (frac != null) $('progBar').style.width = Math.round(frac * 100) + '%'; }
+const compass = h => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((h % 360) + 360) % 360 / 45) % 8];
+
+/* ---------- kept clips (remembered by file name + size, so they survive re-plugging the card) ---------- */
+let KEPT = new Set(); try { KEPT = new Set(JSON.parse(localStorage.getItem('dashcam-studio.kept') || '[]')); } catch (_) {}
+const keepId = e => { const c = clipsOf(e)[0]; return c ? (c.file.name + ':' + c.size).toLowerCase() : ''; };
+const isKept = e => KEPT.has(keepId(e));
+function toggleKeep(e) {
+  if (!e) return; const id = keepId(e);
+  if (KEPT.has(id)) KEPT.delete(id); else KEPT.add(id);
+  try { localStorage.setItem('dashcam-studio.kept', JSON.stringify([...KEPT])); } catch (_) {}
+  const cur = curEntry(); renderList(false); const k = S.shown.indexOf(cur); S.cur = k; markCurrent();
+}
+
+/* ---------- loading clips ---------- */
+async function pool(items, n, fn, onStep) { let i = 0, done = 0; const run = async () => { while (i < items.length) { const k = i++; await fn(items[k], k); done++; onStep && onStep(done); } }; await Promise.all(Array.from({ length: n }, run)); }
+
+/* camera tokens used by dashcam firmwares in file and folder names */
+const TOK = {
+  front: 'f|front|a|fr|ch1|cam1',
+  rear: 'r|rear|b|back|bk|rr|ch2|cam2',
+  third: 'i|in|inside|int|interior|c|cab|cabin|bump|bumper|bp|ext|third|3rd|ch3|cam3',
+};
+const ONE = { front: 'fa', rear: 'rb', third: 'ic' };   // single letters glued to digits: ..._120000F
+const TOKRE = c => new RegExp('(?:(?:^|[_\\-. ])(?:' + TOK[c] + ')|(?<=\\d)[' + ONE[c] + '])$', 'i');
+const DIRRE = c => new RegExp('^(' + TOK[c].split('|').filter(x => x.length > 1).join('|') + '|' + TOK[c].split('|')[0] + ')$', 'i');
+function camOf(rel) {
+  const parts = rel.split('/'); const name = parts.pop().replace(/\.[^.]+$/, '');
+  for (const c of ['third', 'rear', 'front']) if (TOKRE(c).test(name)) return c;
+  for (const p of parts.reverse()) for (const c of ['third', 'rear', 'front']) if (DIRRE(c).test(p)) return c;
+  return 'front';
+}
+function pairKey(rel) {
+  const parts = rel.split('/'); let name = parts.pop().replace(/\.[^.]+$/, '');
+  for (const c of CAMS) name = name.replace(TOKRE(c), '');
+  const dir = parts.filter(p => !CAMS.some(c => DIRRE(c).test(p))).join('/');
+  return (dir + '/' + name).toLowerCase();
+}
+function timeFromName(rel) {
+  const n = rel.split('/').pop();
+  const m = n.match(/(20\d{2})[_\-]?(\d{2})[_\-]?(\d{2})[_\-T ]?(\d{2})[_\-:]?(\d{2})[_\-:]?(\d{2})/);
+  if (m) { const d = new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]); if (!isNaN(d)) return d; }
+  return null;
+}
+function kindOf(rel) { const r = rel.toLowerCase(); if (/park/.test(r)) return 'parking'; if (/(event|emr|emerg|lock|protect|urgent|\bro\b|sos)/.test(r)) return 'event'; return 'normal'; }
+
+async function loadFiles(files) {
+  files = files.filter(f => /\.(mp4|mov)$/i.test(f.name) && !f.name.startsWith('._') && f.size > 0);
+  if (!files.length) { toast('No MP4 or MOV video files were found there.', 'warn'); return; }
+  progress(true, 'Reading clips…', `0 of ${files.length}`, 0);
+  const clips = [];
+  await pool(files, 8, async (f) => {
+    const c = await D.openClip(f);
+    c.rel = f.webkitRelativePath || f._rel || f.name;
+    c.cam = camOf(c.rel); c.key = pairKey(c.rel);
+    c.when = timeFromName(c.rel) || (c.ok && await D.firstGpsTime(c)) || c.creation || new Date(f.lastModified);
+    clips.push(c);
+  }, done => progress(true, null, `${done} of ${files.length}`, done / files.length));
+
+  // pair front/rear
+  const map = new Map();
+  for (const c of clips) {
+    let e = map.get(c.key);
+    if (!e || e[c.cam]) {
+      // fall back to time-matching for unusual names
+      e = null;
+      for (const x of map.values()) if (!x[c.cam] && x.kind === kindOf(c.rel) && Math.abs(x.when - c.when) <= 2000) { e = x; break; }
+      if (!e) { e = { key: c.key + (map.has(c.key) ? '#' + map.size : ''), when: c.when, kind: kindOf(c.rel), front: null, rear: null, third: null, gps: null }; map.set(e.key, e); }
+    }
+    e[c.cam] = c;
+    if (c.cam === 'front' || !e.when) e.when = c.when;
+  }
+  const existing = new Set(S.entries.map(e => e.key));
+  for (const e of map.values()) if (!existing.has(e.key)) S.entries.push(e);
+  S.entries.sort((a, b) => a.when - b.when || a.key.localeCompare(b.key));
+  S.byKey = new Map(S.entries.map(e => [e.key, e]));
+  S.entries.forEach(e => { const ok = okClips(e); e.main = ok[0] || clipsOf(e)[0]; e.day = dayKey(e.when); e.ok = ok.length > 0; e.dur = ok.length ? ok[0].duration : 0; });
+  buildCamOptions();
+  progress(false);
+  const bad = clips.filter(c => !c.ok).length;
+  toast(`Loaded <b>${clips.length}</b> files as <b>${map.size}</b> clips` + (bad ? ` · ${bad} damaged file${bad > 1 ? 's' : ''} labelled` : '') + '.', 'good');
+  $('overlay').style.display = 'none';
+  buildDays();
+  restoreTimelineOffer();
+}
+
+function buildDays() {
+  const days = [...new Set(S.entries.map(e => e.day))].sort();
+  const sel = $('daySel');
+  sel.innerHTML = days.map(d => { const n = S.entries.filter(e => e.day === d).length; return `<option value="${d}">${dayLabel(d)} — ${n} clip${n > 1 ? 's' : ''}</option>`; }).join('');
+  if (!days.includes(S.day)) S.day = days[days.length - 1];
+  sel.value = S.day;
+  renderList(true);
+}
+
+function renderList(selectFirst) {
+  S.shown = S.kind === 'kept' ? S.entries.filter(isKept) : S.entries.filter(e => e.day === S.day && (S.kind === 'all' || e.kind === S.kind));
+  const multiDay = S.kind === 'kept' && new Set(S.shown.map(e => e.day)).size > 1;
+  const L = $('clipList');
+  L.innerHTML = S.shown.map((e, i) => {
+    const b = [];
+    if (e.front) b.push(`<span class="badge f">Front</span>`);
+    if (e.rear) b.push(`<span class="badge r">Rear</span>`);
+    if (e.third) b.push(`<span class="badge t">${esc(thirdName)}</span>`);
+    if (e.kind === 'event') b.push(`<span class="badge ev">Event</span>`);
+    if (e.kind === 'parking') b.push(`<span class="badge pk">Parking</span>`);
+    if (clipsOf(e).some(c => c.gps)) b.push(`<span class="badge g">GPS</span>`);
+    const errs = clipsOf(e).filter(c => !c.ok);
+    if (errs.length) b.push(`<span class="badge err" title="${esc(errs.map(c => c.error).join(' '))}">${!e.ok ? 'Damaged' : errs.map(c => camName(c.cam)).join(' + ') + ' damaged'}</span>`);
+    const kept = isKept(e);
+    return `<div class="clip${kept ? ' kept' : ''}" data-i="${i}"><span class="t"><button class="star${kept ? ' on' : ''}" data-star="${i}" title="${kept ? 'Kept. Click to un-keep' : 'Keep this clip'} (K)">${kept ? '★' : '☆'}</button>${multiDay ? e.when.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' : ''}${fmtClock(e.when)}</span><span style="color:var(--dim)">${e.ok ? fmt(e.dur) : '—'}</span><div class="m">${b.join('')}</div></div>`;
+  }).join('') || `<div style="padding:20px;color:var(--faint)">${S.kind === 'kept' ? 'No kept clips yet. Click the ☆ beside any clip (or press K) to keep it.' : 'No clips of this type on this day.'}</div>`;
+  const tot = S.shown.reduce((a, e) => a + (e.dur || 0), 0);
+  $('listSum').textContent = `${S.shown.length} clips · ${fmt(tot)}`;
+  $('btnAddAll').disabled = !S.shown.some(e => e.ok);
+  $('btnCopyKept').style.display = S.kind === 'kept' && S.shown.length ? '' : 'none';
+  $('daySel').disabled = S.kind === 'kept';
+  drawDayRoutes();
+  if (selectFirst) { const k = S.shown.findIndex(e => e.ok); if (k >= 0) selectClip(k, 0, false); }
+  else markCurrent();
+}
+function markCurrent() {
+  document.querySelectorAll('.clip').forEach(el => el.classList.toggle('cur', +el.dataset.i === S.cur));
+  const el = document.querySelector('.clip.cur'); if (el) el.scrollIntoView({ block: 'nearest' });
+}
+
+/* ---------- playback ---------- */
+const URLS = new Map();
+const curEntry = () => S.shown[S.cur];
+function mainClip(e) { e = e || curEntry(); if (!e) return null; const m = e[S.mainCam]; return m && m.ok ? m : okClips(e)[0] || null; }
+function subClips(e) { e = e || curEntry(); if (!e) return []; const m = mainClip(e); return okClips(e).filter(c => c !== m); }
+
+function setSrc(v, clip) {
+  if (URLS.get(v)) URL.revokeObjectURL(URLS.get(v));
+  URLS.delete(v); v._clip = clip || null;
+  if (!clip) { v.removeAttribute('src'); v.load(); return; }
+  const u = URL.createObjectURL(clip.file); URLS.set(v, u);
+  v.src = u; v.load();
+}
+const liveSubs = () => SUBS.filter(v => v.getAttribute('src'));
+
+async function selectClip(i, t = 0, play = false) {
+  const e = S.shown[i]; if (!e) return;
+  S.cur = i; markCurrent();
+  S.inT = S.outT = null; S.stopAt = null;
+  if (S.editing >= 0 && S.timeline[S.editing].key !== e.key) setEditing(-1);
+  updateInOut();
+  if (!e.ok) {
+    [vA, ...SUBS].forEach(v => setSrc(v, null)); layout();
+    showOverlayMsg('This clip can\'t be played', esc(clipsOf(e).map(c => c.error).filter(Boolean)[0] || 'The file is damaged.'), true);
+    updateInfo(); return;
+  }
+  hideOverlayMsg();
+  const m = mainClip(e), subs = S.layout === 'single' ? [] : subClips(e);
+  setSrc(vA, m); SUBS.forEach((v, k) => setSrc(v, subs[k] || null));
+  layout();
+  [vA, ...SUBS].forEach(v => { v.playbackRate = +$('rate').value; });
+  const start = () => { try { vA.currentTime = t; } catch (_) {} if (play) vA.play().catch(() => {}); };
+  if (vA.readyState >= 1) start(); else vA.addEventListener('loadedmetadata', start, { once: true });
+  updateInfo();
+  ensureGps(e).then(() => { if (curEntry() === e) { drawCurrentRoute(); tick(true); } });
+  preloadNext();
+}
+
+function showOverlayMsg(title, body, withNext) {
+  const o = $('overlay'); o.style.display = 'flex';
+  o.innerHTML = `<div class="card"><h2>${title}</h2><p>${body}</p>${withNext ? '<button class="primary" id="ovNext">Go to next clip</button>' : ''}</div>`;
+  const b = $('ovNext'); if (b) b.onclick = () => nextClip(1, true);
+}
+function hideOverlayMsg() { if (S.entries.length) $('overlay').style.display = 'none'; }
+
+function layout() {
+  const n = 1 + liveSubs().length;
+  $('stage').className = 'stage ' + S.layout + ' n' + n;
+  [['tA', 'labA', vA], ['tB', 'labB', vB], ['tC', 'labC', vC]].forEach(([t, l, v]) => {
+    $(t).classList.toggle('off', !v._clip);
+    $(l).textContent = v._clip ? camName(v._clip.cam).toUpperCase() : '';
+  });
+  document.querySelectorAll('#layoutSeg button').forEach(b => b.classList.toggle('on', b.dataset.l === S.layout));
+  $('bSwap').disabled = okClips(curEntry()).length < 2;
+}
+
+function nextClip(dir, play) {
+  let i = S.cur + dir;
+  while (i >= 0 && i < S.shown.length && !S.shown[i].ok) i += dir;
+  if (i >= 0 && i < S.shown.length) selectClip(i, 0, play);
+  else if (dir > 0) { toast('That was the last clip for this day.', '', 3000); }
+}
+function preloadNext() { /* the browser streams from local disk, so no preload needed */ }
+
+// keep rear in step with main
+vA.addEventListener('play', () => { liveSubs().forEach(v => v.play().catch(() => {})); $('bPlay').textContent = '❚❚'; });
+vA.addEventListener('pause', () => { SUBS.forEach(v => v.pause()); $('bPlay').textContent = '▶'; });
+vA.addEventListener('seeking', () => { if (isFinite(vA.currentTime)) liveSubs().forEach(v => { v.currentTime = Math.min(vA.currentTime, (v.duration || 1e9) - 0.05); }); });
+vA.addEventListener('ratechange', () => { SUBS.forEach(v => { v.playbackRate = vA.playbackRate; }); });
+vA.addEventListener('ended', () => { if (S.previewing) { S.previewing = false; return; } if (S.autoNext) nextClip(1, true); });
+vA.addEventListener('error', () => {
+  if (!vA.getAttribute('src')) return;
+  showOverlayMsg('This video won\'t play in this browser', 'The G900 Pro records in HEVC (H.265). Open Dashcam Studio in <b>Google Chrome</b> or <b>Safari</b> on your Mac. If other clips play fine, this file is probably damaged.', true);
+});
+SUBS.forEach(v => v.addEventListener('error', () => { if (v.getAttribute('src') && v._clip) toast(`The ${camName(v._clip.cam).toLowerCase()} video for this clip couldn't be played.`, 'warn', 4000); }));
+vA.addEventListener('loadeddata', () => { hideOverlayMsg(); tick(true); });
+
+function tick(force) {
+  const t = vA.currentTime || 0, d = vA.duration || (curEntry() && curEntry().dur) || 0;
+  if (S.stopAt != null && t >= S.stopAt) { vA.pause(); S.stopAt = null; S.previewing = false; }
+  if (!vA.paused) liveSubs().forEach(v => { if (Math.abs(v.currentTime - t) > 0.25 && t < (v.duration || 0)) v.currentTime = t; });
+  $('tCur').textContent = fmt(t); $('tDur').textContent = fmt(d);
+  const p = d ? t / d * 100 : 0;
+  $('scrubFill').style.width = p + '%'; $('scrubKnob').style.left = p + '%';
+  updateHud(t);
+}
+(function loop() { if (!vA.paused || S.dragging) tick(); requestAnimationFrame(loop); })();
+vA.addEventListener('timeupdate', () => { if (vA.paused) tick(); });
+
+/* scrub bar */
+(function () {
+  const sc = $('scrub');
+  const tAt = ev => { const r = sc.getBoundingClientRect(); return Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * (vA.duration || 0); };
+  sc.addEventListener('pointerdown', ev => { if (!vA.duration) return; S.dragging = true; sc.setPointerCapture(ev.pointerId); vA.currentTime = tAt(ev); });
+  sc.addEventListener('pointermove', ev => { const tip = $('scrubTip'); if (!vA.duration) return; const r = sc.getBoundingClientRect(); tip.style.display = 'block'; tip.style.left = (ev.clientX - r.left) + 'px'; tip.textContent = fmt(tAt(ev)); if (S.dragging) vA.currentTime = tAt(ev); });
+  sc.addEventListener('pointerleave', () => { $('scrubTip').style.display = 'none'; });
+  sc.addEventListener('pointerup', () => { S.dragging = false; });
+})();
+
+/* ---------- in / out & timeline ---------- */
+function updateInOut() {
+  const d = vA.duration || 0, sel = $('scrubSel');
+  const a = S.inT, b = S.outT;
+  if (a == null && b == null) { $('inout').textContent = 'No section marked'; sel.style.display = 'none'; }
+  else {
+    const s = a ?? 0, e = b ?? d;
+    $('inout').textContent = `${fmt(s, true)} → ${fmt(e, true)}  (${fmt(e - s, true)})`;
+    if (d) { sel.style.display = 'block'; sel.style.left = (s / d * 100) + '%'; sel.style.width = ((e - s) / d * 100) + '%'; }
+  }
+  $('bAdd').innerHTML = S.editing >= 0 ? 'Update section ' + (S.editing + 1) : 'Add section <kbd style="opacity:.7">A</kbd>';
+}
+function markIn() { if (!vA.duration) return; S.inT = vA.currentTime; if (S.outT != null && S.outT <= S.inT) S.outT = null; updateInOut(); }
+function markOut() { if (!vA.duration) return; S.outT = vA.currentTime; if (S.inT != null && S.inT >= S.outT) S.inT = null; updateInOut(); }
+
+function thumbNow() {
+  try { const c = document.createElement('canvas'); c.width = 176; c.height = 99; c.getContext('2d').drawImage(vA, 0, 0, 176, 99); return c.toDataURL('image/jpeg', 0.7); } catch (_) { return ''; }
+}
+function addSection(whole) {
+  const e = curEntry(); if (!e || !e.ok || !vA.duration) { toast('Open a clip first.', 'warn', 3000); return; }
+  const d = e.dur || vA.duration;
+  let s = whole ? 0 : (S.inT ?? 0), en = whole ? d : (S.outT ?? d);
+  if (en - s < 0.2) { toast('That section is too short. Mark an in point (I) and an out point (O).', 'warn', 4000); return; }
+  const sec = { key: e.key, start: s, end: en, mute: false, thumb: thumbNow() };
+  if (S.editing >= 0 && !whole) { sec.mute = S.timeline[S.editing].mute; S.timeline[S.editing] = sec; toast(`Section ${S.editing + 1} updated.`, 'good', 2500); setEditing(-1); }
+  else { S.timeline.push(sec); }
+  const snap = D.snapSegment(e.main.ok ? e.main : mainClip(e), s, en);
+  if (s - snap.start > 0.05) toast(`Section will start at ${fmt(snap.start, true)}, the nearest keyframe before your mark.`, '', 3500);
+  S.inT = S.outT = null; updateInOut(); renderTimeline();
+}
+function addAllShown() { for (const e of S.shown) if (e.ok) S.timeline.push({ key: e.key, start: 0, end: e.dur, mute: false, thumb: '' }); renderTimeline(); toast(`Added ${S.shown.filter(e => e.ok).length} clips to the edit timeline.`, 'good', 3000); }
+
+function setEditing(i) { S.editing = i; renderTimeline(); updateInOut(); }
+function renderTimeline() {
+  const C = $('cards');
+  if (!S.timeline.length) {
+    C.innerHTML = '<div class="empty">No sections yet. Play a clip, press <b>I</b> at the start and <b>O</b> at the end of what you want, then <b>A</b>. Gaps between sections are cut out automatically.</div>';
+  } else {
+    C.innerHTML = S.timeline.map((s, i) => {
+      const e = S.byKey.get(s.key);
+      const when = e ? fmtClock(new Date(e.when.getTime() + s.start * 1000)) : 'missing clip';
+      return `<div class="card${S.editing === i ? ' editing' : ''}" draggable="true" data-i="${i}">
+        <div class="th" style="background-image:${s.thumb ? `url(${s.thumb})` : 'none'}"><span class="num">${i + 1}</span><span class="dur">${fmt(s.end - s.start)}</span>${s.mute ? '<span class="mutedtag">MUTED</span>' : ''}</div>
+        <div class="bd"><span class="lbl" title="${esc(e ? e.main.rel : s.key)}">${when}</span>
+          <button data-a="play" title="Preview this section">▶</button>
+          <button data-a="mute" title="${s.mute ? 'Unmute' : 'Mute'} this section in the export">${s.mute ? '🔇' : '🔊'}</button>
+          <button data-a="del" title="Remove section">✕</button></div></div>`;
+    }).join('');
+  }
+  const tot = S.timeline.reduce((a, s) => a + (s.end - s.start), 0);
+  $('tlSum').textContent = S.timeline.length ? `${S.timeline.length} section${S.timeline.length > 1 ? 's' : ''} · ${fmt(tot)} total` : 'Mark sections in the player, then add them here. Drag cards to reorder.';
+  $('bExport').disabled = !S.timeline.length;
+  saveTimelineLocal();
+}
+function openSection(i, play) {
+  const s = S.timeline[i]; const e = S.byKey.get(s.key); if (!e) { toast('That clip isn\'t loaded. Open its folder first.', 'warn'); return; }
+  if (e.day !== S.day) { S.day = e.day; $('daySel').value = e.day; S.kind = 'all'; syncKindSeg(); renderList(false); }
+  let k = S.shown.indexOf(e); if (k < 0) { S.kind = 'all'; syncKindSeg(); renderList(false); k = S.shown.indexOf(e); }
+  selectClip(k, s.start, play).then(() => { S.inT = s.start; S.outT = s.end; updateInOut(); vA.addEventListener('loadedmetadata', updateInOut, { once: true }); if (play) { S.stopAt = s.end; S.previewing = true; } });
+}
+$('cards').addEventListener('click', ev => {
+  const card = ev.target.closest('.card'); if (!card) return; const i = +card.dataset.i;
+  const a = ev.target.closest('button') && ev.target.closest('button').dataset.a;
+  if (a === 'del') { S.timeline.splice(i, 1); if (S.editing === i) S.editing = -1; else if (S.editing > i) S.editing--; renderTimeline(); updateInOut(); return; }
+  if (a === 'mute') { S.timeline[i].mute = !S.timeline[i].mute; renderTimeline(); return; }
+  if (a === 'play') { setEditing(-1); openSection(i, true); return; }
+  setEditing(i); openSection(i, false);
+});
+(function dnd() {
+  let from = -1; const C = $('cards');
+  C.addEventListener('dragstart', ev => { const c = ev.target.closest('.card'); if (!c) return; from = +c.dataset.i; c.classList.add('drag'); ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', 'card'); });
+  C.addEventListener('dragend', () => { document.querySelectorAll('.card').forEach(c => c.classList.remove('drag', 'over')); });
+  C.addEventListener('dragover', ev => { const c = ev.target.closest('.card'); if (from < 0 || !c) return; ev.preventDefault(); document.querySelectorAll('.card').forEach(x => x.classList.toggle('over', x === c)); });
+  C.addEventListener('drop', ev => { const c = ev.target.closest('.card'); if (from < 0 || !c) return; ev.preventDefault(); ev.stopPropagation(); const to = +c.dataset.i; const [m] = S.timeline.splice(from, 1); S.timeline.splice(to, 0, m); from = -1; S.editing = -1; renderTimeline(); updateInOut(); });
+})();
+
+/* ---------- GPS, HUD and map ---------- */
+async function ensureGps(e) {
+  if (e.gps) return e.gps;
+  if (!e.gpsP) e.gpsP = (async () => {
+    let pts = [];
+    for (const c of okClips(e)) { if (c.gps) { try { pts = await D.loadGps(c); } catch (_) {} if (pts.length) break; } }
+    e.gps = pts; return pts;
+  })();
+  return e.gpsP;
+}
+function gpsAt(e, t) {
+  const p = e && e.gps; if (!p || !p.length) return null;
+  let lo = 0, hi = p.length - 1;
+  if (t <= p[0].t) return p[0]; if (t >= p[hi].t) return p[hi];
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (p[m].t <= t) lo = m; else hi = m; }
+  const a = p[lo], b = p[hi], f = (t - a.t) / ((b.t - a.t) || 1);
+  let dh = ((b.heading - a.heading + 540) % 360) - 180;
+  return { lat: a.lat + (b.lat - a.lat) * f, lon: a.lon + (b.lon - a.lon) * f, knots: a.knots + (b.knots - a.knots) * f, heading: (a.heading + dh * f + 360) % 360, alt: a.alt + (b.alt - a.alt) * f };
+}
+let lastPos = null;
+function updateHud(t) {
+  const e = curEntry(), hud = $('hud');
+  if (!e || !e.ok) { hud.style.display = 'none'; return; }
+  hud.style.display = 'flex';
+  const clock = fmtClock(new Date(e.when.getTime() + t * 1000));
+  const g = gpsAt(e, t);
+  if (g) {
+    const mph = g.knots * 1.15078;
+    hud.innerHTML = `<div class="spd">${Math.round(mph)}<small>mph</small></div><div>${compass(g.heading)} ${Math.round(g.heading)}°</div><div>${clock}</div><div>${g.lat.toFixed(5)}, ${g.lon.toFixed(5)}</div><div>${Math.round(g.alt * 3.28084).toLocaleString()} ft</div>`;
+    moveMarker(g);
+    lastPos = g;
+    $('lnkGmaps').href = `https://www.google.com/maps/search/?api=1&query=${g.lat.toFixed(6)},${g.lon.toFixed(6)}`;
+    $('lnkSv').href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${g.lat.toFixed(6)},${g.lon.toFixed(6)}&heading=${Math.round(g.heading)}`;
+  } else {
+    hud.innerHTML = `<div>${clock}</div>` + (e.gps ? '<div style="color:var(--dim)">No GPS in this clip</div>' : '');
+  }
+}
+
+let map = null, dayLayer = null, curLine = null, marker = null;
+function initMap() {
+  if (!window.L) { $('map').innerHTML = '<div class="nomap">The map needs an internet connection. Video playback and editing still work offline.</div>'; return; }
+  map = L.map('map', { zoomControl: true, attributionControl: true }).setView([39.74, -104.99], 11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  dayLayer = L.layerGroup().addTo(map);
+  map.on('dragstart', () => { if (S.follow) { S.follow = false; $('bFollow').classList.remove('on'); } });
+}
+function moveMarker(g) {
+  if (!map) return;
+  const ll = [g.lat, g.lon];
+  const html = `<svg class="headarrow" viewBox="0 0 24 24" style="transform:rotate(${g.heading}deg)"><circle cx="12" cy="12" r="10" fill="#3d8bfd" stroke="#fff" stroke-width="2"/><path d="M12 5 L16.5 15 L12 12.5 L7.5 15 Z" fill="#fff"/></svg>`;
+  if (!marker) marker = L.marker(ll, { icon: L.divIcon({ className: '', html, iconSize: [22, 22], iconAnchor: [11, 11] }), zIndexOffset: 1000 }).addTo(map);
+  else { marker.setLatLng(ll); marker.getElement() && (marker.getElement().innerHTML = html); }
+  if (S.follow) { const b = map.getBounds().pad(-0.25); if (!b.contains(ll)) map.panTo(ll, { animate: true }); }
+}
+function drawCurrentRoute() {
+  if (!map) return; const e = curEntry();
+  if (curLine) { curLine.remove(); curLine = null; }
+  if (!e || !e.gps || !e.gps.length) return;
+  curLine = L.polyline(e.gps.map(p => [p.lat, p.lon]), { color: '#3d8bfd', weight: 6, opacity: .95 }).addTo(map);
+  if (S.follow) map.fitBounds(curLine.getBounds().pad(0.3), { maxZoom: 16 });
+}
+let dayToken = 0;
+async function drawDayRoutes() {
+  if (!map) return; const tok = ++dayToken;
+  dayLayer.clearLayers();
+  const list = S.shown.slice();
+  const lines = [];
+  await pool(list, 3, async (e) => {
+    if (!e.ok) return; await ensureGps(e); if (tok !== dayToken || !e.gps.length) return;
+    const ln = L.polyline(e.gps.map(p => [p.lat, p.lon]), { color: e.kind === 'event' ? '#f0a63a' : '#8a93a6', weight: 4, opacity: .75 });
+    ln.on('click', ev => { const i = S.shown.indexOf(e); let best = 0, bd = 1e9; e.gps.forEach(p => { const d = (p.lat - ev.latlng.lat) ** 2 + (p.lon - ev.latlng.lng) ** 2; if (d < bd) { bd = d; best = p.t; } }); selectClip(i, best, !vA.paused); });
+    ln.bindTooltip(fmtClock(e.when), { sticky: true });
+    ln.addTo(dayLayer); lines.push(ln);
+  });
+  if (tok !== dayToken) return;
+  S.dayBounds = lines.length ? L.featureGroup(lines).getBounds() : null;
+  if (curLine) curLine.bringToFront();
+}
+
+/* ---------- info panel ---------- */
+function updateInfo() {
+  const e = curEntry(); const box = $('clipInfo');
+  if (!e) { box.textContent = 'No clip selected.'; return; }
+  const row = (c, lab) => c ? `<div><b>${lab}:</b> ${esc(c.rel)} — ${c.ok ? `${c.video.width}×${c.video.height}, ${(c.size / 1048576).toFixed(0)} MB${c.audio ? '' : ', no sound'}${c.gps ? ', GPS' : ''}` : `<span style="color:var(--bad)">${esc(c.error)}</span>`}</div>` : '';
+  box.innerHTML = `<div><b>${dayLabel(e.day)}, ${fmtClock(e.when)}</b> · ${e.kind === 'normal' ? 'Driving' : e.kind === 'event' ? 'Event' : 'Parking'}</div>` + CAMS.map(c => row(e[c], camName(c))).join('');
+}
+
+/* ---------- saving ---------- */
+const idb = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open('dashcam-studio', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+  return {
+    async get(k) { try { const db = await open(); return await new Promise(res => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); } catch (_) { return null; } },
+    async set(k, v) { try { const db = await open(); db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); } catch (_) {} },
+  };
+})();
+const canPickDir = 'showDirectoryPicker' in window;
+async function chooseSaveDir() {
+  if (!canPickDir) {
+    const safari = /Safari/.test(navigator.userAgent) && !/Chrome|Chromium|Edg/.test(navigator.userAgent);
+    toast(safari
+      ? 'Safari saves exports where it saves downloads. To use a dashcam folder instead: <b>Safari → Settings → General → File download location → Other…</b> (or choose "Ask for each download"). In Google Chrome you can pick a folder right here.'
+      : 'This browser saves exports to your Downloads folder. Use Google Chrome to save straight into a folder of your choice.', 'warn', 15000);
+    return false;
+  }
+  try { const h = await window.showDirectoryPicker({ id: 'dashcam-save', mode: 'readwrite' }); S.saveDir = h; await idb.set('saveDir', h); $('saveName').textContent = h.name; toast(`Exports will be saved in <b>${esc(h.name)}</b>.`, 'good', 3500); return true; }
+  catch (e) { if (e.name === 'AbortError') return false; toast('This browser wouldn\'t allow folder access (' + esc(e.message) + '), so exports will go to your Downloads folder.', 'warn', 8000); return true; }
+}
+async function dirReady() {
+  if (!S.saveDir) return false;
+  try { let p = await S.saveDir.queryPermission({ mode: 'readwrite' }); if (p !== 'granted') p = await S.saveDir.requestPermission({ mode: 'readwrite' }); return p === 'granted'; } catch (_) { return false; }
+}
+async function uniqueName(dir, name) {
+  const dot = name.lastIndexOf('.'), base = name.slice(0, dot), ext = name.slice(dot);
+  for (let k = 1; k < 1000; k++) { const n = k === 1 ? name : `${base} (${k})${ext}`; try { await dir.getFileHandle(n); } catch (_) { return n; } }
+  return name;
+}
+async function saveBlob(blob, name, sub) {
+  if (await dirReady()) {
+    try {
+      const dir = sub ? await S.saveDir.getDirectoryHandle(sub, { create: true }) : S.saveDir;
+      const n = await uniqueName(dir, name);
+      const fh = await dir.getFileHandle(n, { create: true });
+      const w = await fh.createWritable();
+      await w.write(blob); await w.close();
+      return { where: S.saveDir.name + (sub ? ' / ' + sub : ''), name: n };
+    } catch (e) {
+      if (!S.dirWarned) { S.dirWarned = true; toast(`Couldn't write to <b>${esc(S.saveDir.name)}</b> (${esc(e.message)}), so files are going to Downloads instead. Try choosing the save folder again.`, 'warn', 10000); }
+    }
+  }
+  const a = document.createElement('a'); const u = URL.createObjectURL(blob);
+  a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 120000);
+  return { where: 'Downloads', name };
+}
+const safeName = s => (s || 'Drive').replace(/[\\/:*?"<>|]+/g, '-').trim() || 'Drive';
+
+/* ---------- export ---------- */
+async function doExport() {
+  if (!S.timeline.length) return;
+  const cam = $('exCam').value, mode = $('exMode').value, audio = $('exAudio').value === 'keep';
+  const name = safeName($('exportName').value);
+  if (canPickDir && !S.saveDir) { const ok = await chooseSaveDir(); if (!ok) return; }
+  const cams = cam === 'all' ? CAMS.filter(c => S.entries.some(e => e[c])) : [cam];
+  const jobs = [];
+  for (const c of cams) {
+    const segs = []; const missing = [];
+    S.timeline.forEach((s, i) => { const e = S.byKey.get(s.key); const clip = e && e[c]; if (clip && clip.ok) segs.push({ clip, start: s.start, end: Math.min(s.end, clip.duration), mute: s.mute, n: i + 1 }); else missing.push(i + 1); });
+    if (missing.length) toast(`${camName(c)} video is missing for section${missing.length > 1 ? 's' : ''} ${missing.join(', ')}, so ${missing.length > 1 ? 'they were' : 'it was'} skipped.`, 'warn', 8000);
+    if (!segs.length) continue;
+    const label = camName(c);
+    if (mode === 'one') jobs.push({ segs, file: `${name} - ${label}.mp4` });
+    else segs.forEach(s => jobs.push({ segs: [s], file: `${name} - ${pad(s.n)} - ${label}.mp4` }));
+  }
+  if (!jobs.length) { toast('Nothing to export for that camera.', 'warn'); return; }
+  progress(true, 'Exporting…', '', 0);
+  const saved = []; const warns = new Set();
+  try {
+    for (let k = 0; k < jobs.length; k++) {
+      const j = jobs[k];
+      progress(true, `Exporting ${k + 1} of ${jobs.length}`, j.file, k / jobs.length);
+      await new Promise(r => setTimeout(r, 30));
+      const s0 = j.segs[0], e0 = S.entries.find(x => clipsOf(x).includes(s0.clip));
+      const r = D.buildExport(j.segs, { audio, creation: e0 ? new Date(e0.when.getTime() + D.snapSegment(s0.clip, s0.start, s0.end).start * 1000) : null });
+      r.warnings.forEach(w => warns.add(w));
+      const res = await saveBlob(r.blob, j.file);
+      saved.push(res); progress(true, null, null, (k + 1) / jobs.length);
+    }
+  } catch (e) {
+    progress(false); toast('Export failed: ' + esc(e.message), 'bad', 12000); return;
+  }
+  progress(false);
+  warns.forEach(w => toast(esc(w), 'warn', 8000));
+  const where = saved[0].where;
+  toast(`Saved <b>${saved.length}</b> video${saved.length > 1 ? 's' : ''} to <b>${esc(where)}</b>:<br>${saved.map(s => esc(s.name)).join('<br>')}`, 'good', 12000);
+  $('exStatus').textContent = `Last export: ${saved.length} file${saved.length > 1 ? 's' : ''} → ${where}`;
+}
+
+/* ---------- copy kept originals ---------- */
+async function copyKept() {
+  const list = S.entries.filter(isKept); if (!list.length) return;
+  if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return;
+  const files = list.flatMap(e => clipsOf(e).map(c => c.file));
+  const total = files.reduce((a, f) => a + f.size, 0); let done = 0, where = '';
+  const usingDir = await dirReady();
+  if (!usingDir && files.length > 6) toast(`Your browser will download ${files.length} files one by one. Using Chrome with a save folder is much smoother.`, 'warn', 8000);
+  try {
+    for (let k = 0; k < files.length; k++) {
+      const f = files[k];
+      progress(true, `Copying ${k + 1} of ${files.length}`, `${f.name} · ${(f.size / 1048576).toFixed(0)} MB`, done / total);
+      const r = await saveBlob(f, f.name, 'Kept clips'); where = r.where; done += f.size;
+    }
+  } catch (e) { progress(false); toast('Copy stopped: ' + esc(e.message), 'bad', 10000); return; }
+  progress(false);
+  toast(`Copied <b>${files.length}</b> original file${files.length > 1 ? 's' : ''} (${(total / 1073741824).toFixed(2)} GB) from ${list.length} kept clip${list.length > 1 ? 's' : ''} to <b>${esc(where)}</b>.`, 'good', 10000);
+}
+$('btnCopyKept').onclick = copyKept;
+
+/* ---------- project files & autosave ---------- */
+function projectData() { return { app: 'Dashcam Studio', version: 1, name: $('exportName').value, saved: new Date().toISOString(), sections: S.timeline.map(s => { const e = S.byKey.get(s.key); return { key: s.key, files: e ? clipsOf(e).map(c => c.rel) : s.files || [], start: +s.start.toFixed(3), end: +s.end.toFixed(3), mute: s.mute }; }) }; }
+function resolveKey(sec) {
+  if (S.byKey.has(sec.key)) return sec.key;
+  const names = (sec.files || []).map(f => f.split('/').pop().toLowerCase());
+  const e = S.entries.find(x => clipsOf(x).some(c => names.includes(c.file.name.toLowerCase())));
+  return e ? e.key : null;
+}
+function loadProject(p) {
+  if (!p || !Array.isArray(p.sections)) throw new Error('not a Dashcam Studio edit file');
+  let miss = 0;
+  S.timeline = p.sections.map(s => { const k = resolveKey(s); if (!k) miss++; return k ? { key: k, start: s.start, end: s.end, mute: !!s.mute, thumb: '' } : null; }).filter(Boolean);
+  if (p.name) $('exportName').value = p.name;
+  S.editing = -1; renderTimeline(); updateInOut();
+  if (miss) toast(`${miss} section${miss > 1 ? 's' : ''} refer to clips that aren't loaded. Open the folder with those clips, then open the edit again.`, 'warn', 9000);
+  else toast(`Opened edit with ${S.timeline.length} sections.`, 'good', 3000);
+}
+function saveTimelineLocal() { try { localStorage.setItem('dashcam-studio.last', JSON.stringify(projectData())); } catch (_) {} }
+function restoreTimelineOffer() {
+  if (S.timeline.length) return;
+  let p = null; try { p = JSON.parse(localStorage.getItem('dashcam-studio.last') || 'null'); } catch (_) {}
+  if (!p || !p.sections || !p.sections.length) return;
+  const ok = p.sections.filter(resolveKey).length; if (!ok) return;
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = `Your last edit (${p.sections.length} sections) uses clips from this folder. <button class="primary" style="margin-left:8px">Restore it</button>`;
+  t.querySelector('button').onclick = () => { loadProject(p); t.remove(); };
+  $('toasts').appendChild(t); setTimeout(() => t.remove(), 20000);
+}
+
+/* ---------- diagnostic ---------- */
+async function saveDiagnostic() {
+  const e = curEntry(); if (!e) { toast('Select a clip first.', 'warn'); return; }
+  const parts = []; const info = { app: 'Dashcam Studio diagnostic', ua: navigator.userAgent, clips: [] };
+  for (const c of clipsOf(e)) {
+    const top = await D.scanTop(c.file);
+    const ci = { rel: c.rel, size: c.size, ok: c.ok, error: c.error || null, top: top.map(b => [b.type, b.start, b.size]), tracks: (c.tracks || []).map(t => ({ handler: t.handler, format: t.format, n: t.n, ts: t.timescale, w: t.width, h: t.height })) };
+    info.clips.push(ci);
+    const moov = top.find(b => b.type === 'moov' && !b.truncated);
+    if (moov && moov.size < 8e6) parts.push(new TextEncoder().encode(`\n--MOOV ${c.rel}--\n`), c.file.slice(moov.start, moov.start + moov.size));
+    if (c.gps) for (let i = 0; i < Math.min(5, c.gps.n); i++) parts.push(new TextEncoder().encode(`\n--GPS ${i}--\n`), c.file.slice(c.gps.off[i], c.gps.off[i] + c.gps.size[i]));
+    else if (c.ok) { const first = top.find(b => b.type === 'mdat'); if (first) parts.push(new TextEncoder().encode('\n--HEAD--\n'), c.file.slice(0, Math.min(first.start + 65536, c.size))); }
+  }
+  const blob = new Blob([JSON.stringify(info, null, 1), ...parts]);
+  const res = await saveBlob(new Blob([blob], { type: 'text/plain' }), `diagnostic - ${(e.main.file.name || 'clip').replace(/\.[^.]+$/, '')}.txt`);
+  toast(`Diagnostic saved to <b>${esc(res.where)}</b> as ${esc(res.name)} (${Math.max(1, Math.round(blob.size / 1024))} KB).`, 'good', 8000);
+}
+
+/* ---------- wiring ---------- */
+function syncKindSeg() { document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === S.kind)); }
+$('btnOpen').onclick = $('btnOpen2').onclick = () => $('inFolder').click();
+$('btnAddFiles').onclick = () => $('inFiles').click();
+$('inFolder').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
+$('inFiles').onchange = ev => { const f = [...ev.target.files]; ev.target.value = ''; loadFiles(f); };
+$('btnSaveDir').onclick = chooseSaveDir;
+$('daySel').onchange = ev => { S.day = ev.target.value; renderList(true); };
+$('kindSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.kind = b.dataset.k; syncKindSeg(); renderList(true); };
+$('clipList').onclick = ev => { const st = ev.target.closest('[data-star]'); if (st) { ev.stopPropagation(); toggleKeep(S.shown[+st.dataset.star]); return; } const r = ev.target.closest('.clip'); if (r) selectClip(+r.dataset.i, 0, true); };
+$('btnAddAll').onclick = addAllShown;
+$('bPlay').onclick = () => { if (!vA.src) return; vA.paused ? vA.play().catch(() => {}) : vA.pause(); };
+$('bBack').onclick = () => { vA.currentTime = Math.max(0, vA.currentTime - 5); };
+$('bFwd').onclick = () => { vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 5); };
+$('bPrev').onclick = () => { if (vA.currentTime > 3) vA.currentTime = 0; else nextClip(-1, !vA.paused); };
+$('bNext').onclick = () => nextClip(1, !vA.paused);
+$('bStepB').onclick = () => { vA.pause(); vA.currentTime = Math.max(0, vA.currentTime - 1 / 30); };
+$('bStepF').onclick = () => { vA.pause(); vA.currentTime = Math.min(vA.duration || 0, vA.currentTime + 1 / 30); };
+$('rate').onchange = ev => { vA.playbackRate = +ev.target.value; };
+$('bVol').onclick = () => { vA.muted = !vA.muted; $('bVol').textContent = vA.muted ? '🔇' : '🔊'; };
+function reloadKeep() { const t = vA.currentTime, p = !vA.paused, a = S.inT, b = S.outT, ed = S.editing; if (S.cur < 0) { layout(); return; } selectClip(S.cur, t, p); S.inT = a; S.outT = b; S.editing = ed; vA.addEventListener('loadedmetadata', updateInOut, { once: true }); updateInOut(); }
+$('layoutSeg').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; S.layout = b.dataset.l; reloadKeep(); };
+const swap = () => { const ok = okClips(curEntry()); if (ok.length < 2) return; const cur = mainClip(); S.mainCam = ok[(ok.indexOf(cur) + 1) % ok.length].cam; reloadKeep(); };
+$('bSwap').onclick = swap;
+['tB', 'tC'].forEach((t, k) => { $(t).onclick = () => { const v = SUBS[k]; if (v._clip) { S.mainCam = v._clip.cam; reloadKeep(); } }; });
+function buildCamOptions() {
+  const have = CAMS.filter(c => S.entries.some(e => e[c])); const sel = $('exCam'); const cur = sel.value;
+  sel.innerHTML = have.map(c => `<option value="${c}">${esc(camName(c))}</option>`).join('') + (have.length > 1 ? `<option value="all">All ${have.length} cameras (one file each)</option>` : '');
+  sel.value = [...sel.options].some(o => o.value === cur) ? cur : have[0] || 'front';
+}
+$('thirdName').value = thirdName;
+$('thirdName').onchange = ev => { thirdName = ev.target.value; try { localStorage.setItem('dashcam-studio.third', thirdName); } catch (_) {} buildCamOptions(); renderList(false); layout(); updateInfo(); };
+$('bAuto').onclick = () => { S.autoNext = !S.autoNext; $('bAuto').classList.toggle('on', S.autoNext); };
+$('bIn').onclick = markIn; $('bOut').onclick = markOut;
+$('bClear').onclick = () => { S.inT = S.outT = null; setEditing(-1); };
+$('bAdd').onclick = () => addSection(false);
+$('bWhole').onclick = () => addSection(true);
+$('bFollow').onclick = () => { S.follow = !S.follow; $('bFollow').classList.toggle('on', S.follow); if (S.follow && lastPos && map) map.panTo([lastPos.lat, lastPos.lon]); };
+$('bFit').onclick = () => { if (map && S.dayBounds) { S.follow = false; $('bFollow').classList.remove('on'); map.fitBounds(S.dayBounds.pad(0.1)); } };
+$('bExport').onclick = doExport;
+$('bTlClear').onclick = () => { if (!S.timeline.length) return; const keep = S.timeline.slice(); S.timeline = []; S.editing = -1; renderTimeline(); updateInOut();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = 'Timeline cleared. <button style="margin-left:8px">Undo</button>'; t.querySelector('button').onclick = () => { S.timeline = keep; renderTimeline(); t.remove(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 8000); };
+$('bProjSave').onclick = async () => { if (!S.timeline.length) { toast('The timeline is empty.', 'warn', 3000); return; } if (canPickDir && !S.saveDir && !(await chooseSaveDir())) return; const r = await saveBlob(new Blob([JSON.stringify(projectData(), null, 2)], { type: 'application/json' }), `${safeName($('exportName').value)} - edit.json`); toast(`Edit saved to <b>${esc(r.where)}</b> as ${esc(r.name)}. Open it later with "Open edit…".`, 'good', 6000); };
+$('bProjOpen').onclick = () => $('inProject').click();
+$('inProject').onchange = async ev => { const f = ev.target.files[0]; ev.target.value = ''; if (!f) return; try { loadProject(JSON.parse(await f.text())); } catch (e) { toast('Couldn\'t open that edit file: ' + esc(e.message), 'bad'); } };
+$('btnHelp').onclick = () => { $('help').style.display = 'flex'; };
+$('bHelpClose').onclick = () => { $('help').style.display = 'none'; };
+$('help').onclick = ev => { if (ev.target.id === 'help') $('help').style.display = 'none'; };
+$('bDiag').onclick = saveDiagnostic;
+
+document.addEventListener('keydown', ev => {
+  if (ev.target.matches('input,select,textarea') || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const k = ev.key;
+  const act = { ' ': () => $('bPlay').click(), ArrowLeft: () => $('bBack').click(), ArrowRight: () => $('bFwd').click(), ',': () => $('bStepB').click(), '.': () => $('bStepF').click(),
+    i: markIn, o: markOut, a: () => addSection(false), n: () => $('bNext').click(), p: () => $('bPrev').click(), s: swap, k: () => toggleKeep(curEntry()), m: () => $('bVol').click(), Escape: () => { $('help').style.display = 'none'; } }[k.length === 1 ? k.toLowerCase() : k];
+  if (act) { ev.preventDefault(); act(); }
+});
+
+// drag & drop folders
+(function () {
+  let depth = 0;
+  document.addEventListener('dragenter', ev => { if (ev.dataTransfer && [...ev.dataTransfer.types].includes('Files')) { depth++; document.body.classList.add('active'); } });
+  document.addEventListener('dragleave', () => { if (--depth <= 0) { depth = 0; document.body.classList.remove('active'); } });
+  document.addEventListener('dragover', ev => { if ([...(ev.dataTransfer || {}).types || []].includes('Files')) ev.preventDefault(); });
+  document.addEventListener('drop', async ev => {
+    if (!ev.dataTransfer || ![...ev.dataTransfer.types].includes('Files')) return;
+    ev.preventDefault(); depth = 0; document.body.classList.remove('active');
+    const out = [];
+    const walk = async (entry, path) => {
+      if (entry.isFile) { await new Promise(res => entry.file(f => { f._rel = path + f.name; out.push(f); res(); }, res)); }
+      else if (entry.isDirectory) { const r = entry.createReader(); let batch; do { batch = await new Promise(res => r.readEntries(res, () => res([]))); for (const x of batch) await walk(x, path + entry.name + '/'); } while (batch.length); }
+    };
+    const items = [...ev.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+    progress(true, 'Finding clips…', '', 0);
+    for (const it of items) await walk(it, '');
+    progress(false);
+    loadFiles(out);
+  });
+})();
+
+(async () => {
+  initMap(); renderTimeline(); layout();
+  if (!canPickDir) { $('saveName').textContent = 'Safari downloads folder'; if (!/Safari/.test(navigator.userAgent) || /Chrome|Edg/.test(navigator.userAgent)) $('saveName').textContent = 'Downloads'; $('btnSaveDir').textContent = 'How to change…'; }
+  const h = await idb.get('saveDir'); if (h) { S.saveDir = h; $('saveName').textContent = h.name; }
+})();
+})();
+</script>
+</body>
+</html>
