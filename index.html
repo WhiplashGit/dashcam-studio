@@ -1135,7 +1135,15 @@ let map = null, dayLayer = null, curLine = null, marker = null;
 function initMap() {
   if (!window.L) { $('map').innerHTML = '<div class="nomap">The map needs an internet connection. Video playback and editing still work offline.</div>'; return; }
   map = L.map('map', { zoomControl: true, attributionControl: true }).setView([39.74, -104.99], 11);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  // OpenStreetMap's own servers refuse requests that don't identify a website (e.g. a file opened from disk),
+  // so local files use CARTO's free OpenStreetMap-based tiles, and any OSM refusal switches over automatically.
+  const carto = () => L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '&copy; OpenStreetMap contributors &copy; CARTO' });
+  if (location.protocol === 'file:') carto().addTo(map);
+  else {
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    let fails = 0, switched = false;
+    osm.on('tileerror', () => { if (++fails >= 3 && !switched) { switched = true; map.removeLayer(osm); carto().addTo(map); } });
+  }
   dayLayer = L.layerGroup().addTo(map);
   map.on('dragstart', () => { if (S.follow) { S.follow = false; $('bFollow').classList.remove('on'); } });
 }

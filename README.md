@@ -14,7 +14,7 @@ Works best in Google Chrome on a Mac (it can save straight into a folder you cho
 ## Credits
 
 - GPS decoding is based on the WolfBox/Redtiger data layout documented in [ExifTool](https://exiftool.org) by Phil Harvey. No ExifTool code is included.
-- Maps use [Leaflet](https://leafletjs.com) and map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
+- Maps use [Leaflet](https://leafletjs.com) and map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, with map tiles from OpenStreetMap or [CARTO](https://carto.com/attributions).
 
 ## Disclaimer
 
