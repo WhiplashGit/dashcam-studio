@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashcam Studio — WolfBox G900 Pro</title>
+<meta name="app-version" content="2026-10-30b">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 <style>
@@ -1860,7 +1861,15 @@ function syncKindSeg() { document.querySelectorAll('#kindSeg button').forEach(b 
 // Its folder-access picker asks "Let this site view files?" instead, and reads files only when they're used.
 async function openFolder() {
   if (!canPickDir) { $('inFolder').click(); return; }
-  let dir; try { dir = await window.showDirectoryPicker({ id: 'footage', mode: 'read' }); } catch (e) { if (e.name !== 'AbortError') $('inFolder').click(); return; }
+  let dir; try { dir = await window.showDirectoryPicker({ id: 'footage', mode: 'read' }); }
+  catch (e) {
+    if (e.name === 'AbortError') return;
+    // say why, rather than quietly falling back to the chooser with the upload wording
+    const t = document.createElement('div'); t.className = 'toast warn';
+    t.innerHTML = `Chrome wouldn't open that folder this way (${esc(e.name)}: ${esc(e.message)}). If it's the card itself, try its DCIM folder instead. <button style="margin-left:6px">Use the other chooser</button>`;
+    t.querySelector('button').onclick = () => { t.remove(); $('inFolder').click(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 20000);
+    return;
+  }
   progress(true, 'Finding clips…', '', 0);
   const out = [];
   const walk = async (h, path) => {
