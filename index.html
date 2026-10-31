@@ -140,6 +140,7 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .pk-folder{display:flex;align-items:center;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
 .pk-folder .txt{flex:1;min-width:0}.pk-folder b{font-size:15px}.pk-folder p{margin:4px 0 0;color:var(--dim);line-height:1.5}
 .pk-folder button{padding:10px 18px;font-size:14px}
+.pk-reopen{border-color:#33507c;background:#18233a;margin-bottom:12px}
 .pk-more{margin:14px 2px 0}.pk-more a{color:#9cc3ff;text-decoration:none}.pk-more a:hover{text-decoration:underline}
 .pk-or{display:flex;align-items:center;gap:12px;color:var(--faint);margin:24px 0 14px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
 .pk-or::before,.pk-or::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -388,6 +389,10 @@ button.ok:hover:not(:disabled){background:#1d4733}
 <div class="picker" id="picker"><div class="pk">
   <h2 id="pkTitle">Open your dashcam footage</h2>
   <p class="lead">Nothing is uploaded. Everything stays on your Mac.</p>
+  <div class="pk-folder pk-reopen" id="pkReopen" style="display:none">
+    <div class="txt"><b id="pkReopenTitle"></b><p id="pkReopenText"></p></div>
+    <button class="primary" id="pkReopenBtn"></button>
+  </div>
   <div class="pk-folder">
     <div class="txt"><b>Open a trip folder or the SD card</b><p>Everything in it opens at once: each day plays as one continuous video, with the front mirror, rear and separate front cameras matched up. Then skim through and save the moments you want.</p></div>
     <button class="primary" id="pkFolder">Open folder…</button>
@@ -1045,8 +1050,10 @@ async function loadFiles(files) {
   toast(`Found <b>${clips.length}</b> files: <b>${map.size}</b> clips.`, 'good', 3000);
   $('overlay').style.display = 'none';
   closePicker();
+  try { const top = (clips[0].rel.split('/')[0]) || ''; if (clips[0].rel.includes('/')) localStorage.setItem('dashcam-studio.folder', top); } catch (_) {}
   buildDays();
   restoreTimelineOffer();
+  if (!S.placeDone) { S.placeDone = true; restorePlace(); }
   return added.sort((a, b) => a.when - b.when);
 }
 
@@ -1896,6 +1903,10 @@ async function openFolder() {
     t.querySelector('button').onclick = () => { t.remove(); $('inFolder').click(); }; $('toasts').appendChild(t); setTimeout(() => t.remove(), 20000);
     return;
   }
+  idb.set('lastDir', dir).catch(() => {});
+  await readFolder(dir);
+}
+async function readFolder(dir) {
   progress(true, 'Finding clips…', '', 0);
   const out = [];
   const walk = async (h, path) => {
@@ -1989,6 +2000,45 @@ const pickerOpen = () => $('picker').classList.contains('open');
   });
 })();
 
+/* ---------- picking up where you left off after a reload ----------
+   A web page loses access to files when it reloads. Chrome can remember the folder (it asks once to
+   allow it again); Safari can't, so it shows which folder to open. Moments and the place you were
+   watching are kept in the browser either way. */
+async function setupReopen() {
+  let name = ''; try { name = localStorage.getItem('dashcam-studio.folder') || ''; } catch (_) {}
+  const h = canPickDir ? await idb.get('lastDir').catch(() => null) : null;
+  if (!h && !name) return;
+  $('pkReopen').style.display = '';
+  $('pkReopenTitle').textContent = `Carry on with "${h ? h.name : name}"`;
+  if (h) {
+    $('pkReopenText').textContent = 'Reopen the folder you were using. Your moments and the place you were watching come back too.';
+    $('pkReopenBtn').textContent = 'Reopen it';
+    $('pkReopenBtn').onclick = async () => {
+      try { if ((await h.queryPermission({ mode: 'read' })) !== 'granted' && (await h.requestPermission({ mode: 'read' })) !== 'granted') return; await readFolder(h); }
+      catch (e) { toast('That folder isn\'t available any more (is the card plugged in?). Use Open folder instead.', 'warn', 8000); }
+    };
+  } else {
+    $('pkReopenText').textContent = `This browser can't reopen a folder by itself after the page reloads. Press the button and choose "${name}" again; your moments and the place you were watching come back.`;
+    $('pkReopenBtn').textContent = `Choose "${name}"…`;
+    $('pkReopenBtn').onclick = openFolder;
+  }
+}
+function savePlace() {
+  const e = curEntry(); if (!e || !vA.getAttribute('src')) return;
+  try { localStorage.setItem('dashcam-studio.place', JSON.stringify({ file: e.main.file.name, t: +vA.currentTime.toFixed(1) })); } catch (_) {}
+}
+setInterval(savePlace, 3000);
+window.addEventListener('pagehide', savePlace);
+async function restorePlace() {
+  let p = null; try { p = JSON.parse(localStorage.getItem('dashcam-studio.place') || 'null'); } catch (_) {}
+  if (!p) return;
+  const e = S.entries.find(x => clipsOf(x).some(c => c.file.name === p.file)); if (!e) return;
+  for (let i = 0; i < 300 && !S.movie.length; i++) await new Promise(r => setTimeout(r, 100));   // wait for the day to be ready
+  if (await jumpTo(e.key, p.t, false)) toast(`Back where you were: ${fmtClock(new Date(e.when.getTime() + p.t * 1000))}.`, 'good', 3000);
+}
+// a reload drops the open folder, so ask first
+window.addEventListener('beforeunload', ev => { if (S.entries.length) { savePlace(); ev.preventDefault(); ev.returnValue = ''; } });
+
 /* ---------- footage picker: one box per camera ---------- */
 const PK = { front: [], rear: [], third: [] };
 const SLOT = {
@@ -2016,6 +2066,7 @@ function addToSlot(cam, files) {
 function openPicker(files) {
   $('pkTitle').textContent = S.entries.length ? 'Add more footage' : 'Open your dashcam footage';
   $('picker').classList.add('open'); showPickerFiles(files === true);
+  if (S.entries.length) $('pkReopen').style.display = 'none';
 }
 function closePicker() { $('picker').classList.remove('open'); for (const c of CAMS) PK[c] = []; if (!S.entries.length) $('overlay').style.display = 'flex'; }
 function slotTimes(list) {
@@ -2080,7 +2131,7 @@ function showPickerFiles(on) { $('pkFiles').style.display = on ? '' : 'none'; $(
 $('picker').addEventListener('click', ev => { if (ev.target.id === 'picker' && S.entries.length) closePicker(); });
 
 (async () => {
-  initMap(); mvRender(); renderMoments(); layout(); openPicker();
+  initMap(); mvRender(); renderMoments(); layout(); openPicker(); setupReopen();
   if (!canPickDir) { $('saveName').textContent = 'Safari downloads folder'; if (!/Safari/.test(navigator.userAgent) || /Chrome|Edg/.test(navigator.userAgent)) $('saveName').textContent = 'Downloads'; $('btnSaveDir').textContent = 'How to change…'; }
   const h = await idb.get('saveDir'); if (h) { S.saveDir = h; $('saveName').textContent = h.name; }
 })();
