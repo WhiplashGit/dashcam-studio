@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashcam Studio — WolfBox G900 Pro</title>
-<meta name="app-version" content="2026-10-30b">
+<meta name="app-version" content="2026-10-31a">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 <style>
@@ -2038,8 +2038,25 @@ async function restorePlace() {
   for (let i = 0; i < 300 && !S.movie.length; i++) await new Promise(r => setTimeout(r, 100));   // wait for the day to be ready
   if (await jumpTo(e.key, p.t, false)) toast(`Back where you were: ${fmtClock(new Date(e.when.getTime() + p.t * 1000))}.`, 'good', 3000);
 }
+// GitHub Pages lets browsers keep the page for up to 10 minutes, so check for a newer version now and then.
+// Fetching with cache 'reload' also refreshes the browser's copy, so a normal reload then gets the new page.
+async function checkForUpdate() {
+  if (location.protocol === 'file:') return;
+  try {
+    const html = await (await fetch(location.href.split('#')[0], { cache: 'reload' })).text();
+    const v = (html.match(/name="app-version" content="([^"]+)"/) || [])[1], mine = document.querySelector('meta[name="app-version"]').content;
+    if (!v || v === mine || S.updateShown === v) return;
+    S.updateShown = v;
+    const t = document.createElement('div'); t.className = 'toast';
+    t.innerHTML = `A newer version of Dashcam Studio is ready. <button class="primary" style="margin-left:8px">Refresh now</button>${S.entries.length ? '<div style="color:var(--dim);margin-top:4px">Your moments are kept; you\'ll reopen the folder after.</div>' : ''}`;
+    t.querySelector('button').onclick = () => { savePlace(); S.leaving = true; location.reload(); };
+    $('toasts').appendChild(t);
+  } catch (_) {}
+}
+setTimeout(checkForUpdate, 5000); setInterval(checkForUpdate, 120000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
 // a reload drops the open folder, so ask first
-window.addEventListener('beforeunload', ev => { if (S.entries.length) { savePlace(); ev.preventDefault(); ev.returnValue = ''; } });
+window.addEventListener('beforeunload', ev => { if (S.entries.length && !S.leaving) { savePlace(); ev.preventDefault(); ev.returnValue = ''; } });
 
 /* ---------- footage picker: one box per camera ---------- */
 const PK = { front: [], rear: [], third: [] };
