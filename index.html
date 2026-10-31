@@ -194,7 +194,10 @@ aside{display:flex;flex-direction:column;border-right:1px solid var(--line);back
 .selr .sellen{position:absolute;left:50%;top:-22px;transform:translateX(-50%);background:#f5c84b;color:#111;font-weight:700;font-size:11.5px;padding:1px 6px;border-radius:4px;white-space:nowrap}
 .mk{position:absolute;top:-8px;bottom:-8px;width:4px;margin-left:-2px;background:#f5c84b;border-radius:2px;display:none;z-index:2}
 .mk::after{content:"start";position:absolute;top:-16px;left:4px;font-size:11px;font-weight:700;color:#f5c84b}
-.playhead{position:absolute;top:-10px;bottom:-6px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6);pointer-events:none;z-index:3;display:none}
+.playhead{position:absolute;top:-10px;bottom:-6px;width:4px;margin-left:-2px;background:#fff;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 6px rgba(0,0,0,.5);pointer-events:none;z-index:3;display:none}
+.playhead .grip{position:absolute;left:50%;top:50%;width:26px;height:40px;transform:translate(-50%,-50%);background:#fff;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);pointer-events:auto;cursor:grab;display:flex;align-items:center;justify-content:center;gap:4px}
+.playhead .grip i{width:2px;height:18px;background:#9aa3b2;border-radius:1px}
+.playhead .grip:hover{background:#e8f0ff}.movie:active .playhead .grip{cursor:grabbing;background:#dbe8ff}
 .playhead span{position:absolute;top:-6px;left:50%;transform:translate(-50%,-100%);background:#fff;color:#111;font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .bartip{position:absolute;bottom:calc(100% + 14px);transform:translateX(-50%);background:#000;border:1px solid #3a4252;color:#fff;padding:4px;border-radius:6px;font-size:11.5px;display:none;pointer-events:none;white-space:nowrap;z-index:5;text-align:center;font-variant-numeric:tabular-nums}
 .bartip .tipimg{width:160px;height:90px;background:#1a1d23 center/cover no-repeat;border-radius:4px;margin-bottom:3px}
@@ -325,7 +328,7 @@ button.ok:hover:not(:disabled){background:#1d4733}
           <div id="ovl"></div>
           <div class="selr" id="selr"><span class="h" data-h="a"></span><span class="sellen" id="selLen"></span><span class="h" data-h="b"></span></div>
           <div class="mk" id="mkA"></div>
-          <div class="playhead" id="playhead"><span id="phTime"></span></div>
+          <div class="playhead" id="playhead"><span id="phTime"></span><div class="grip" title="Drag to move through the video"><i></i><i></i><i></i></div></div>
           <div class="bartip" id="barTip"><div class="tipimg" id="tipImg"></div><div id="tipClock"></div></div>
         </div>
         <div class="ruler" id="ruler"></div>
