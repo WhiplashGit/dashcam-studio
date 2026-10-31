@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashcam Studio — WolfBox G900 Pro</title>
-<meta name="app-version" content="2026-10-31a">
+<meta name="app-version" content="2026-10-31b">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 <style>
@@ -358,7 +358,8 @@ button.ok:hover:not(:disabled){background:#1d4733}
     <div class="moments" id="moments"></div>
     <div class="tl-head exportbar" style="border-top:1px solid var(--line);padding:10px 12px">
       <label>Trip name <input type="text" id="exportName" value="Trip" title="Used at the start of every saved video's file name"></label>
-      <label>Camera <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
+      <label title="How the cameras appear in the saved video">Layout <select id="exLayout"><option value="single">One camera (fast, original quality)</option><option value="pip">Picture-in-picture (rear in the corner)</option><option value="side">Side by side</option></select></label>
+      <label><span id="exCamLbl">Camera</span> <select id="exCam"><option value="front">Front</option><option value="rear">Rear</option><option value="all">All cameras (one file each)</option></select></label>
       <label>Sound <select id="exAudio"><option value="keep">Keep sound</option><option value="remove">No sound in any video</option></select></label>
       <div style="flex:1"></div>
       <span id="exStatus" style="color:var(--dim)"></span>
@@ -366,7 +367,7 @@ button.ok:hover:not(:disabled){background:#1d4733}
   </section>
 </div>
 
-<div class="progress" id="progress"><div class="card2"><b id="progTitle">Working…</b><div id="progText" style="color:var(--dim);margin-top:4px"></div><div class="pbar"><div id="progBar"></div></div></div></div>
+<div class="progress" id="progress"><div class="card2"><b id="progTitle">Working…</b><div id="progText" style="color:var(--dim);margin-top:4px;white-space:pre-line"></div><div class="pbar"><div id="progBar"></div></div><button id="progCancel" style="display:none;margin-top:14px">Stop</button></div></div>
 
 <div class="modal" id="help"><div class="card2">
   <h2>Dashcam Studio — how it works</h2>
@@ -375,6 +376,7 @@ button.ok:hover:not(:disabled){background:#1d4733}
   <p><b>Finding the moments:</b> each day plays as one continuous video. The strip at the bottom covers the whole day: drag along it to move through the video, click to jump, hover to preview, or click the route on the map. The blue line under it is your speed and the shading is your height, so slow crawls, stops and the highest point are easy to spot. Play at 4× or 8× to skim.</p>
   <p><b>Saving a moment:</b> press <b>Mark start</b> where it begins and <b>Mark end</b> where it ends, then <b>⭐ Save as a moment</b>. A moment can run across several 3-minute files. Give it a name on its card. Each moment can be saved as its own video, and the ones ticked "In highlight reel" join into one video with <b>Save highlight reel</b>. Moments are remembered in this browser, and come back when you open the same folder again.</p>
   <p><b>Saving videos</b> copies the original video without re-compressing it, so it's fast and full quality. Section starts snap back to the nearest keyframe (usually less than a second earlier); ends are exact. GPS is kept in exported files, so they reopen here with their route.</p>
+  <p><b>Layout:</b> to show more than one camera in a single video, choose <b>Picture-in-picture</b> (the other cameras in a corner of the main one) or <b>Side by side</b> before saving. These videos are drawn frame by frame on your computer and saved as a standard H.264 MP4 with the sound, so they play anywhere. They take about as long to make as the video lasts (often less), are compressed once more so look very slightly softer than the originals, and don't carry GPS. Press <b>Stop</b> to cancel.</p>
   <p><b>Save folder:</b> in Chrome, choose a folder once and every export goes straight into it. Other browsers save to Downloads. From there, drag the files into Photos or iMovie.</p>
   <table>
     <tr><td><kbd>Space</kbd></td><td>Play / pause</td><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back / forward 5 s</td></tr>
@@ -922,6 +924,245 @@ function box(type, ...kids) { const body = concat(kids.filter(Boolean)); const o
 function fullbox(type, version, flags, ...kids) { return box(type, new Uint8Array([version, flags >> 16 & 255, flags >> 8 & 255, flags & 255]), ...kids); }
 function rle(list) { const out = []; for (const v of list) { const l = out[out.length - 1]; if (l && l[1] === v) l[0]++; else out.push([1, v]); } return out; }
 
+/* ---------- layouts: decode every camera, draw them into one picture, re-encode as H.264 ---------- */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const hex2 = x => x.toString(16).padStart(2, '0');
+function codecInfo(t) {
+  const s = t.stsd;
+  for (let i = 8; i + 4 <= s.length; i++) {
+    const tag = cc(s, i);
+    if (tag !== 'avcC' && tag !== 'hvcC') continue;
+    const d = s.slice(i + 4, i - 4 + u32(s, i - 4));
+    if (tag === 'avcC') return { codec: 'avc1.' + hex2(d[1]) + hex2(d[2]) + hex2(d[3]), description: d };
+    let compat = u32(d, 2), rev = 0;
+    for (let k = 0; k < 32; k++) { rev = (rev * 2) + (compat & 1); compat >>>= 1; }
+    const cons = Array.from(d.slice(6, 12)); while (cons.length && !cons[cons.length - 1]) cons.pop();
+    const fmt = t.format === 'hev1' ? 'hev1' : 'hvc1';
+    return { codec: [fmt, ['', 'A', 'B', 'C'][d[1] >> 6] + (d[1] & 31), rev.toString(16).toUpperCase(), ((d[1] >> 5) & 1 ? 'H' : 'L') + d[12], ...cons.map(x => x.toString(16).toUpperCase())].join('.'), description: d };
+  }
+  return null;
+}
+
+/** Hands out decoded frames of one camera, in order, for a stretch of one clip. */
+class FrameFeed {
+  constructor(clip, start, end) {
+    const v = this.v = clip.video;
+    this.file = v.file || clip.file; this.ts = v.timescale;
+    this.i = snapSegment(clip, start, end).i0;
+    this.i1 = Math.min(v.n, lowerBound(v.dts, v.n, (end + 0.5) * this.ts) + 1);
+    this.shift = v.cto ? v.cto[0] : 0;
+    this.q = []; this.err = null; this.done = false; this.buf = null; this.bufOff = 0;
+  }
+  async open() {
+    const info = codecInfo(this.v);
+    if (!info) throw new Error('unknown video format');
+    const cfg = { codec: info.codec, description: info.description, codedWidth: this.v.width, codedHeight: this.v.height };
+    let ok = false;
+    try { ok = (await VideoDecoder.isConfigSupported(cfg)).supported; } catch (_) {}
+    if (!ok) throw new Error('This browser can\'t read the camera\'s ' + (/^h/.test(info.codec) ? 'HEVC (H.265)' : 'H.264') + ' video for layouts. Try the latest Chrome or Safari.');
+    this.dec = new VideoDecoder({ output: f => this.q.push(f), error: e => { this.err = e; } });
+    this.dec.configure(cfg);
+  }
+  async bytes(i) {
+    const v = this.v, off = v.off[i], size = v.size[i];
+    if (!this.buf || off < this.bufOff || off + size > this.bufOff + this.buf.length) {
+      let end = off + size;
+      for (let k = i + 1; k < this.i1 && v.off[k] >= off && v.off[k] + v.size[k] - off < 8e6; k++) end = Math.max(end, v.off[k] + v.size[k]);
+      this.buf = await readBytes(this.file, off, end - off); this.bufOff = off;
+    }
+    return this.buf.subarray(off - this.bufOff, off - this.bufOff + size);
+  }
+  prune(tUs) {
+    const q = this.q; let k = -1;
+    for (let j = 0; j < q.length; j++) if (q[j].timestamp <= tUs + 1000) k = j;
+    if (k > 0) q.splice(0, k).forEach(f => f.close());
+  }
+  /** The frame showing at tUs (microseconds into the clip); the last frame once the clip runs out. */
+  async frameAt(tUs) {
+    const v = this.v, q = this.q;
+    for (;;) {
+      if (this.err) throw this.err;
+      this.prune(tUs);
+      if (this.done || (q.length && q[q.length - 1].timestamp > tUs)) break;
+      if (this.i < this.i1) {
+        const i = this.i++, data = await this.bytes(i);
+        this.dec.decode(new EncodedVideoChunk({ type: !v.sync || v.sync[i] ? 'key' : 'delta', timestamp: Math.round((v.dts[i] + (v.cto ? v.cto[i] : 0) - this.shift) / this.ts * 1e6), duration: Math.round(v.dur[i] / this.ts * 1e6), data }));
+        while (this.dec.decodeQueueSize > 6 && !this.err) { await sleep(1); this.prune(tUs); }
+      } else { await this.dec.flush(); this.done = true; }
+    }
+    return q[0] || null;
+  }
+  close() { this.q.forEach(f => f.close()); this.q = []; try { if (this.dec && this.dec.state !== 'closed') this.dec.close(); } catch (_) {} }
+}
+
+const even = x => Math.max(2, Math.round(x / 2) * 2);
+/** Where each camera goes in the picture. tracks[0] is the main camera. */
+function layoutRects(layout, tracks, scale) {
+  const m = tracks[0], n = tracks.length;
+  const aspect = t => (t && t.width && t.height ? t.width / t.height : 16 / 9);
+  let W, H, rects;
+  if (layout === 'side' && n > 1) {
+    if (n === 2) { W = 3840; H = 1080; rects = [[0, 0, 1920, 1080], [1920, 0, 1920, 1080]]; }
+    else { W = 3840; H = 1440; rects = [[0, 0, 2560, 1440], [2560, 0, 1280, 720], [2560, 720, 1280, 720]]; }
+  } else {
+    W = Math.min(m.width || 1920, 2560); H = W / aspect(m);
+    rects = [[0, 0, W, H]];
+    const gap = W * 0.02, w = W * (n > 2 ? 0.25 : 0.3);
+    let y = H - gap;
+    for (let k = 1; k < n; k++) { const h = w / aspect(tracks[k]); y -= h; rects.push([W - gap - w, y, w, h]); y -= gap; }
+  }
+  return { W: even(W * scale), H: even(H * scale), rects: rects.map(r => r.map(x => x * scale)), pip: layout !== 'side' };
+}
+function drawFit(ctx, frame, [x, y, w, h]) {
+  const fw = frame.displayWidth, fh = frame.displayHeight, s = Math.min(w / fw, h / fh);
+  const dw = fw * s, dh = fh * s;
+  ctx.drawImage(frame, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+}
+
+async function pickEncoder(layout, tracks, fps) {
+  for (const scale of [1, 0.75, 0.5]) {
+    const L = layoutRects(layout, tracks, scale);
+    const bitrate = Math.round(L.W * L.H * fps * 0.12);
+    for (const codec of ['avc1.640034', 'avc1.640033', 'avc1.4d0034', 'avc1.640028', 'avc1.42e034']) {
+      const cfg = { codec, width: L.W, height: L.H, bitrate, framerate: fps, avc: { format: 'avc' } };
+      try { if ((await VideoEncoder.isConfigSupported(cfg)).supported) return { cfg, L }; } catch (_) {}
+    }
+  }
+  return null;
+}
+
+/**
+ * segments: [{clips: [main, other, other] (null where a camera is missing), start, end, mute}]  (seconds within the clips)
+ * opts: {layout: 'pip'|'side', audio, creation, onProgress(frac), cancelled()}
+ * returns {blob, duration, warnings[]}
+ */
+async function renderLayout(segments, opts = {}) {
+  if (typeof VideoEncoder === 'undefined' || typeof VideoDecoder === 'undefined') throw new Error('This browser can\'t make layout videos. Use the latest Chrome or Safari.');
+  if (!segments.length) throw new Error('Nothing to export.');
+  const warnings = [], fps = 30, vts = fps * 1000;
+  const nCams = segments[0].clips.length;
+  const tracks = []; for (let k = 0; k < nCams; k++) { const s = segments.find(x => x.clips[k]); tracks.push(s ? s.clips[k].video : null); }
+  const enc = await pickEncoder(opts.layout, tracks, fps);
+  if (!enc) throw new Error('This browser can\'t make H.264 video at this size.');
+  const { cfg, L } = enc;
+  if (L.W !== layoutRects(opts.layout, tracks, 1).W) warnings.push(`This browser could only make the video ${L.W}×${L.H}, a bit smaller than the original.`);
+
+  // sound: copied untouched from the main camera
+  const mains = segments.map(s => s.clips[0]);
+  let A = opts.audio !== false && mains.every(c => c.audio) && compatible(mains.map(c => c.audio)) ? mains[0].audio : null;
+  if (opts.audio !== false && !A) warnings.push('The sound couldn\'t be included for these clips.');
+  const silence = silenceFor(A);
+  if (A && segments.some(s => s.mute) && !(silence && silence.kind === 'frame')) { A = null; warnings.push('The sound was left out because muting isn\'t possible for this sound format.'); }
+  const ats = A && A.timescale, aOut = [];
+  let aTicks = 0, frames = 0;
+  const segFrames = segments.map(s => Math.max(1, Math.round((s.end - s.start) * fps)));
+  const total = segFrames.reduce((a, b) => a + b, 0);
+  segments.forEach((seg, si) => {
+    frames += segFrames[si];
+    if (!A) return;
+    const a = seg.clips[0].audio, target = frames / fps * ats;
+    let j = Math.max(0, lowerBound(a.dts, a.n, seg.start * ats - (a.dur[0] || 1024) / 2));
+    while (aTicks + (a.dur[Math.min(j, a.n - 1)] || 1024) / 2 < target) {
+      const silent = seg.mute || j >= a.n, d = j < a.n ? a.dur[j] : (a.dur[a.n - 1] || 1024);
+      aOut.push(silent ? { silent: true, size: silence ? silence.bytes.length : 0, dur: d } : { file: a.file || seg.clips[0].file, off: a.off[j], size: a.size[j], dur: d });
+      if (silent && !silence) { aOut.pop(); break; }
+      aTicks += d; j++;
+    }
+  });
+
+  // encoder
+  const vOut = [], blobs = []; let pending = [], pendingBytes = 0, avcC = null, encErr = null;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => {
+      const d = meta && meta.decoderConfig && meta.decoderConfig.description;
+      if (d && !avcC) avcC = ArrayBuffer.isView(d) ? new Uint8Array(d.buffer, d.byteOffset, d.byteLength).slice() : new Uint8Array(d).slice();
+      const b = new Uint8Array(chunk.byteLength); chunk.copyTo(b);
+      vOut.push({ pts: Math.round(chunk.timestamp * vts / 1e6), size: b.length, sync: chunk.type === 'key' ? 1 : 0 });
+      pending.push(b); pendingBytes += b.length;
+      if (pendingBytes > 32e6) { blobs.push(new Blob(pending)); pending = []; pendingBytes = 0; }
+    },
+    error: e => { encErr = e; },
+  });
+  encoder.configure(cfg);
+  const canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(L.W, L.H) : Object.assign(document.createElement('canvas'), { width: L.W, height: L.H });
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const line = Math.max(2, Math.round(L.W / 900));
+
+  let f = 0, feeds = [];
+  try {
+    for (let si = 0; si < segments.length; si++) {
+      const seg = segments[si];
+      feeds = seg.clips.map(c => c && c.video ? new FrameFeed(c, seg.start, seg.end) : null);
+      for (let k = 0; k < feeds.length; k++) {
+        if (!feeds[k]) continue;
+        try { await feeds[k].open(); } catch (e) { if (k === 0) throw e; feeds[k] = null; warnings.push(e.message); }
+      }
+      for (let g = 0; g < segFrames[si]; g++, f++) {
+        if (opts.cancelled && opts.cancelled()) throw Object.assign(new Error('Stopped.'), { cancelled: true });
+        if (encErr) throw encErr;
+        const tUs = Math.round((seg.start + g / fps) * 1e6);
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, L.W, L.H);
+        for (let k = 0; k < L.rects.length; k++) {
+          const fr = feeds[k] ? await feeds[k].frameAt(tUs) : null;
+          if (fr) drawFit(ctx, fr, L.rects[k]);
+          if (L.pip && k > 0 && fr) { ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = line; ctx.strokeRect(...L.rects[k]); }
+        }
+        const vf = new VideoFrame(canvas, { timestamp: Math.round(f * 1e6 / fps), duration: Math.round(1e6 / fps) });
+        encoder.encode(vf, { keyFrame: f % (fps * 2) === 0 }); vf.close();
+        while (encoder.encodeQueueSize > 4 && !encErr) await sleep(1);
+        if (opts.onProgress && f % 10 === 0) opts.onProgress(f / total);
+      }
+      feeds.forEach(x => x && x.close()); feeds = [];
+    }
+    await encoder.flush();
+    if (encErr) throw encErr;
+  } finally {
+    feeds.forEach(x => x && x.close());
+    try { if (encoder.state !== 'closed') encoder.close(); } catch (_) {}
+  }
+  if (!avcC || !vOut.length) throw new Error('The video encoder produced nothing.');
+  if (pending.length) blobs.push(new Blob(pending));
+
+  // decode times: frame order as the encoder wrote them; ctts holds the reordering
+  const sorted = vOut.map(s => s.pts).sort((a, b) => a - b);
+  vOut.forEach((s, i) => { s.dur = vts / fps; s.cto = s.pts - sorted[i]; });
+  const lead = Math.max(0, ...vOut.map(s => -s.cto));
+  vOut.forEach(s => { s.cto += lead; });
+  const anyCto = vOut.some(s => s.cto);
+
+  // file: ftyp, mdat (sound first, then picture), moov
+  const ftyp = box('ftyp', str('isom'), be32(512), str('isomiso2avc1mp41'));
+  const parts = [ftyp, null];
+  let pos = ftyp.length + 16;
+  let curFile = null, curStart = 0, curEnd = 0;
+  const flush = () => { if (curFile) parts.push(curFile.slice(curStart, curEnd)); curFile = null; };
+  for (const s of aOut) {
+    s.pos = pos;
+    if (s.silent) { flush(); parts.push(silence.bytes); }
+    else if (curFile === s.file && curEnd === s.off) curEnd += s.size;
+    else { flush(); curFile = s.file; curStart = s.off; curEnd = s.off + s.size; }
+    pos += s.size;
+  }
+  flush();
+  for (const s of vOut) { s.pos = pos; pos += s.size; }
+  parts.push(...blobs);
+  const mh = new Uint8Array(16);
+  mh.set(be32(1), 0); mh.set(str('mdat'), 4); mh.set(be64(pos - ftyp.length), 8);
+  parts[1] = mh;
+
+  const V = tracks[0];
+  const avc1 = box('avc1', new Uint8Array(6), be16(1), new Uint8Array(16), be16(L.W), be16(L.H), be32(0x00480000), be32(0x00480000), be32(0), be16(1), new Uint8Array(32), be16(0x18), be16(0xffff), box('avcC', avcC));
+  const vSrc = { timescale: vts, handler: 'vide', width: L.W, height: L.H, hdlr: V.hdlr, mhd: V.mhd, stsd: fullbox('stsd', 0, 0, be32(1), avc1) };
+  const movieTs = 1000, totalSec = vOut.length / fps;
+  const traks = [trakBox(vSrc, vOut, 1, movieTs, { cto: anyCto, flags: 3 })];
+  if (A && aOut.length) traks.push(trakBox(A, aOut, 2, movieTs, { flags: 3 }));
+  const creation = opts.creation ? Math.round(opts.creation.getTime() / 1000) + 2082844800 : 0;
+  const mvhd = fullbox('mvhd', 0, 0, be32(creation), be32(creation), be32(movieTs), be32(Math.round(totalSec * movieTs)),
+    be32(0x00010000), be16(0x0100), new Uint8Array(10), unityMatrix(), new Uint8Array(24), be32(traks.length + 1));
+  parts.push(box('moov', mvhd, ...traks));
+  return { blob: new Blob(parts, { type: 'video/mp4' }), duration: totalSec, warnings, hasAudio: !!(A && aOut.length), width: L.W, height: L.H };
+}
+
 async function firstGpsTime(clip) {
   const t = clip.gps; if (!t) return null;
   for (let i = 0; i < Math.min(t.n, 5); i++) {
@@ -929,7 +1170,7 @@ async function firstGpsTime(clip) {
   }
   return null;
 }
-root.DashMP4 = { firstGpsTime, openClip, loadGps, decodeWolfbox, buildExport, snapSegment, scanTop };
+root.DashMP4 = { firstGpsTime, openClip, loadGps, decodeWolfbox, buildExport, renderLayout, snapSegment, scanTop };
 if (typeof module !== 'undefined') module.exports = root.DashMP4;
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -1593,6 +1834,7 @@ async function exportMoments(items, reelName) {
   const cam = $('exCam').value, audio = $('exAudio').value === 'keep';
   const trip = safeName($('exportName').value);
   if (canPickDir && !S.saveDir) { const ok = await chooseSaveDir(); if (!ok) return; }
+  if ($('exLayout').value !== 'single') return exportLayout(items, reelName, $('exLayout').value, cam === 'all' ? 'front' : cam, audio, trip);
   const cams = cam === 'all' ? CAMS.filter(c => S.entries.some(e => e[c])) : [cam];
   const jobs = [];
   for (const c of cams) {
@@ -1624,6 +1866,53 @@ async function exportMoments(items, reelName) {
   toast(`Saved <b>${saved.length}</b> video${saved.length > 1 ? 's' : ''} to <b>${esc(where)}</b>:<br>${saved.map(s => esc(s.name)).join('<br>')}`, 'good', 12000);
   $('exStatus').textContent = `Last saved: ${saved.length} file${saved.length > 1 ? 's' : ''} → ${where}`;
 }
+
+/* saving with every camera in one picture (re-encoded) */
+async function exportLayout(items, reelName, layout, mainCam, audio, trip) {
+  const others = CAMS.filter(c => c !== mainCam && items.some(it => it.segs.some(s => { const e = S.byKey.get(s.key); return e && e[c] && e[c].ok; })));
+  const cams = [mainCam, ...others];
+  if (cams.length < 2) { toast('Only one camera recorded these moments, so there is nothing to put side by side. Choose "One camera" instead.', 'warn', 8000); return; }
+  const label = layout === 'pip' ? 'Picture-in-picture' : 'Side by side';
+  let missing = 0;
+  const segsOf = it => it.segs.map(s => { const e = S.byKey.get(s.key), m = e && e[mainCam]; if (!m || !m.ok) { missing++; return null; } return { clips: cams.map(c => (e[c] && e[c].ok ? e[c] : null)), start: s.start, end: Math.min(s.end, m.duration), mute: it.mute }; }).filter(Boolean);
+  const jobs = [];
+  if (reelName) { const segs = items.flatMap(segsOf); if (segs.length) jobs.push({ segs, file: `${trip} - ${safeName(reelName)} - ${label}.mp4` }); }
+  else items.forEach(it => { const segs = segsOf(it); if (segs.length) jobs.push({ segs, file: `${trip} - ${safeName(it.label)} - ${label}.mp4` }); });
+  if (missing) toast(`The ${camName(mainCam).toLowerCase()} video is missing for part of this, so that part was skipped.`, 'warn', 8000);
+  if (!jobs.length) { toast('Nothing to save for that camera.', 'warn'); return; }
+  const totalSec = jobs.reduce((a, j) => a + j.segs.reduce((b, s) => b + s.end - s.start, 0), 0);
+  let doneSec = 0; const t0 = performance.now();
+  S.stopSave = false; $('progCancel').style.display = ''; $('progCancel').textContent = 'Stop';
+  const saved = [], warns = new Set();
+  const left = () => { const f = doneSec / totalSec, el = (performance.now() - t0) / 1000; if (f < 0.02 || el < 4) return 'Working out how long this takes…'; const r = el / f - el; return r < 60 ? 'Less than a minute left' : `About ${Math.round(r / 60)} min left`; };
+  try {
+    for (let k = 0; k < jobs.length; k++) {
+      const j = jobs[k], len = j.segs.reduce((b, s) => b + s.end - s.start, 0);
+      progress(true, `Making ${label.toLowerCase()} video${jobs.length > 1 ? ` ${k + 1} of ${jobs.length}` : ''}`, j.file, doneSec / totalSec);
+      const s0 = j.segs[0], e0 = S.entries.find(x => clipsOf(x).includes(s0.clips[0]));
+      const r = await D.renderLayout(j.segs, {
+        layout, audio, creation: e0 ? new Date(e0.when.getTime() + s0.start * 1000) : null,
+        cancelled: () => S.stopSave,
+        onProgress: f => progress(true, null, `${j.file}\n${left()}`, (doneSec + f * len) / totalSec),
+      });
+      doneSec += len;
+      r.warnings.forEach(w => warns.add(w));
+      progress(true, null, 'Writing the file…', doneSec / totalSec);
+      saved.push(await saveBlob(r.blob, j.file));
+    }
+  } catch (e) {
+    progress(false); $('progCancel').style.display = 'none';
+    if (e.cancelled) toast(saved.length ? `Stopped. ${saved.length} video${saved.length > 1 ? 's were' : ' was'} already saved.` : 'Stopped. Nothing was saved.', 'warn', 6000);
+    else toast('Saving failed: ' + esc(e.message || String(e)), 'bad', 12000);
+    return;
+  }
+  progress(false); $('progCancel').style.display = 'none';
+  warns.forEach(w => toast(esc(w), 'warn', 8000));
+  const where = saved[0].where;
+  toast(`Saved <b>${saved.length}</b> video${saved.length > 1 ? 's' : ''} to <b>${esc(where)}</b>:<br>${saved.map(s => esc(s.name)).join('<br>')}`, 'good', 12000);
+  $('exStatus').textContent = `Last saved: ${saved.length} file${saved.length > 1 ? 's' : ''} → ${where}`;
+}
+$('progCancel').onclick = () => { S.stopSave = true; $('progCancel').textContent = 'Stopping…'; };
 
 /* ---------- GPS, HUD and map ---------- */
 async function ensureGps(e) {
@@ -1944,9 +2233,15 @@ $('bSwap').onclick = swap;
 ['tB', 'tC'].forEach((t, k) => { $(t).onclick = () => { const v = SUBS[k]; if (v._clip) { S.mainCam = v._clip.cam; reloadKeep(); } }; });
 function buildCamOptions() {
   const have = CAMS.filter(c => S.entries.some(e => e[c])); const sel = $('exCam'); const cur = sel.value;
-  sel.innerHTML = have.map(c => `<option value="${c}">${esc(camName(c))}</option>`).join('') + (have.length > 1 ? `<option value="all">All ${have.length} cameras (one file each)</option>` : '');
+  const lay = $('exLayout'), canLayout = typeof VideoEncoder !== 'undefined' && typeof VideoDecoder !== 'undefined';
+  [...lay.options].forEach(o => { if (o.value !== 'single') { o.disabled = !canLayout || have.length < 2; o.textContent = o.textContent.replace(/ — .*$/, '') + (!canLayout ? ' — needs a newer browser' : have.length < 2 ? ' — needs two cameras' : ''); } });
+  if (lay.selectedOptions[0] && lay.selectedOptions[0].disabled) lay.value = 'single';
+  const single = lay.value === 'single';
+  $('exCamLbl').textContent = single ? 'Camera' : 'Main camera';
+  sel.innerHTML = have.map(c => `<option value="${c}">${esc(camName(c))}</option>`).join('') + (single && have.length > 1 ? `<option value="all">All ${have.length} cameras (one file each)</option>` : '');
   sel.value = [...sel.options].some(o => o.value === cur) ? cur : have[0] || 'front';
 }
+$('exLayout').onchange = buildCamOptions;
 $('thirdName').value = thirdName;
 $('thirdName').onchange = ev => { thirdName = ev.target.value; try { localStorage.setItem('dashcam-studio.third', thirdName); } catch (_) {} buildCamOptions(); renderList(false); layout(); updateInfo(); };
 $('bAuto').onclick = () => { S.autoNext = !S.autoNext; $('bAuto').classList.toggle('on', S.autoNext); };
